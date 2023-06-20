@@ -1,0 +1,16 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Term {
+  id: ID!
+  en: String!
+  th: String!
+  createdAt: String!
+  updatedAt: String!
+  publishedAt: String!
+}
+
+type Query {
+  getLatestTerm: Term!
+}
