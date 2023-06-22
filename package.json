@@ -32,7 +32,8 @@
     "dotenv": "^16.3.1",
     "graphql": "^16.6.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "tscpaths": "^0.0.9"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
@@ -54,7 +55,7 @@
     "ts-jest": "29.1.0",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
-    "tsconfig-paths": "4.2.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.0"
   },
   "jest": {

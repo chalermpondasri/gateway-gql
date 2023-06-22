@@ -1,16 +1,21 @@
-# build app
-FROM node:16-alpine as development
+FROM node:16-alpine as build
 
 WORKDIR /app
 
-## install deps
-COPY package.json .
-
-# prebuild
-COPY tsconfig.json .
-COPY tsconfig.build.json .
-COPY nest-cli.json .
-COPY src .
-
+COPY --chown=node:node . .
 # build
-RUN npm install --silent && npm run build
+RUN npm ci --silent
+RUN npm run build
+USER node
+
+FROM node:16-alpine as runner
+ENV NODE_ENV staging
+ENV DOTENV_KEY dotenv_key
+WORKDIR /app
+
+# Copy the bundled code from the build stage to the production image
+COPY --chown=node:node --from=build /app/node_modules ./node_modules
+COPY --chown=node:node --from=build /app/dist ./dist
+COPY --chown=node:node --from=build /app/.env.vault .
+USER node
+CMD [ "node", "dist/main.js" ]

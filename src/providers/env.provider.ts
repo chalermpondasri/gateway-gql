@@ -11,9 +11,7 @@ import { config } from 'dotenv'
 export const envConfigProvider: Provider<EnvironmentConfig> = {
     provide: ProviderNames.ENV_CONFIG,
     useFactory: () => {
-        config({
-            path: `.env.${process.env.NODE_ENV}`
-        })
+        config()
         const env = plainToInstance(EnvironmentConfig, process.env)
         const errors = validateSync(env)
         if (errors.length !== 0) {
