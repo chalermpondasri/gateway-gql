@@ -7,12 +7,10 @@ WORKDIR /app
 COPY package.json .
 
 # prebuild
-COPY .eslintrc.js .
+COPY tsconfig.json .
 COPY tsconfig.build.json .
 COPY nest-cli.json .
-COPY tslint.json .
+COPY src .
 
 # build
-COPY tsconfig.json .
-COPY src .
 RUN npm install --silent && npm run build
