@@ -10,10 +10,10 @@ import {
 } from 'rxjs'
 import {
     BaseRequest,
-    IBaseRequest
 } from '@/repositories/cms/base.request'
 import { EnvironmentConfig } from '@/models/common'
 import axios, { AxiosInstance } from 'axios'
+import * as querystring from 'querystring'
 
 export class CmsRepository implements ICmsRepository {
     private readonly _axiosInstance: AxiosInstance
@@ -28,7 +28,8 @@ export class CmsRepository implements ICmsRepository {
 
     }
     public getTermsAndConditions(request:BaseRequest): Observable<BaseResponse<TermResponse>> {
-        const promise = this._axiosInstance.get(`/terms-and-conditions`, request.build())
+        const queryString = querystring.encode(request.build())
+        const promise = this._axiosInstance.get(`/terms-and-conditions?${queryString}`)
         return from(promise).pipe(
             map(result => {
                 return result.data
