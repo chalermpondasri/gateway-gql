@@ -11,4 +11,7 @@ export class EnvironmentConfig {
 
     @IsNotEmpty()
     declare readonly CMS_API_KEY
+
+    @IsNotEmpty()
+    declare readonly AUTH_ENDPOINT: string
 }

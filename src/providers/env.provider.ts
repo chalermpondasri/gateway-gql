@@ -5,11 +5,11 @@ import {
 import { plainToInstance } from 'class-transformer'
 import { validateSync } from 'class-validator'
 import { EnvironmentConfig } from '@/models/common'
-import { ProviderNames } from '@/constants/provider-name.const'
+import { ProviderName } from '@/constants/provider-name.const'
 import { config } from 'dotenv'
 
 export const envConfigProvider: Provider<EnvironmentConfig> = {
-    provide: ProviderNames.ENV_CONFIG,
+    provide: ProviderName.ENV_CONFIG,
     useFactory: () => {
         config()
         const env = plainToInstance(EnvironmentConfig, process.env)

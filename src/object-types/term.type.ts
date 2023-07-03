@@ -1,12 +1,11 @@
 import {
-    Directive,
     Field,
     ID,
     ObjectType
 } from '@nestjs/graphql'
 
 @ObjectType()
-export class Term {
+export class TermType {
     @Field(() => ID)
     public id: number
 

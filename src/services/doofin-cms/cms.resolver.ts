@@ -2,12 +2,12 @@ import {
     Query,
     Resolver
 } from '@nestjs/graphql'
-import { Term } from '@/services/doofin-cms/models/term.model'
+import { TermType } from '@/object-types'
 import { Inject } from '@nestjs/common'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import { Observable } from 'rxjs'
 
-@Resolver(of => Term)
+@Resolver(of => TermType)
 export class CmsResolver {
 
     constructor(
@@ -16,8 +16,8 @@ export class CmsResolver {
     ) {
     }
 
-    @Query( returns => Term)
-    public getLatestTerm(): Observable<Term> {
+    @Query( returns => TermType)
+    public getLatestTerm(): Observable<TermType> {
         return this._cmsService.getLatestTerms()
     }
 }
