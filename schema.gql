@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Term {
+type TermType {
   id: ID!
   en: String!
   th: String!
@@ -11,6 +11,24 @@ type Term {
   publishedAt: String!
 }
 
+type CreateUserResponseType {
+  userId: ID!
+  status: String!
+  email: String!
+  otpToken: String!
+}
+
 type Query {
-  getLatestTerm: Term!
+  getLatestTerm: TermType!
+}
+
+type Mutation {
+  createUser(CreateUserInputType: CreateUserInputType!): CreateUserResponseType!
+}
+
+input CreateUserInputType {
+  email: String!
+  password: String!
+  dob: String!
+  acceptTermId: String!
 }

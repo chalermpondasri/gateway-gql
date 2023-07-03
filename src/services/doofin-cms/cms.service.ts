@@ -8,23 +8,23 @@ import {
     map,
     Observable
 } from 'rxjs'
-import { Term } from '@/services/doofin-cms/models/term.model'
+import { TermType } from '@/object-types'
 import { ICmsRepository } from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
-import { ProviderNames } from '@/constants/provider-name.const'
+import { ProviderName } from '@/constants/provider-name.const'
 
 @Injectable()
 export class CmsService {
 
     private readonly _logger: LoggerService
     constructor(
-        @Inject(ProviderNames.CMS_REPOSITORY)
+        @Inject(ProviderName.CMS_REPOSITORY)
         private readonly _cmsRepository: ICmsRepository,
     ) {
         this._logger = new Logger(this.constructor.name)
     }
 
-    public getLatestTerms(): Observable<Term> {
+    public getLatestTerms(): Observable<TermType> {
         const request = new BaseRequest()
         request.sortMeta = {
             'publishedAt': 'desc',
