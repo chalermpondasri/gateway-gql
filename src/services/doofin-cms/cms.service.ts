@@ -8,10 +8,10 @@ import {
     map,
     Observable
 } from 'rxjs'
-import { TermType } from '@/object-types'
 import { ICmsRepository } from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
 import { ProviderName } from '@/constants/provider-name.const'
+import { TermType } from '@/types/objects'
 
 @Injectable()
 export class CmsService {

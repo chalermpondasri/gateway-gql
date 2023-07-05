@@ -1,3 +1,5 @@
 export * from './create-user.request'
 export * from './create-user.response'
 export * from './repository.interface'
+export * from './send-otp.request'
+export * from './send-otp.response'

@@ -1,6 +1,9 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
+import {
+    ApolloDriver,
+    ApolloDriverConfig
+} from '@nestjs/apollo'
+import { Module } from '@nestjs/common'
+import { GraphQLModule } from '@nestjs/graphql'
 import { GlobalModule } from '@/modules/global.module'
 import { CmsModule } from '@/modules/cms.module'
 import { AuthModule } from '@/modules/auth.module'

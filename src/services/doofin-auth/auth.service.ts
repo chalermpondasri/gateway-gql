@@ -14,20 +14,25 @@ import {
     Observable,
 } from 'rxjs'
 import {
-    CreateUserInputType,
-    CreateUserResponseType
-} from '@/object-types'
+    CreateUserResponseType,
+    RequestOtpType
+} from '@/types/objects'
+import {
+    CreateUserInput,
+    RequestOtpInput
+} from '@/types/inputs'
 
 @Injectable()
 export class AuthService {
     private readonly _logger: LoggerService
+
     constructor(
         @Inject(ProviderName.AUTH_REPOSITORY)
         private readonly _authRepository: IAuthRepository,
     ) {
     }
 
-    public createNewUser(request: CreateUserInputType): Observable<CreateUserResponseType> {
+    public createNewUser(request: CreateUserInput): Observable<CreateUserResponseType> {
         const payload: CreateUserRequest = new CreateUserRequest()
         payload.email = request.email
         payload.dob = request.dob
@@ -45,5 +50,16 @@ export class AuthService {
         )
     }
 
+    public sendOtp(request: RequestOtpInput): Observable<RequestOtpType> {
+        return this._authRepository.requestOtp(request).pipe(
+            map( data => {
+                const typedResponse = new RequestOtpType()
+                typedResponse.expiredAt = data.expiredAt
+                typedResponse.referenceNumber = data.referenceNumber
+                typedResponse.remaining = data.remaining
+                return typedResponse
+            })
+        )
+    }
 
 }
