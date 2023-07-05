@@ -1,7 +1,9 @@
 import {
     CreateUserRequest,
     CreateUserResponse,
-    IAuthRepository
+    IAuthRepository,
+    SendOtpRequest,
+    SendOtpResponse
 } from '@/repositories/auth'
 import {
     from,
@@ -25,6 +27,14 @@ export class AuthRepository implements IAuthRepository {
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
         return from(this._axiosInstance.post<CreateUserResponse>(`/user`, request)).pipe(
             map((result: AxiosResponse<CreateUserResponse>) => {
+                return result.data
+            })
+        )
+    }
+
+    public requestOtp(request: SendOtpRequest): Observable<SendOtpResponse> {
+        return from(this._axiosInstance.post('/otp/send', request)).pipe(
+            map( (result: AxiosResponse<SendOtpResponse>) => {
                 return result.data
             })
         )
