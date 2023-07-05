@@ -2,10 +2,10 @@ import {
     Query,
     Resolver
 } from '@nestjs/graphql'
-import { TermType } from '@/object-types'
 import { Inject } from '@nestjs/common'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import { Observable } from 'rxjs'
+import { TermType } from '@/types/objects'
 
 @Resolver(of => TermType)
 export class CmsResolver {

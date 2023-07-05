@@ -15,6 +15,7 @@ import axios, {
     AxiosInstance,
     AxiosResponse
 } from 'axios'
+import { BadRequestException } from '@nestjs/common'
 
 export class AuthRepository implements IAuthRepository {
     private readonly _axiosInstance: AxiosInstance
@@ -22,6 +23,9 @@ export class AuthRepository implements IAuthRepository {
     constructor(config: EnvironmentConfig) {
         this._axiosInstance = axios.create({
             baseURL: `${config.AUTH_ENDPOINT}`,
+        })
+        this._axiosInstance.interceptors.response.use(null, error => {
+            throw new BadRequestException(error.response.data)
         })
     }
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
@@ -35,8 +39,13 @@ export class AuthRepository implements IAuthRepository {
     public requestOtp(request: SendOtpRequest): Observable<SendOtpResponse> {
         return from(this._axiosInstance.post('/otp/send', request)).pipe(
             map( (result: AxiosResponse<SendOtpResponse>) => {
-                return result.data
-            })
+                const data = new SendOtpResponse()
+                data.remaining = result.data.remaining
+                data.referenceNumber = result.data.referenceNumber
+                data.expiredAt = new Date(result.data.expiredAt)
+                return data
+            }),
+
         )
     }
 

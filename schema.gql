@@ -18,17 +18,34 @@ type CreateUserResponseType {
   otpToken: String!
 }
 
+type RequestOtpType {
+  referenceNumber: String!
+  remaining: Int!
+  expiredAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Query {
   getLatestTerm: TermType!
 }
 
 type Mutation {
-  createUser(CreateUserInputType: CreateUserInputType!): CreateUserResponseType!
+  createUser(CreateUserInput: CreateUserInput!): CreateUserResponseType!
+  requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
 }
 
-input CreateUserInputType {
+input CreateUserInput {
   email: String!
   password: String!
   dob: String!
   acceptTermId: String!
+}
+
+input RequestOtpInput {
+  otpToken: String!
+  phoneNumber: String!
 }
