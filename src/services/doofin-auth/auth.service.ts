@@ -14,12 +14,14 @@ import {
     Observable,
 } from 'rxjs'
 import {
+    BaseUserType,
     CreateUserResponseType,
-    RequestOtpType
+    RequestOtpType,
 } from '@/types/objects'
 import {
     CreateUserInput,
-    RequestOtpInput
+    RequestOtpInput,
+    VerifyOtpInput,
 } from '@/types/inputs'
 
 @Injectable()
@@ -57,6 +59,17 @@ export class AuthService {
                 typedResponse.expiredAt = data.expiredAt
                 typedResponse.referenceNumber = data.referenceNumber
                 typedResponse.remaining = data.remaining
+                return typedResponse
+            })
+        )
+    }
+
+    public verifyOtp(request: VerifyOtpInput): Observable<BaseUserType> {
+        return this._authRepository.verifyOtp(request).pipe(
+            map( data => {
+                const typedResponse = new BaseUserType()
+                typedResponse.status = data.status
+                typedResponse.userId = data.userId
                 return typedResponse
             })
         )

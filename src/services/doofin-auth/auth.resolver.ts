@@ -1,20 +1,25 @@
 import {
     Args,
     Mutation,
-    Resolver
+    Resolver,
 } from '@nestjs/graphql'
 
 import { AuthService } from '@/services/doofin-auth/auth.service'
 import { Inject } from '@nestjs/common'
 import { Observable } from 'rxjs'
+
 import {
     CreateUserResponseType,
-    RequestOtpType
+    RequestOtpType,
+    VerifyOtpType,
 } from '@/types/objects'
+
 import {
     CreateUserInput,
-    RequestOtpInput
+    RequestOtpInput,
+    VerifyOtpInput,
 } from '@/types/inputs'
+
 
 @Resolver(of => CreateUserResponseType)
 export class AuthResolver {
@@ -27,15 +32,22 @@ export class AuthResolver {
 
     @Mutation(returns => CreateUserResponseType)
     public createUser(
-        @Args('CreateUserInput') request: CreateUserInput,
+        @Args('CreateUserInput') input: CreateUserInput,
     ): Observable<CreateUserResponseType> {
-        return this._authService.createNewUser(request)
+        return this._authService.createNewUser(input)
     }
 
     @Mutation(returns => RequestOtpType)
     public requestOtp(
-        @Args(RequestOtpInput.name) request: RequestOtpInput,
+        @Args(RequestOtpInput.name) input: RequestOtpInput,
     ) {
-        return this._authService.sendOtp(request)
+        return this._authService.sendOtp(input)
+    }
+
+    @Mutation( returns => VerifyOtpType)
+    public verifyOtp(
+        @Args(VerifyOtpInput.name) input: VerifyOtpInput
+    ) {
+        return this._authService.verifyOtp(input)
     }
 }

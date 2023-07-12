@@ -1,8 +1,10 @@
+import { BaseUserType } from '@/types/objects/user.type'
+
 import {
     Field,
     GraphQLISODateTime,
     Int,
-    ObjectType
+    ObjectType,
 } from '@nestjs/graphql'
 
 @ObjectType()
@@ -14,3 +16,5 @@ export class RequestOtpType {
     @Field(type => GraphQLISODateTime)
     public expiredAt: Date
 }
+@ObjectType()
+export class VerifyOtpType extends BaseUserType {}

@@ -7,7 +7,7 @@ $ npm install
 ```
 
 ## Setting up
-set process env to targen environment such as `development` or `production`  
+set process env to target environment such as `development` or `production`  
 
 create `.env.NODE_ENV` file for local testing, for example  
 `.env.development`
