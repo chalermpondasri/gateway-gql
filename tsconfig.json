@@ -23,7 +23,9 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
   },
   "watchOptions": {
     "watchFile": "dynamicPriorityPolling",

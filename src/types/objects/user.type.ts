@@ -5,13 +5,16 @@ import {
 } from '@nestjs/graphql'
 
 @ObjectType()
-export class CreateUserResponseType {
+export class BaseUserType {
     @Field(() => ID)
     public userId: string
 
     @Field()
     public status: string
+}
 
+@ObjectType()
+export class CreateUserResponseType extends BaseUserType{
     @Field()
     public email: string
 

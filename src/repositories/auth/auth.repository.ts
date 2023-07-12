@@ -3,7 +3,9 @@ import {
     CreateUserResponse,
     IAuthRepository,
     SendOtpRequest,
-    SendOtpResponse
+    SendOtpResponse,
+    VerifyOtpRequest,
+    VerifyOtpResponse,
 } from '@/repositories/auth'
 import {
     from,
@@ -25,6 +27,7 @@ export class AuthRepository implements IAuthRepository {
             baseURL: `${config.AUTH_ENDPOINT}`,
         })
         this._axiosInstance.interceptors.response.use(null, error => {
+            console.log(error)
             throw new BadRequestException(error.response.data)
         })
     }
@@ -46,6 +49,17 @@ export class AuthRepository implements IAuthRepository {
                 return data
             }),
 
+        )
+    }
+
+    public verifyOtp(request: VerifyOtpRequest): Observable<VerifyOtpResponse> {
+        return from(this._axiosInstance.post('/otp/verify', request)).pipe(
+            map( (result: AxiosResponse<VerifyOtpResponse>) => {
+                const data = new VerifyOtpResponse()
+                data.userId = result.data.userId
+                data.status = result.data.status
+                return data
+            }),
         )
     }
 
