@@ -34,6 +34,10 @@ type VerifyOtpType {
   status: String!
 }
 
+type CategoryType {
+  id: String!
+}
+
 type Query {
   getLatestTerm: TermType!
 }
@@ -42,6 +46,7 @@ type Mutation {
   createUser(CreateUserInput: CreateUserInput!): CreateUserResponseType!
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
+  updateUserPreferences(categoryIds: [String!]!): CategoryType!
 }
 
 input CreateUserInput {

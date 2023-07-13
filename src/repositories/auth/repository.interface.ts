@@ -12,4 +12,5 @@ export interface IAuthRepository {
     createNewUser(request: CreateUserRequest): Observable<CreateUserResponse>
     requestOtp(request: SendOtpRequest): Observable<SendOtpResponse>
     verifyOtp(request: VerifyOtpRequest): Observable<VerifyOtpResponse>
+    updateUserPreferences(userId: string, preferences: string[]): Observable<string[]>
 }
