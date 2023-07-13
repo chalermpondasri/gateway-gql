@@ -27,8 +27,7 @@ export class AuthRepository implements IAuthRepository {
             baseURL: `${config.AUTH_ENDPOINT}`,
         })
         this._axiosInstance.interceptors.response.use(null, error => {
-            console.log(error)
-            throw new BadRequestException(error.response.data)
+            throw new BadRequestException(error?.response?.data)
         })
     }
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
@@ -60,6 +59,14 @@ export class AuthRepository implements IAuthRepository {
                 data.status = result.data.status
                 return data
             }),
+        )
+    }
+
+    public updateUserPreferences(userId: string, preferences: string[]): Observable<string[]> {
+        return from(this._axiosInstance.patch(`/user/${userId}/categories`, preferences)).pipe(
+            map((result: AxiosResponse<string[]>) => {
+                return result.data
+            })
         )
     }
 

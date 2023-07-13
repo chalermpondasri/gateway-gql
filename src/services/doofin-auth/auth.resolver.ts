@@ -9,6 +9,7 @@ import { Inject } from '@nestjs/common'
 import { Observable } from 'rxjs'
 
 import {
+    CategoryType,
     CreateUserResponseType,
     RequestOtpType,
     VerifyOtpType,
@@ -49,5 +50,12 @@ export class AuthResolver {
         @Args(VerifyOtpInput.name) input: VerifyOtpInput
     ) {
         return this._authService.verifyOtp(input)
+    }
+
+    @Mutation(returns => CategoryType)
+    public updateUserPreferences(
+        @Args({name: 'categoryIds', type: () => [String]}) ids: string[]
+    ){
+        return this._authService.updateUserPreferences('mockupId', ids)
     }
 }
