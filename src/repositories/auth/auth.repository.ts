@@ -1,7 +1,9 @@
 import {
+    CategoryResponse,
     CreateUserRequest,
     CreateUserResponse,
     IAuthRepository,
+    ListResponse,
     SendOtpRequest,
     SendOtpResponse,
     VerifyOtpRequest,
@@ -18,6 +20,8 @@ import axios, {
     AxiosResponse
 } from 'axios'
 import { BadRequestException } from '@nestjs/common'
+import { response } from 'express'
+import { plainToInstance } from 'class-transformer'
 
 export class AuthRepository implements IAuthRepository {
     private readonly _axiosInstance: AxiosInstance
@@ -66,6 +70,14 @@ export class AuthRepository implements IAuthRepository {
         return from(this._axiosInstance.patch(`/user/${userId}/categories`, preferences)).pipe(
             map((result: AxiosResponse<string[]>) => {
                 return result.data
+            })
+        )
+    }
+
+    public getCategories(): Observable<ListResponse<CategoryResponse>> {
+        return from(this._axiosInstance.get(`/categories`)).pipe(
+            map( ({data}) => {
+                return plainToInstance(ListResponse<CategoryResponse>, data)
             })
         )
     }

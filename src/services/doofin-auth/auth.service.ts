@@ -25,6 +25,10 @@ import {
     RequestOtpInput,
     VerifyOtpInput,
 } from '@/types/inputs'
+import {
+    instanceToPlain,
+    plainToInstance,
+} from 'class-transformer'
 
 @Injectable()
 export class AuthService {
@@ -77,7 +81,7 @@ export class AuthService {
         )
     }
 
-    public updateUserPreferences(userId: string, preferences: string[]): Observable<CategoryType> {
+    public updateUserPreferences(userId: string, preferences: string[]): Observable<CategoryType[]> {
         return this._authRepository.updateUserPreferences(userId, preferences).pipe(
             map(result => {
                 return result.map(r => {
@@ -86,7 +90,14 @@ export class AuthService {
                     return c
                 })
             }),
-            mergeMap(r => from(r)),
+        )
+    }
+
+    public getAllCategories(): Observable<CategoryType[]> {
+        return this._authRepository.getCategories().pipe(
+            map( response => {
+                return plainToInstance(Array<CategoryType>,instanceToPlain(response.data))
+            })
         )
     }
 

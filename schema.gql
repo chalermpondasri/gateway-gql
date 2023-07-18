@@ -36,17 +36,19 @@ type VerifyOtpType {
 
 type CategoryType {
   id: String!
+  label: String!
 }
 
 type Query {
   getLatestTerm: TermType!
+  getCategories: [CategoryType!]!
 }
 
 type Mutation {
   createUser(CreateUserInput: CreateUserInput!): CreateUserResponseType!
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
-  updateUserPreferences(categoryIds: [String!]!): CategoryType!
+  updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
 }
 
 input CreateUserInput {

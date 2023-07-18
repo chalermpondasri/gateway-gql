@@ -7,4 +7,7 @@ import {
 export class CategoryType {
     @Field()
     public id: string
+
+    @Field()
+    public label: string
 }
