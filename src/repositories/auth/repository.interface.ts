@@ -1,6 +1,8 @@
 import {
+    CategoryResponse,
     CreateUserRequest,
     CreateUserResponse,
+    ListResponse,
     SendOtpRequest,
     SendOtpResponse,
 } from '@/repositories/auth'
@@ -13,4 +15,5 @@ export interface IAuthRepository {
     requestOtp(request: SendOtpRequest): Observable<SendOtpResponse>
     verifyOtp(request: VerifyOtpRequest): Observable<VerifyOtpResponse>
     updateUserPreferences(userId: string, preferences: string[]): Observable<string[]>
+    getCategories(): Observable<ListResponse<CategoryResponse>>
 }

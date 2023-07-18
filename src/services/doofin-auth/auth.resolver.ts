@@ -9,7 +9,6 @@ import { Inject } from '@nestjs/common'
 import { Observable } from 'rxjs'
 
 import {
-    CategoryType,
     CreateUserResponseType,
     RequestOtpType,
     VerifyOtpType,
@@ -21,8 +20,7 @@ import {
     VerifyOtpInput,
 } from '@/types/inputs'
 
-
-@Resolver(of => CreateUserResponseType)
+@Resolver(() => CreateUserResponseType)
 export class AuthResolver {
     constructor(
         @Inject(AuthService)
@@ -31,31 +29,24 @@ export class AuthResolver {
 
     }
 
-    @Mutation(returns => CreateUserResponseType)
+    @Mutation(() => CreateUserResponseType)
     public createUser(
         @Args('CreateUserInput') input: CreateUserInput,
     ): Observable<CreateUserResponseType> {
         return this._authService.createNewUser(input)
     }
 
-    @Mutation(returns => RequestOtpType)
+    @Mutation(() => RequestOtpType)
     public requestOtp(
         @Args(RequestOtpInput.name) input: RequestOtpInput,
     ) {
         return this._authService.sendOtp(input)
     }
 
-    @Mutation( returns => VerifyOtpType)
+    @Mutation( () => VerifyOtpType)
     public verifyOtp(
         @Args(VerifyOtpInput.name) input: VerifyOtpInput
     ) {
         return this._authService.verifyOtp(input)
-    }
-
-    @Mutation(returns => CategoryType)
-    public updateUserPreferences(
-        @Args({name: 'categoryIds', type: () => [String]}) ids: string[]
-    ){
-        return this._authService.updateUserPreferences('mockupId', ids)
     }
 }
