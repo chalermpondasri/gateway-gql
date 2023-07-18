@@ -12,15 +12,14 @@ import {
 import {
     from,
     map,
-    Observable
+    Observable,
 } from 'rxjs'
 import { EnvironmentConfig } from '@/models/common'
 import axios, {
     AxiosInstance,
-    AxiosResponse
+    AxiosResponse,
 } from 'axios'
 import { BadRequestException } from '@nestjs/common'
-import { response } from 'express'
 import { plainToInstance } from 'class-transformer'
 
 export class AuthRepository implements IAuthRepository {

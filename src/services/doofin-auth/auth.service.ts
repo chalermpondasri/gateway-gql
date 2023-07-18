@@ -11,7 +11,6 @@ import { ProviderName } from '@/constants/provider-name.const'
 import {
     from,
     map,
-    mergeMap,
     Observable,
 } from 'rxjs'
 import {
