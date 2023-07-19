@@ -2,6 +2,22 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type CmsRoleType {
+  id: ID!
+  name: String!
+  description: String!
+  type: String!
+}
+
+type CmsUserType {
+  id: ID!
+  username: String!
+  email: String!
+  provider: String!
+  role: CmsRoleType!
+  jwt: String!
+}
+
 type TermType {
   id: ID!
   en: String!
@@ -41,6 +57,7 @@ type CategoryType {
 
 type Query {
   getLatestTerm: TermType!
+  localeManagerLogin(username: String!, password: String!): CmsUserType!
   getCategories: [CategoryType!]!
 }
 

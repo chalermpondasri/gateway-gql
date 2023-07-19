@@ -1,12 +1,14 @@
 import {
     BaseResponse,
     ICmsRepository,
-    TermResponse
+    LoginResponse,
+    TermResponse,
+    UserRoleResponse,
 } from '@/repositories/cms'
 import {
     from,
     map,
-    Observable
+    Observable,
 } from 'rxjs'
 import {
     BaseRequest,
@@ -22,19 +24,46 @@ export class CmsRepository implements ICmsRepository {
         this._axiosInstance = axios.create({
             baseURL: `${config.CMS_ENDPOINT}/api`,
             headers: {
-                Authorization: `Bearer ${config.CMS_API_KEY}`
-            }
+                Authorization: `Bearer ${config.CMS_API_KEY}`,
+            },
         })
 
     }
-    public getTermsAndConditions(request:BaseRequest): Observable<BaseResponse<TermResponse>> {
+
+    public getTermsAndConditions(request: BaseRequest): Observable<BaseResponse<TermResponse>> {
         const queryString = querystring.encode(request.build())
         const promise = this._axiosInstance.get(`/terms-and-conditions?${queryString}`)
         return from(promise).pipe(
             map(result => {
                 return result.data
-            })
+            }),
         )
     }
+
+    public login(identifier: string, password: string): Observable<LoginResponse> {
+        const promise = this._axiosInstance.post(`/auth/local`,
+            {
+                identifier,
+                password,
+            },
+            {
+                headers: {
+                    Authorization: null
+                }
+            }
+        )
+        return from(promise).pipe(
+            map( result => result.data)
+        )
+    }
+
+    public getUserData(userId: number): Observable<UserRoleResponse> {
+        const path =`/users/${userId}?populate=*`
+        const promise = this._axiosInstance.get(path)
+        return from(promise).pipe(
+            map( result => result.data)
+        )
+    }
+
 
 }
