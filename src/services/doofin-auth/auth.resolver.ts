@@ -31,7 +31,7 @@ export class AuthResolver {
 
     @Mutation(() => CreateUserResponseType)
     public createUser(
-        @Args('CreateUserInput') input: CreateUserInput,
+        @Args(CreateUserInput.name) input: CreateUserInput,
     ): Observable<CreateUserResponseType> {
         return this._authService.createNewUser(input)
     }

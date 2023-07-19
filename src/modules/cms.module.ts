@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common'
-import { CmsResolver } from '@/services/doofin-cms/cms.resolver'
+import { TermResolver } from '@/services/doofin-cms/term.resolver'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import { cmsRepositoryProvider } from '@/providers/cms.provider'
+import { LocaleResolver } from '@/services/doofin-cms/locale.resolver'
 
 @Module({
     providers: [
         cmsRepositoryProvider,
-        CmsResolver,
+        TermResolver,
         CmsService,
+        LocaleResolver,
     ]
 })
 export class CmsModule {}

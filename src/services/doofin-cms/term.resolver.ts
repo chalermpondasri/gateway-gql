@@ -8,7 +8,7 @@ import { Observable } from 'rxjs'
 import { TermType } from '@/types/objects'
 
 @Resolver(of => TermType)
-export class CmsResolver {
+export class TermResolver {
 
     constructor(
         @Inject(CmsService)
