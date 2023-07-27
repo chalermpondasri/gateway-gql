@@ -10,7 +10,10 @@ import {
 } from '@nestjs/common'
 import { LocaleService } from '@/services/doofin-auth/locale.service'
 import { IdType } from '@/types/objects/id.type'
-import { CreateLocaleLabelInput } from '@/types/inputs'
+import {
+    CreateLocaleLabelInput,
+    UpdateLocaleLabelInput,
+} from '@/types/inputs'
 import { LocaleType } from '@/types/objects'
 
 @Resolver()
@@ -22,15 +25,31 @@ export class LocaleResolver {
     }
 
     @Mutation(() => IdType)
-    public CreateLocaleLabel(
+    public createLocale(
         @Args(CreateLocaleLabelInput.name) input: CreateLocaleLabelInput,
         @Context() ctx,
     ){
         return this._localeService.createNewLocale(input, ctx.req.headers.authorization)
     }
+    @Mutation(() => LocaleType)
+    public deleteLocale(
+        @Args('id') id: string,
+        @Context() ctx,
+    ) {
+        return this._localeService.deleteLocale(id, ctx.req.headers.authorization)
+    }
+
+    @Mutation(() => LocaleType)
+    public patchLocale(
+        @Context() ctx,
+        @Args('id') id: string,
+        @Args('payload') payload: UpdateLocaleLabelInput,
+    ) {
+        return this._localeService.patchLocale(id, payload,ctx.req.headers.authorization)
+    }
 
     @Query(() => LocaleType)
-    public Locale(
+    public locale(
         @Args('id') id: string,
         @Context() ctx,
     ) {

@@ -7,7 +7,10 @@ import {
     CreateLocaleRequest,
     ILocaleRepository,
 } from '@/repositories/auth'
-import { CreateLocaleLabelInput } from '@/types/inputs'
+import {
+    CreateLocaleLabelInput,
+    UpdateLocaleLabelInput,
+} from '@/types/inputs'
 import {
     map,
     Observable,
@@ -44,6 +47,22 @@ export class LocaleService {
 
     public getLocale(id: string, token: string): Observable<LocaleType> {
         return this._localeRepository.getById(this.extractJwt(token), id).pipe(
+            map( data => {
+                return plainToInstance(LocaleType, instanceToPlain(data))
+            })
+        )
+    }
+
+    public deleteLocale(id: string, token: string): Observable<LocaleType> {
+        return this._localeRepository.deleteLabel(this.extractJwt(token), id).pipe(
+            map( data => {
+                return plainToInstance(LocaleType, instanceToPlain(data))
+            })
+        )
+    }
+
+    public patchLocale(id: string, payload: UpdateLocaleLabelInput, token: string): Observable<LocaleType> {
+        return this._localeRepository.updateLabel(this.extractJwt(token), id, payload).pipe(
             map( data => {
                 return plainToInstance(LocaleType, instanceToPlain(data))
             })

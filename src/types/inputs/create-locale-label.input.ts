@@ -24,3 +24,8 @@ export class CreateLocaleLabelInput {
     @Field(() => LabelInput, {nullable: false})
     public labels: LabelInput
 }
+
+@InputType()
+export class UpdateLocaleLabelInput extends CreateLocaleLabelInput {
+
+}

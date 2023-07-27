@@ -75,7 +75,7 @@ type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getCategories: [CategoryType!]!
-  Locale(id: String!): LocaleType!
+  locale(id: String!): LocaleType!
 }
 
 type Mutation {
@@ -83,7 +83,9 @@ type Mutation {
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
-  CreateLocaleLabel(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdType!
+  createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdType!
+  deleteLocale(id: String!): LocaleType!
+  patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
 }
 
 input CreateUserInput {
@@ -115,4 +117,9 @@ input LabelInput {
   en: String!
   th: String
   cn: String
+}
+
+input UpdateLocaleLabelInput {
+  key: String!
+  labels: LabelInput!
 }
