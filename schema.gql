@@ -55,10 +55,27 @@ type CategoryType {
   label: String!
 }
 
+type LabelType {
+  en: String!
+  th: String
+  cn: String
+}
+
+type LocaleType {
+  id: ID!
+  key: String!
+  labels: LabelType!
+}
+
+type IdType {
+  id: ID!
+}
+
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getCategories: [CategoryType!]!
+  locale(id: String!): LocaleType!
 }
 
 type Mutation {
@@ -66,6 +83,9 @@ type Mutation {
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
+  createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdType!
+  deleteLocale(id: String!): LocaleType!
+  patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
 }
 
 input CreateUserInput {
@@ -84,4 +104,22 @@ input VerifyOtpInput {
   otpToken: String!
   referenceNumber: String!
   confirmationCode: String!
+}
+
+"""Create system-wide localization"""
+input CreateLocaleLabelInput {
+  key: String!
+  labels: LabelInput!
+}
+
+"""localization label detail"""
+input LabelInput {
+  en: String!
+  th: String
+  cn: String
+}
+
+input UpdateLocaleLabelInput {
+  key: String!
+  labels: LabelInput!
 }

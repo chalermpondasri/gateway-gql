@@ -21,13 +21,16 @@ import axios, {
 } from 'axios'
 import { BadRequestException } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
+import * as http from 'http'
 
-export class AuthRepository implements IAuthRepository {
+export class AuthRepository implements IAuthRepository{
     private readonly _axiosInstance: AxiosInstance
 
     constructor(config: EnvironmentConfig) {
+        const agent = new http.Agent({family: 4})
         this._axiosInstance = axios.create({
             baseURL: `${config.AUTH_ENDPOINT}`,
+            httpAgent: agent,
         })
         this._axiosInstance.interceptors.response.use(null, error => {
             throw new BadRequestException(error?.response?.data)

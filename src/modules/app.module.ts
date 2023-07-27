@@ -17,7 +17,8 @@ import { AuthModule } from '@/modules/auth.module'
             driver: ApolloDriver,
             autoSchemaFile: 'schema.gql',
             installSubscriptionHandlers: true,
-            playground: process.env.NODE_ENV !== 'production'
+            playground: process.env.NODE_ENV !== 'production',
+            context: ({req}) => ({req})
         }),
     ],
 })

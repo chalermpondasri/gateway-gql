@@ -1,3 +1,5 @@
 export * from './category.resolver'
 export * from './auth.resolver'
 export * from './auth.service'
+export * from './locale.resolver'
+export * from './locale.service'

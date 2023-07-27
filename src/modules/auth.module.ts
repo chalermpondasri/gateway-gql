@@ -3,15 +3,23 @@ import {
     AuthResolver,
     AuthService,
     CategoryResolver,
+    LocaleService,
 } from '@/services/doofin-auth'
-import { authRepositoryProvider } from '@/providers/auth.provider'
+import {
+    authRepositoryProvider,
+    localeRepositoryProvider,
+} from '@/providers/auth.provider'
+import { LocaleResolver } from '@/services/doofin-auth/locale.resolver'
 
 @Module({
     providers: [
-        AuthResolver,
         authRepositoryProvider,
+        localeRepositoryProvider,
+        AuthResolver,
         AuthService,
         CategoryResolver,
+        LocaleResolver,
+        LocaleService,
     ],
 })
 export class AuthModule {}
