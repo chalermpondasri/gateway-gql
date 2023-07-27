@@ -12,6 +12,5 @@ export abstract class ListType<T> {
     @Field()
     public limit: number
 
-    @Field()
     abstract data: T[]
 }
