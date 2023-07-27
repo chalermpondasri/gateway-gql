@@ -45,25 +45,46 @@ export class LocaleRepository implements ILocaleRepository {
     }
 
     public deleteLabel(token: string, id: string): Observable<LocaleResponse> {
-        return from(this._axiosInstance.delete(`/${id}`)).pipe(
+        const opts = {
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        }
+        return from(this._axiosInstance.delete(`/${id}`, opts)).pipe(
             map(({data}) => plainToInstance(LocaleResponse, data))
         )
     }
 
     public getById(token: string,id: string): Observable<LocaleResponse> {
-        return from(this._axiosInstance.get(`/${id}`)).pipe(
+        const opts = {
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        }
+        return from(this._axiosInstance.get(`/${id}`, opts)).pipe(
             map(({data}) => plainToInstance(LocaleResponse, data))
         )
     }
 
     public updateLabel(token: string,id: string, request: UpdateLocaleRequest): Observable<LocaleResponse> {
-        return from(this._axiosInstance.patch(`/${id}`,request)).pipe(
+        const opts = {
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        }
+        return from(this._axiosInstance.patch(`/${id}`,request, opts)).pipe(
             map(({data}) => plainToInstance(LocaleResponse, data))
         )
     }
 
     public listLabels(token: string,paginationQueryRequest: PaginationQueryRequest): Observable<ListResponse<LocaleResponse>> {
-        return from(this._axiosInstance.get(`/`,{params: paginationQueryRequest})).pipe(
+        const opts = {
+            params: paginationQueryRequest,
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        }
+        return from(this._axiosInstance.get(`/`,opts)).pipe(
             map(({data}) => {
                 const response  =new ListResponse<LocaleResponse>()
                 response.data = plainToInstance(LocaleResponse, data.data as any[])

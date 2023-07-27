@@ -61,6 +61,12 @@ type LabelType {
   cn: String
 }
 
+type LocaleType {
+  id: ID!
+  key: String!
+  labels: LabelType!
+}
+
 type IdType {
   id: ID!
 }
@@ -69,6 +75,7 @@ type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getCategories: [CategoryType!]!
+  Locale(id: String!): LocaleType!
 }
 
 type Mutation {

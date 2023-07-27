@@ -17,6 +17,7 @@ import {
     instanceToPlain,
     plainToInstance,
 } from 'class-transformer'
+import { LocaleType } from '@/types/objects'
 
 @Injectable()
 export class LocaleService {
@@ -37,6 +38,14 @@ export class LocaleService {
                 const result = new IdType()
                 result.id = data.id
                 return result
+            })
+        )
+    }
+
+    public getLocale(id: string, token: string): Observable<LocaleType> {
+        return this._localeRepository.getById(this.extractJwt(token), id).pipe(
+            map( data => {
+                return plainToInstance(LocaleType, instanceToPlain(data))
             })
         )
     }
