@@ -5,9 +5,9 @@ import {
 
 @InputType()
 export class PaginationInput {
-    @Field({defaultValue: 20})
-    public limit: number
+    @Field({defaultValue: 20, nullable: true})
+    public limit: number = 20
 
-    @Field({defaultValue: 1})
-    public page: 1
+    @Field({defaultValue: 1, nullable: true})
+    public page: number = 1
 }

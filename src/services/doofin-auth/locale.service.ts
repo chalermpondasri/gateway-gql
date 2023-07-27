@@ -6,6 +6,7 @@ import { ProviderName } from '@/constants/provider-name.const'
 import {
     CreateLocaleRequest,
     ILocaleRepository,
+    PaginationQueryRequest,
 } from '@/repositories/auth'
 import {
     CreateLocaleLabelInput,
@@ -20,7 +21,11 @@ import {
     instanceToPlain,
     plainToInstance,
 } from 'class-transformer'
-import { LocaleType } from '@/types/objects'
+import {
+    LocaleListType,
+    LocaleType,
+} from '@/types/objects'
+import { PaginationInput } from '@/types/inputs/pagination.input'
 
 @Injectable()
 export class LocaleService {
@@ -49,6 +54,21 @@ export class LocaleService {
         return this._localeRepository.getById(this.extractJwt(token), id).pipe(
             map( data => {
                 return plainToInstance(LocaleType, instanceToPlain(data))
+            })
+        )
+    }
+
+    public getLocales(query: string, pagination: PaginationInput, token: string): Observable<LocaleListType> {
+        const queryRequest = new PaginationQueryRequest()
+        if(!!pagination) {
+            queryRequest.limit = pagination.limit
+            queryRequest.page = pagination.page
+            queryRequest.query = query
+        }
+
+        return this._localeRepository.listLabels(this.extractJwt(token), queryRequest).pipe(
+            map(result => {
+                return plainToInstance(LocaleListType, instanceToPlain(result))
             })
         )
     }

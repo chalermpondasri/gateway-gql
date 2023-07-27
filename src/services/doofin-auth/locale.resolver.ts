@@ -5,17 +5,17 @@ import {
     Query,
     Resolver,
 } from '@nestjs/graphql'
-import {
-    Inject,
-} from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { LocaleService } from '@/services/doofin-auth/locale.service'
 import { IdType } from '@/types/objects/id.type'
 import {
     CreateLocaleLabelInput,
     UpdateLocaleLabelInput,
 } from '@/types/inputs'
-import { LocaleType } from '@/types/objects'
-import { ListType } from '@/types/objects/list.type'
+import {
+    LocaleListType,
+    LocaleType,
+} from '@/types/objects'
 import { PaginationInput } from '@/types/inputs/pagination.input'
 
 @Resolver()
@@ -56,6 +56,15 @@ export class LocaleResolver {
         @Context() ctx,
     ) {
         return this._localeService.getLocale(id, ctx.req.headers.authorization)
+    }
+
+    @Query(() => LocaleListType)
+    public locales(
+        @Context() ctx,
+        @Args(PaginationInput.name, {nullable: true}) pagination: PaginationInput = new PaginationInput(),
+        @Args('query', {nullable: true}) query: string
+    ) {
+        return this._localeService.getLocales(query, pagination, ctx.req.headers.authorization)
     }
 
 }

@@ -3,6 +3,7 @@ import {
     ID,
     ObjectType,
 } from '@nestjs/graphql'
+import { ListType } from '@/types/objects/list.type'
 
 
 @ObjectType()
@@ -27,4 +28,10 @@ export class LocaleType {
 
     @Field( () => LabelType)
     public labels: LabelType
+}
+
+@ObjectType()
+export class LocaleListType extends ListType<LocaleType>{
+    @Field(() => [LocaleType])
+    public data: LocaleType[]
 }

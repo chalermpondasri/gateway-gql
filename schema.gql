@@ -67,6 +67,13 @@ type LocaleType {
   labels: LabelType!
 }
 
+type LocaleListType {
+  total: Float!
+  page: Float!
+  limit: Float!
+  data: [LocaleType!]!
+}
+
 type IdType {
   id: ID!
 }
@@ -76,6 +83,12 @@ type Query {
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
+  locales(PaginationInput: PaginationInput, query: String): LocaleListType!
+}
+
+input PaginationInput {
+  limit: Float = 20
+  page: Float = 1
 }
 
 type Mutation {
