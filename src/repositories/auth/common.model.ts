@@ -1,7 +1,7 @@
 
 export class LocaleLabel {
     public en: string
-    public th: string
+    public th?: string
     public cn?: string
 }
 

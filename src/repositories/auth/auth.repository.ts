@@ -1,17 +1,11 @@
 import {
     CategoryResponse,
-    CreateLocaleRequest,
     CreateUserRequest,
     CreateUserResponse,
     IAuthRepository,
-    IdResponse,
-    ILocaleRepository,
     ListResponse,
-    LocaleResponse,
-    PaginationQueryRequest,
     SendOtpRequest,
     SendOtpResponse,
-    UpdateLocaleRequest,
     VerifyOtpRequest,
     VerifyOtpResponse,
 } from '@/repositories/auth'
@@ -29,7 +23,7 @@ import { BadRequestException } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
 import * as http from 'http'
 
-export class AuthRepository implements IAuthRepository , ILocaleRepository{
+export class AuthRepository implements IAuthRepository{
     private readonly _axiosInstance: AxiosInstance
 
     constructor(config: EnvironmentConfig) {
@@ -89,43 +83,5 @@ export class AuthRepository implements IAuthRepository , ILocaleRepository{
             })
         )
     }
-
-    public createLabel(request: CreateLocaleRequest): Observable<IdResponse> {
-        return from(this._axiosInstance.post(`/i18n`, request)).pipe(
-            map( ({data}) => plainToInstance(IdResponse,data))
-        )
-    }
-
-    public delete(id: string): Observable<LocaleResponse> {
-        return from(this._axiosInstance.delete(`/i18n/${id}`)).pipe(
-            map(({data}) => plainToInstance(LocaleResponse, data))
-        )
-    }
-
-    public getById(id: string): Observable<LocaleResponse> {
-        return from(this._axiosInstance.get(`/i18n/${id}`)).pipe(
-            map(({data}) => plainToInstance(LocaleResponse, data))
-        )
-    }
-
-    public updateLabel(id: string, request: UpdateLocaleRequest): Observable<LocaleResponse> {
-        return from(this._axiosInstance.patch(`/i18n/${id}`,request)).pipe(
-            map(({data}) => plainToInstance(LocaleResponse, data))
-        )
-    }
-
-    public listLabels(paginationQueryRequest: PaginationQueryRequest): Observable<ListResponse<LocaleResponse>> {
-        return from(this._axiosInstance.get(`/i18n`,{params: paginationQueryRequest})).pipe(
-            map(({data}) => {
-                const response  =new ListResponse<LocaleResponse>()
-                response.data = plainToInstance(LocaleResponse, data.data as any[])
-                response.page = data.page
-                response.limit = data.limit
-                response.total = data.total
-                return  response
-            })
-        )
-    }
-
 
 }

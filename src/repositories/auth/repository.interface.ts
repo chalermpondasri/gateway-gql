@@ -24,9 +24,9 @@ export interface IAuthRepository {
 }
 
 export interface ILocaleRepository {
-    getById(id: string): Observable<LocaleResponse>
-    delete(id: string): Observable<LocaleResponse>
-    createLabel(request: CreateLocaleRequest): Observable<IdResponse>
-    updateLabel(id: string, request: UpdateLocaleRequest): Observable<LocaleResponse>
-    listLabels(paginationQueryRequest: PaginationQueryRequest): Observable<ListResponse<LocaleResponse>>
+    getById(token: string,id: string): Observable<LocaleResponse>
+    deleteLabel(token: string,id: string): Observable<LocaleResponse>
+    createLabel(token: string,request: CreateLocaleRequest): Observable<IdResponse>
+    updateLabel(token: string,id: string, request: UpdateLocaleRequest): Observable<LocaleResponse>
+    listLabels(token: string,paginationQueryRequest: PaginationQueryRequest): Observable<ListResponse<LocaleResponse>>
 }

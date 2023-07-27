@@ -14,4 +14,7 @@ export class EnvironmentConfig {
 
     @IsNotEmpty()
     declare readonly AUTH_ENDPOINT: string
+
+    @IsNotEmpty()
+    declare readonly LOCALE_ENDPOINT: string
 }

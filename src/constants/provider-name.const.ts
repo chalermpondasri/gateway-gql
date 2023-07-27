@@ -1,7 +1,8 @@
 export enum ProviderName {
-    ENV_CONFIG = 'env-config',
-    CMS_SERVICE = 'cms-service',
-    CMS_REPOSITORY = 'cms-repository',
+    ENV_CONFIG = 'ENV_CONFIG',
+    CMS_SERVICE = 'CMS_SERVICE',
+    CMS_REPOSITORY = 'CMS_REPOSITORY',
 
-    AUTH_REPOSITORY = 'auth-repository',
+    AUTH_REPOSITORY = 'AUTH_REPOSITORY',
+    LOCALE_REPOSITORY = 'LOCALE_REPOSITORY',
 }
