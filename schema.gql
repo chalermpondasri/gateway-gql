@@ -58,6 +58,7 @@ type CategoryType {
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
+  validateToken: Boolean!
   getCategories: [CategoryType!]!
 }
 
