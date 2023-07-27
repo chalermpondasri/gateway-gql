@@ -15,6 +15,8 @@ import {
     UpdateLocaleLabelInput,
 } from '@/types/inputs'
 import { LocaleType } from '@/types/objects'
+import { ListType } from '@/types/objects/list.type'
+import { PaginationInput } from '@/types/inputs/pagination.input'
 
 @Resolver()
 export class LocaleResolver {
@@ -55,4 +57,5 @@ export class LocaleResolver {
     ) {
         return this._localeService.getLocale(id, ctx.req.headers.authorization)
     }
+
 }
