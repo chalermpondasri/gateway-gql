@@ -1,5 +1,5 @@
 import {
-    BaseResponse,
+    ListResponse,
     ICmsRepository,
     LoginResponse,
     TermResponse,
@@ -16,6 +16,7 @@ import {
 import { EnvironmentConfig } from '@/models/common'
 import axios, { AxiosInstance } from 'axios'
 import * as querystring from 'querystring'
+import { PromotionalResponse } from '@/repositories/cms/promotional.response'
 
 export class CmsRepository implements ICmsRepository {
     private readonly _axiosInstance: AxiosInstance
@@ -30,7 +31,7 @@ export class CmsRepository implements ICmsRepository {
 
     }
 
-    public getTermsAndConditions(request: BaseRequest): Observable<BaseResponse<TermResponse>> {
+    public getTermsAndConditions(request: BaseRequest): Observable<ListResponse<TermResponse>> {
         const queryString = querystring.encode(request.build())
         const promise = this._axiosInstance.get(`/terms-and-conditions?${queryString}`)
         return from(promise).pipe(
@@ -48,20 +49,28 @@ export class CmsRepository implements ICmsRepository {
             },
             {
                 headers: {
-                    Authorization: null
-                }
-            }
+                    Authorization: null,
+                },
+            },
         )
         return from(promise).pipe(
-            map( result => result.data)
+            map(result => result.data),
         )
     }
 
     public getUserData(userId: number): Observable<UserRoleResponse> {
-        const path =`/users/${userId}?populate=*`
+        const path = `/users/${userId}?populate=*`
         const promise = this._axiosInstance.get(path)
         return from(promise).pipe(
-            map( result => result.data)
+            map(result => result.data),
+        )
+    }
+
+    public getPromotionalContents(): Observable<ListResponse<PromotionalResponse>> {
+        const path = `/promotions?populate=*`
+        const promise = this._axiosInstance.get(path)
+        return from(promise).pipe(
+            map(result => result.data),
         )
     }
 
