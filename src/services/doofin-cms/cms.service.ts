@@ -6,18 +6,21 @@ import {
     UnauthorizedException,
 } from '@nestjs/common'
 import {
+    concatMap,
+    from,
     map,
     mergeMap,
     Observable,
     of,
     throwError,
+    toArray,
 } from 'rxjs'
 import { ICmsRepository } from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
 import { ProviderName } from '@/constants/provider-name.const'
 import { TermType } from '@/types/objects'
-import { response } from 'express'
 import {
+    CmsPromotionalContentType,
     CmsRoleType,
     CmsUserType,
 } from '@/types/objects/cms.type'
@@ -30,6 +33,7 @@ import {
 export class CmsService {
 
     private readonly _logger: LoggerService
+
     constructor(
         @Inject(ProviderName.CMS_REPOSITORY)
         private readonly _cmsRepository: ICmsRepository,
@@ -53,21 +57,21 @@ export class CmsService {
                     th: attributes.th,
                     en: attributes.en,
                 }
-            })
+            }),
         )
     }
 
     public localeManagerLogin(identity: string, password: string): Observable<CmsUserType> {
         return this._cmsRepository.login(identity, password).pipe(
-            mergeMap( loginResponse => {
+            mergeMap(loginResponse => {
                 return this._cmsRepository.getUserData(loginResponse.user.id).pipe(
                     map(userData => {
                         return {loginResponse, userData}
-                    })
+                    }),
                 )
             }),
-            mergeMap( ({loginResponse, userData}) => {
-                if(!userData?.role?.type || userData?.role?.type !== 'locale_manager') {
+            mergeMap(({loginResponse, userData}) => {
+                if (!userData?.role?.type || userData?.role?.type !== 'locale_manager') {
                     return throwError(() => new UnauthorizedException('Unauthorized'))
                 }
 
@@ -75,9 +79,38 @@ export class CmsService {
                 cmsUser.role = plainToInstance(CmsRoleType, instanceToPlain(userData.role))
                 cmsUser.jwt = loginResponse.jwt
                 return of(cmsUser)
-            })
+            }),
         )
 
+    }
+
+    public getPromotionalContent(): Observable<CmsPromotionalContentType[]> {
+        return this._cmsRepository.getPromotionalContents().pipe(
+            concatMap(result => {
+                return from(result.data)
+            }),
+            map(data => {
+                const result = new CmsPromotionalContentType()
+                const {
+                    descriptionTh,
+                    descriptionEn,
+                    titleEn,
+                    titleTh,
+                    imageMobile,
+                    imageWeb,
+                } = data.attributes
+                result.id = data.id
+                result.descriptionTh = descriptionTh
+                result.descriptionEn = descriptionEn
+                result.titleEn = titleEn
+                result.titleTh = titleTh
+                result.imageWeb = imageWeb.data.attributes
+                result.imageMobile = imageMobile.data.attributes
+
+                return result
+            }),
+            toArray()
+        )
     }
 
 }

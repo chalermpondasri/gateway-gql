@@ -18,6 +18,26 @@ type CmsUserType {
   jwt: String!
 }
 
+type CmsImageType {
+  id: ID!
+  width: Float!
+  height: Float!
+  hash: String!
+  ext: String!
+  mime: String!
+  url: String!
+}
+
+type CmsPromotionalContentType {
+  id: ID!
+  titleEn: String!
+  titleTh: String!
+  descriptionEn: String!
+  descriptionTh: String!
+  imageWeb: CmsImageType!
+  imageMobile: CmsImageType!
+}
+
 type TermType {
   id: ID!
   en: String!
@@ -81,6 +101,7 @@ type IdType {
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
+  getPromotionalContents: [CmsPromotionalContentType!]!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!

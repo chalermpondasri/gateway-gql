@@ -31,3 +31,46 @@ export class CmsUserType {
     @Field()
     public jwt: string
 }
+
+@ObjectType({isAbstract: true})
+export abstract class CmsDataType<T> {
+    public data: T
+}
+
+@ObjectType({isAbstract: true})
+export abstract class IdType {
+    @Field(() => ID)
+    public id:number
+}
+@ObjectType()
+export class CmsImageType extends IdType {
+    public name: string
+    @Field()
+    public width: number
+    @Field()
+    public height: number
+    @Field()
+    public hash: string
+    @Field()
+    public ext: string
+    @Field()
+    public mime: string
+    @Field()
+    public url: string
+}
+
+@ObjectType()
+export class CmsPromotionalContentType extends IdType {
+    @Field()
+    public titleEn: string
+    @Field()
+    public titleTh: string
+    @Field()
+    public descriptionEn: string
+    @Field()
+    public descriptionTh: string
+    @Field( () => CmsImageType)
+    public imageWeb: CmsImageType
+    @Field( () => CmsImageType)
+    public imageMobile: CmsImageType
+}
