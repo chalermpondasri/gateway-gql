@@ -1,14 +1,12 @@
-export class BaseResponse<T>{
-    data: T[]
-    meta: ResponseMeta
+import { ResponseMeta } from '@/repositories/cms/list.response'
+
+export class BaseAttribute {
+    public id: number
+    public createdAt: string
+    public updatedAt: string
 }
 
-export class ResponseMeta {
-    public pagination: PaginationMeta
-}
-
-export class PaginationMeta {
-    public start: number
-    public limit: number
-    public total: number
+export class BaseResponse<T> {
+    public id: number
+    public attributes: BaseAttribute & T
 }
