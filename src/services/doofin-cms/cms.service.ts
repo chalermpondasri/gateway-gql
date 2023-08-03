@@ -28,6 +28,8 @@ import {
     instanceToPlain,
     plainToInstance,
 } from 'class-transformer'
+import { capitalize } from 'lodash/fp'
+import { get } from 'lodash'
 
 @Injectable()
 export class CmsService {
@@ -84,26 +86,23 @@ export class CmsService {
 
     }
 
-    public getPromotionalContent(): Observable<CmsPromotionalContentType[]> {
+    public getPromotionalContent(locale: string): Observable<CmsPromotionalContentType[]> {
         return this._cmsRepository.getPromotionalContents().pipe(
             concatMap(result => {
                 return from(result.data)
             }),
             map(data => {
+                const langSuffix = capitalize(locale)
+                const title = get(data, `attributes.title${langSuffix}`) ?? get(data, `attributes.titleEn}`)
+                const description = get(data, `attributes.description${langSuffix}`) ?? get(data, `attributes.descriptionEn}`)
                 const result = new CmsPromotionalContentType()
                 const {
-                    descriptionTh,
-                    descriptionEn,
-                    titleEn,
-                    titleTh,
                     imageMobile,
                     imageWeb,
                 } = data.attributes
                 result.id = data.id
-                result.descriptionTh = descriptionTh
-                result.descriptionEn = descriptionEn
-                result.titleEn = titleEn
-                result.titleTh = titleTh
+                result.description = description
+                result.title = title
                 result.imageWeb = imageWeb.data.attributes
                 result.imageMobile = imageMobile.data.attributes
 

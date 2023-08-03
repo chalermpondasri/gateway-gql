@@ -10,3 +10,8 @@ export class LocaleResponse extends IdResponse{
     @Type(() => LocaleLabel)
     public labels: LocaleLabel
 }
+
+export class LocalizedKeyLabelResponse {
+    public key: string
+    public label: string
+}

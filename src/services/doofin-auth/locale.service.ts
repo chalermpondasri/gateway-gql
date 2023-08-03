@@ -24,6 +24,7 @@ import {
 import {
     LocaleListType,
     LocaleType,
+    LocalizedKeyLabelType,
 } from '@/types/objects'
 import { PaginationInput } from '@/types/inputs/pagination.input'
 
@@ -85,6 +86,14 @@ export class LocaleService {
         return this._localeRepository.updateLabel(this.extractJwt(token), id, payload).pipe(
             map( data => {
                 return plainToInstance(LocaleType, instanceToPlain(data))
+            })
+        )
+    }
+
+    public getLocalesByCode(localeKey: string): Observable<LocalizedKeyLabelType[]> {
+        return this._localeRepository.listLocalizedKeyLabel(localeKey).pipe(
+            map(data => {
+                return plainToInstance(LocalizedKeyLabelType, instanceToPlain(data.data) as unknown[])
             })
         )
     }

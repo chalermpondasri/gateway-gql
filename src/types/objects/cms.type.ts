@@ -62,13 +62,9 @@ export class CmsImageType extends IdType {
 @ObjectType()
 export class CmsPromotionalContentType extends IdType {
     @Field()
-    public titleEn: string
+    public title: string
     @Field()
-    public titleTh: string
-    @Field()
-    public descriptionEn: string
-    @Field()
-    public descriptionTh: string
+    public description: string
     @Field( () => CmsImageType)
     public imageWeb: CmsImageType
     @Field( () => CmsImageType)
