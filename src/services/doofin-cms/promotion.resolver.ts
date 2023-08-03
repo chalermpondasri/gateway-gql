@@ -6,6 +6,7 @@ import {
 import { Inject } from '@nestjs/common'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import { CmsPromotionalContentType } from '@/types/objects/cms.type'
+import { parse } from 'accept-language-parser'
 
 @Resolver()
 export class PromotionResolver {
@@ -19,7 +20,9 @@ export class PromotionResolver {
     public getPromotionalContents(
         @Context() ctx,
     ) {
-        return this._cmsService.getPromotionalContent(ctx.req.headers['accept-language']??'en')
+
+        const lang  = parse(ctx.req.headers['accept-language'])
+        return this._cmsService.getPromotionalContent(lang[0]?.code ?? 'en')
     }
 
 }
