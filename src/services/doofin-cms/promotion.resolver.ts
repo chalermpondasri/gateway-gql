@@ -1,4 +1,5 @@
 import {
+    Context,
     Query,
     Resolver,
 } from '@nestjs/graphql'
@@ -15,8 +16,10 @@ export class PromotionResolver {
     }
 
     @Query(() => [CmsPromotionalContentType])
-    public getPromotionalContents() {
-        return this._cmsService.getPromotionalContent()
+    public getPromotionalContents(
+        @Context() ctx,
+    ) {
+        return this._cmsService.getPromotionalContent(ctx.req.headers['accept-language']??'en')
     }
 
 }

@@ -30,10 +30,8 @@ type CmsImageType {
 
 type CmsPromotionalContentType {
   id: ID!
-  titleEn: String!
-  titleTh: String!
-  descriptionEn: String!
-  descriptionTh: String!
+  title: String!
+  description: String!
   imageWeb: CmsImageType!
   imageMobile: CmsImageType!
 }
