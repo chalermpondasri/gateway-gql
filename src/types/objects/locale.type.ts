@@ -35,3 +35,11 @@ export class LocaleListType extends ListType<LocaleType>{
     @Field(() => [LocaleType])
     public data: LocaleType[]
 }
+
+@ObjectType()
+export class LocalizedKeyLabelType {
+    @Field()
+    public key: string
+    @Field()
+    public label: string
+}

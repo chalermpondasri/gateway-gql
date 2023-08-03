@@ -94,6 +94,11 @@ type LocaleListType {
   data: [LocaleType!]!
 }
 
+type LocalizedKeyLabelType {
+  key: String!
+  label: String!
+}
+
 type IdType {
   id: ID!
 }
@@ -105,6 +110,7 @@ type Query {
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!
+  getLocaleByCode(localeKey: String!): [LocalizedKeyLabelType!]!
 }
 
 input PaginationInput {

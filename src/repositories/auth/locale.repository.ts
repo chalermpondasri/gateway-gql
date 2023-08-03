@@ -13,20 +13,26 @@ import {
     PaginationQueryRequest,
 } from '@/repositories/auth/common.model'
 import { plainToInstance } from 'class-transformer'
-import { LocaleResponse } from '@/repositories/auth/locale.response'
+import {
+    LocaleResponse,
+    LocalizedKeyLabelResponse,
+} from '@/repositories/auth/locale.response'
 import { ListResponse } from '@/repositories/auth/list.response'
 import { EnvironmentConfig } from '@/models/common'
 import http from 'http'
 import axios, { AxiosInstance } from 'axios'
 import { BadRequestException } from '@nestjs/common'
+import { LocalizedKeyLabelType } from '@/types/objects'
 
 export class LocaleRepository implements ILocaleRepository {
     private readonly _axiosInstance: AxiosInstance
 
-    constructor(config: EnvironmentConfig) {
+    constructor(
+        private readonly _config: EnvironmentConfig,
+        ) {
         const agent = new http.Agent({family: 4})
         this._axiosInstance = axios.create({
-            baseURL: `${config.LOCALE_ENDPOINT}/i18n`,
+            baseURL: `${_config.LOCALE_ENDPOINT}/i18n`,
             httpAgent: agent,
         })
         this._axiosInstance.interceptors.response.use(null, error => {
@@ -87,7 +93,27 @@ export class LocaleRepository implements ILocaleRepository {
         return from(this._axiosInstance.get(`/`,opts)).pipe(
             map(({data}) => {
                 const response  =new ListResponse<LocaleResponse>()
-                response.data = plainToInstance(LocaleResponse, data.data as any[])
+                response.data = plainToInstance(LocaleResponse, data.data as unknown[])
+                response.page = data.page
+                response.limit = data.limit
+                response.total = data.total
+                return  response
+            })
+        )
+    }
+
+    public listLocalizedKeyLabel(localeKey: string): Observable<ListResponse<LocalizedKeyLabelResponse>> {
+        const opts = {
+            params: {
+                limit: 0
+            },
+            baseURL: `${this._config.LOCALE_ENDPOINT}`
+        }
+
+        return from(this._axiosInstance.get(`/locales/${localeKey}`, opts)).pipe(
+            map(({data}) => {
+                const response = new ListResponse<LocalizedKeyLabelResponse>()
+                response.data = plainToInstance(LocalizedKeyLabelType, data.data as unknown[])
                 response.page = data.page
                 response.limit = data.limit
                 response.total = data.total

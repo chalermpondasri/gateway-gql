@@ -15,6 +15,7 @@ import {
 import {
     LocaleListType,
     LocaleType,
+    LocalizedKeyLabelType,
 } from '@/types/objects'
 import { PaginationInput } from '@/types/inputs/pagination.input'
 
@@ -65,6 +66,13 @@ export class LocaleResolver {
         @Args('query', {nullable: true}) query: string
     ) {
         return this._localeService.getLocales(query, pagination, ctx.req.headers.authorization)
+    }
+
+    @Query(() => [LocalizedKeyLabelType])
+    public getLocaleByCode(
+        @Args('localeKey') localeKey: string
+    ) {
+        return this._localeService.getLocalesByCode(localeKey)
     }
 
 }

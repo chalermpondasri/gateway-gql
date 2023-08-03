@@ -25,7 +25,6 @@ export class CmsRepository implements ICmsRepository {
 
     constructor(config: EnvironmentConfig) {
         const agent = new http.Agent({family: 4})
-        console.log(`${config.CMS_ENDPOINT}/api`)
         this._axiosInstance = axios.create({
             baseURL: `${config.CMS_ENDPOINT}/api`,
             httpAgent: agent,
