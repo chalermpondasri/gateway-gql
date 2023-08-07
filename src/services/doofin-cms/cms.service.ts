@@ -30,7 +30,6 @@ import {
 } from 'class-transformer'
 import { capitalize } from 'lodash/fp'
 import { get } from 'lodash'
-import * as console from 'console'
 
 @Injectable()
 export class CmsService {
