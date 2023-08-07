@@ -22,6 +22,7 @@ export interface IAuthRepository {
     verifyOtp(request: VerifyOtpRequest): Observable<VerifyOtpResponse>
     updateUserPreferences(userId: string, preferences: string[]): Observable<string[]>
     getCategories(): Observable<ListResponse<CategoryResponse>>
+    login(identity: string, password: string): Observable<{ accessToken: string, refreshToken: string }>
 }
 
 export interface ILocaleRepository {

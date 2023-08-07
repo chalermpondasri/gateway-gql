@@ -97,7 +97,6 @@ export class CmsService {
 
                 const title = get(data, `attributes.title${langSuffix}`) ?? get(data, `attributes.titleEn}`)
                 const description = get(data, `attributes.description${langSuffix}`) ?? get(data, `attributes.descriptionEn}`)
-                console.log({langSuffix,pp: `attributes.title${langSuffix}`,title,})
                 const result = new CmsPromotionalContentType()
                 const {
                     imageMobile,

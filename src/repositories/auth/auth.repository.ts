@@ -84,4 +84,12 @@ export class AuthRepository implements IAuthRepository{
         )
     }
 
+    public login(identity: string, password: string): Observable<{ accessToken: string; refreshToken: string }> {
+        return from(this._axiosInstance.post(`/auth/login`, {identity, password})).pipe(
+            map(({data}) => {
+                return data
+            })
+        )
+    }
+
 }
