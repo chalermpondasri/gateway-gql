@@ -16,7 +16,6 @@ import {
     map,
     Observable,
 } from 'rxjs'
-import { IdType } from '@/types/objects/id.type'
 import {
     instanceToPlain,
     plainToInstance,
@@ -27,6 +26,7 @@ import {
     LocalizedKeyLabelType,
 } from '@/types/objects'
 import { PaginationInput } from '@/types/inputs/pagination.input'
+import { IdStringType } from '@/types/objects/id-string.type'
 
 @Injectable()
 export class LocaleService {
@@ -40,11 +40,11 @@ export class LocaleService {
         return token.substring(token.indexOf(' ')+1)
     }
 
-    public createNewLocale(input: CreateLocaleLabelInput, token: string): Observable<IdType> {
+    public createNewLocale(input: CreateLocaleLabelInput, token: string): Observable<IdStringType> {
         const request = plainToInstance(CreateLocaleRequest, instanceToPlain(input))
         return this._localeRepository.createLabel(this.extractJwt(token),request).pipe(
             map(data => {
-                const result = new IdType()
+                const result = new IdStringType()
                 result.id = data.id
                 return result
             })

@@ -7,12 +7,12 @@ import {
 } from '@nestjs/graphql'
 import { Inject } from '@nestjs/common'
 import { LocaleService } from '@/services/doofin-auth/locale.service'
-import { IdType } from '@/types/objects/id.type'
 import {
     CreateLocaleLabelInput,
     UpdateLocaleLabelInput,
 } from '@/types/inputs'
 import {
+    IdStringType,
     LocaleListType,
     LocaleType,
     LocalizedKeyLabelType,
@@ -27,7 +27,7 @@ export class LocaleResolver {
     ) {
     }
 
-    @Mutation(() => IdType)
+    @Mutation(() => IdStringType)
     public createLocale(
         @Args(CreateLocaleLabelInput.name) input: CreateLocaleLabelInput,
         @Context() ctx,

@@ -40,7 +40,7 @@ export abstract class CmsDataType<T> {
 @ObjectType({isAbstract: true})
 export abstract class IdType {
     @Field(() => ID)
-    public id:number
+    public id: number
 }
 @ObjectType()
 export class CmsImageType extends IdType {

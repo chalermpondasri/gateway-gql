@@ -36,6 +36,10 @@ type CmsPromotionalContentType {
   imageMobile: CmsImageType!
 }
 
+type IdStringType {
+  id: ID!
+}
+
 type TermType {
   id: ID!
   en: String!
@@ -97,14 +101,16 @@ type LocalizedKeyLabelType {
   label: String!
 }
 
-type IdType {
-  id: ID!
+type TokenType {
+  accessToken: String!
+  refreshToken: String!
 }
 
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getPromotionalContents: [CmsPromotionalContentType!]!
+  userLogin(identity: String!, password: String!): TokenType!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!
@@ -121,7 +127,7 @@ type Mutation {
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
-  createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdType!
+  createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
   deleteLocale(id: String!): LocaleType!
   patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
 }

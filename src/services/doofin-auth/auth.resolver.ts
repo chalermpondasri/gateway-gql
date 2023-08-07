@@ -1,6 +1,7 @@
 import {
     Args,
     Mutation,
+    Query,
     Resolver,
 } from '@nestjs/graphql'
 
@@ -11,6 +12,7 @@ import { Observable } from 'rxjs'
 import {
     CreateUserResponseType,
     RequestOtpType,
+    TokenType,
     VerifyOtpType,
 } from '@/types/objects'
 
@@ -48,5 +50,15 @@ export class AuthResolver {
         @Args(VerifyOtpInput.name) input: VerifyOtpInput
     ) {
         return this._authService.verifyOtp(input)
+    }
+
+    @Query(() => TokenType)
+    public userLogin(
+        @Args('identity')
+        identity: string,
+        @Args('password')
+        password: string,
+    ) {
+        return this._authService.doLogin(identity, password)
     }
 }
