@@ -28,6 +28,7 @@ import {
     instanceToPlain,
     plainToInstance,
 } from 'class-transformer'
+import { TokenType } from '@/types/objects/token.type'
 
 @Injectable()
 export class AuthService {
@@ -96,6 +97,14 @@ export class AuthService {
         return this._authRepository.getCategories().pipe(
             map( response => {
                 return plainToInstance(Array<CategoryType>,instanceToPlain(response.data))
+            })
+        )
+    }
+
+    public doLogin(identity: string, password: string): Observable<TokenType> {
+        return this._authRepository.login(identity,password).pipe(
+            map( response => {
+                return plainToInstance(TokenType, response)
             })
         )
     }
