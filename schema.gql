@@ -36,6 +36,12 @@ type CmsPromotionalContentType {
   imageMobile: CmsImageType!
 }
 
+type SubjectType {
+  id: ID!
+  subject: String!
+  content: String!
+}
+
 type IdStringType {
   id: ID!
 }
@@ -110,6 +116,7 @@ type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getPromotionalContents: [CmsPromotionalContentType!]!
+  getFAQs: [SubjectType!]!
   userLogin(identity: String!, password: String!): TokenType!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
