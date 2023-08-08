@@ -30,6 +30,7 @@ import {
 } from 'class-transformer'
 import { capitalize } from 'lodash/fp'
 import { get } from 'lodash'
+import { SubjectType } from '@/types/objects/subject.type'
 
 @Injectable()
 export class CmsService {
@@ -111,6 +112,19 @@ export class CmsService {
             }),
             toArray()
         )
+    }
+
+    public getFaqs(locale: string = 'en'): Observable<SubjectType[]> {
+        const data = []
+        for (let i = 0; i < 10; i++) {
+            const v = new SubjectType()
+            v.id = i
+            v.subject = `Subject ${i}`
+            v.content = `Content of subhect ${i}`
+
+            data.push(v)
+        }
+        return of(data)
     }
 
 }
