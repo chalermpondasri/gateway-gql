@@ -1,7 +1,4 @@
 include:
-  - project: 'doofin/gitlab-deployment'
+  - project: 'ucconnect.devs/doofin/gitlab-deployment'
     ref: main
     file: 'pipelines/node.pipeline.yml'
-
-before_script:
-  - env
