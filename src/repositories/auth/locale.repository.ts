@@ -21,7 +21,10 @@ import { ListResponse } from '@/repositories/auth/list.response'
 import { EnvironmentConfig } from '@/models/common'
 import http from 'http'
 import axios, { AxiosInstance } from 'axios'
-import { BadRequestException } from '@nestjs/common'
+import {
+    BadRequestException,
+    Logger,
+} from '@nestjs/common'
 import { LocalizedKeyLabelType } from '@/types/objects'
 
 export class LocaleRepository implements ILocaleRepository {
@@ -36,6 +39,7 @@ export class LocaleRepository implements ILocaleRepository {
             httpAgent: agent,
         })
         this._axiosInstance.interceptors.response.use(null, error => {
+            Logger.error(error, LocaleRepository.name)
             throw new BadRequestException(error?.response?.data)
         })
     }
