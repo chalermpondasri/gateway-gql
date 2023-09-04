@@ -114,17 +114,22 @@ export class CmsService {
         )
     }
 
-    public getFaqs(locale: string = 'en'): Observable<SubjectType[]> {
-        const data = []
-        for (let i = 0; i < 10; i++) {
-            const v = new SubjectType()
-            v.id = i
-            v.subject = `Subject ${i}`
-            v.content = `Content of subhect ${i}`
-
-            data.push(v)
-        }
-        return of(data)
+    public getFaqs(locale: string = 'en'): Observable<SubjectType[]> { 
+        return this._cmsRepository.getFaqs().pipe(
+            concatMap(faqResponse => from(faqResponse.data)),
+            map(faq =>{
+                // console.log(faq);             
+                const langSuffix = capitalize(locale)              
+                const result =  new SubjectType()
+                result.id = faq.id
+                result.content =  get(faq, `attributes.content${langSuffix}`) ?? get(faq, `attributes.contentEn}`)
+                result.subject =  get(faq, `attributes.subject${langSuffix}`) ?? get(faq, `attributes.subjectEn}`)
+                console.log(result);
+                
+                return result
+            }),
+            toArray()
+        )
     }
 
 }

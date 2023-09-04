@@ -1,5 +1,6 @@
 import {
     BaseResponse,
+    FaqResponse,
     ListResponse,
     LoginResponse,
     TermResponse,
@@ -14,4 +15,5 @@ export interface ICmsRepository {
     login(identifier: string, password: string): Observable<LoginResponse>
     getUserData(userId: number): Observable<UserRoleResponse>
     getPromotionalContents(): Observable<ListResponse<BaseResponse<PromotionalResponse>>>
+    getFaqs(): Observable<ListResponse<BaseResponse<FaqResponse>>>
 }
