@@ -14,7 +14,7 @@ export class BaseProfileType extends IdStringType implements BaseProfileRespose 
 }
 
 @ObjectType()
-export class ProfileType extends BaseProfileRespose implements ProfileRespose {
+export class ProfileType extends BaseProfileType implements ProfileRespose {
     @Field()
     public dob: string
     @Field(()=> [String])

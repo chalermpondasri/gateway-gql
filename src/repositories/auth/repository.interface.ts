@@ -12,10 +12,12 @@ import {
     PaginationQueryRequest,
     LocalizedKeyLabelResponse,
     BaseProfileRespose,
+    ProfileRespose,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
 import { VerifyOtpResponse } from '@/repositories/auth/verify-otp.response'
+import { CreateProfilePinInput } from '@/types/inputs'
 
 export interface IAuthRepository {
     createNewUser(request: CreateUserRequest): Observable<CreateUserResponse>
@@ -25,6 +27,7 @@ export interface IAuthRepository {
     getCategories(): Observable<ListResponse<CategoryResponse>>
     login(identity: string, password: string): Observable<{ accessToken: string, refreshToken: string }>
     getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>>
+    createPin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
 }
 
 export interface ILocaleRepository {

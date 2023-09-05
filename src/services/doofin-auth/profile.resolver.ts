@@ -1,7 +1,8 @@
 import { BaseProfileType, ProfileType } from "@/types/objects";
 import { Inject } from "@nestjs/common";
-import { Context, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { AuthService } from "./auth.service";
+import { CreateProfilePinInput } from "@/types/inputs";
 
 @Resolver()
 export class ProfileResolver {
@@ -12,8 +13,16 @@ export class ProfileResolver {
     }
 
     @Query(() => [BaseProfileType])
-    getProfiles(@Context() ctx){
+    getProfiles(@Context() ctx: any){
         return this._authService.getProfiles(ctx.req.headers['token'])
+    }
+
+    @Mutation(()=> ProfileType)
+    createPin(
+        @Context() ctx: any,
+        @Args(CreateProfilePinInput.name) arg: CreateProfilePinInput
+    ){  
+        return this._authService.createPin(ctx.req.headers['token'], arg)
     }
 
 }

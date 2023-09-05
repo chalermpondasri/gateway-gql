@@ -5,6 +5,7 @@ import {
     CreateUserResponse,
     IAuthRepository,
     ListResponse,
+    ProfileRespose,
     SendOtpRequest,
     SendOtpResponse,
     VerifyOtpRequest,
@@ -23,6 +24,7 @@ import axios, {
 import { BadRequestException } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
 import * as http from 'http'
+import { CreateProfilePinInput } from '@/types/inputs'
 
 export class AuthRepository implements IAuthRepository{
     private readonly _axiosInstance: AxiosInstance
@@ -97,6 +99,16 @@ export class AuthRepository implements IAuthRepository{
         return from(this._axiosInstance.get<ListResponse<BaseProfileRespose>>("user/me/profiles",{headers: {Authorization: "Bearer " + token}})).pipe(
             map(res=> res.data)
         )
+    }
+
+    public createPin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>{
+        return from(
+          this._axiosInstance.post<ProfileRespose>(
+            `user/me/profile/${arg.profileId}/pin`,
+            { pin: arg.pin },
+            { headers: { Authorization: "Bearer " + token } }
+          )
+        ).pipe(map((res) => res.data));
     }
 
 }

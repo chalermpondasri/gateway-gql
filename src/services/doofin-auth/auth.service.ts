@@ -24,6 +24,7 @@ import {
     RequestOtpType,
 } from '@/types/objects'
 import {
+    CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
     VerifyOtpInput,
@@ -115,11 +116,17 @@ export class AuthService {
 
     public getProfiles(token: string): Observable<BaseProfileType[]>{
         return this._authRepository.getProfiles(token).pipe(
-            concatMap(e=> from(e.data)),
             map((profile) =>{    
-                return plainToInstance(BaseProfileType,profile)
+                return plainToInstance(Array<BaseProfileType>, instanceToPlain(profile.data))
             }),
-            toArray()
+        )
+    }
+
+    public createPin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
+        return this._authRepository.createPin(token,arg).pipe(
+            map(res =>{
+                return plainToInstance(ProfileType, res)
+            })
         )
     }
 
