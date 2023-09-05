@@ -1,4 +1,5 @@
 import {
+    BaseProfileRespose,
     CategoryResponse,
     CreateUserRequest,
     CreateUserResponse,
@@ -89,6 +90,12 @@ export class AuthRepository implements IAuthRepository{
             map(({data}) => {
                 return data
             })
+        )
+    }
+
+    public getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>> {
+        return from(this._axiosInstance.get<ListResponse<BaseProfileRespose>>("user/me/profiles",{headers: {Authorization: "Bearer " + token}})).pipe(
+            map(res=> res.data)
         )
     }
 

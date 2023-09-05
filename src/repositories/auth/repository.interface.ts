@@ -11,6 +11,7 @@ import {
     UpdateLocaleRequest,
     PaginationQueryRequest,
     LocalizedKeyLabelResponse,
+    BaseProfileRespose,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
@@ -23,6 +24,7 @@ export interface IAuthRepository {
     updateUserPreferences(userId: string, preferences: string[]): Observable<string[]>
     getCategories(): Observable<ListResponse<CategoryResponse>>
     login(identity: string, password: string): Observable<{ accessToken: string, refreshToken: string }>
+    getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>>
 }
 
 export interface ILocaleRepository {

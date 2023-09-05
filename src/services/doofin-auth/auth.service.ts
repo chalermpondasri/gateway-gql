@@ -9,14 +9,18 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
+    concatMap,
     from,
     map,
     Observable,
+    toArray,
 } from 'rxjs'
 import {
+    BaseProfileType,
     BaseUserType,
     CategoryType,
     CreateUserResponseType,
+    ProfileType,
     RequestOtpType,
 } from '@/types/objects'
 import {
@@ -106,6 +110,16 @@ export class AuthService {
             map( response => {
                 return plainToInstance(TokenType, response)
             })
+        )
+    }
+
+    public getProfiles(token: string): Observable<BaseProfileType[]>{
+        return this._authRepository.getProfiles(token).pipe(
+            concatMap(e=> from(e.data)),
+            map((profile) =>{    
+                return plainToInstance(BaseProfileType,profile)
+            }),
+            toArray()
         )
     }
 
