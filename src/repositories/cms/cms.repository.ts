@@ -5,6 +5,7 @@ import {
     TermResponse,
     UserRoleResponse,
     BaseResponse,
+    FaqResponse,
 } from '@/repositories/cms'
 import {
     from,
@@ -79,5 +80,11 @@ export class CmsRepository implements ICmsRepository {
         )
     }
 
-
+    public getFaqs(): Observable<ListResponse<BaseResponse<FaqResponse>>> {
+        const path = `/faqs?populate=*`
+        const promise = this._axiosInstance.get(path)
+        return from(promise).pipe(
+            map(result => result.data),
+        )
+    }
 }
