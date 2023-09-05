@@ -18,11 +18,19 @@ export class ProfileResolver {
     }
 
     @Mutation(()=> ProfileType)
-    createPin(
+    createProfilePin(
         @Context() ctx: any,
         @Args(CreateProfilePinInput.name) arg: CreateProfilePinInput
     ){  
-        return this._authService.createPin(ctx.req.headers['token'], arg)
+        return this._authService.createProfilePin(ctx.req.headers['token'], arg)
+    }
+
+    @Mutation(()=> ProfileType)
+    changeProfilePin(
+        @Context() ctx: any,
+        @Args(CreateProfilePinInput.name) arg: CreateProfilePinInput
+    ){  
+        return this._authService.changeProfilePin(ctx.req.headers['token'], arg)
     }
 
 }

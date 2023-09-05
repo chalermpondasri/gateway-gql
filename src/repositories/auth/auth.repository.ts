@@ -101,9 +101,19 @@ export class AuthRepository implements IAuthRepository{
         )
     }
 
-    public createPin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>{
+    public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>{
         return from(
           this._axiosInstance.post<ProfileRespose>(
+            `user/me/profile/${arg.profileId}/pin`,
+            { pin: arg.pin },
+            { headers: { Authorization: "Bearer " + token } }
+          )
+        ).pipe(map((res) => res.data));
+    }
+
+    public changeProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>{
+        return from(
+          this._axiosInstance.patch<ProfileRespose>(
             `user/me/profile/${arg.profileId}/pin`,
             { pin: arg.pin },
             { headers: { Authorization: "Bearer " + token } }

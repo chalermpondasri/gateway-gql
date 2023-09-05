@@ -122,8 +122,16 @@ export class AuthService {
         )
     }
 
-    public createPin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
-        return this._authRepository.createPin(token,arg).pipe(
+    public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
+        return this._authRepository.createProfilePin(token,arg).pipe(
+            map(res =>{
+                return plainToInstance(ProfileType, res)
+            })
+        )
+    }
+
+    public changeProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
+        return this._authRepository.changeProfilePin(token,arg).pipe(
             map(res =>{
                 return plainToInstance(ProfileType, res)
             })

@@ -27,7 +27,8 @@ export interface IAuthRepository {
     getCategories(): Observable<ListResponse<CategoryResponse>>
     login(identity: string, password: string): Observable<{ accessToken: string, refreshToken: string }>
     getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>>
-    createPin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
+    createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
+    changeProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
 }
 
 export interface ILocaleRepository {
