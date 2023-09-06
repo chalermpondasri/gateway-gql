@@ -114,8 +114,12 @@ export class AuthService {
         )
     }
 
+    private extractJwt(token: string = ''){
+        return token.substring(token.indexOf(' ')+1)
+    }
+
     public getProfiles(token: string): Observable<BaseProfileType[]>{
-        return this._authRepository.getProfiles(token).pipe(
+        return this._authRepository.getProfiles(this.extractJwt(token)).pipe(
             map((profile) =>{    
                 return plainToInstance(Array<BaseProfileType>, instanceToPlain(profile.data))
             }),
@@ -123,7 +127,7 @@ export class AuthService {
     }
 
     public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
-        return this._authRepository.createProfilePin(token,arg).pipe(
+        return this._authRepository.createProfilePin(this.extractJwt(token), arg).pipe(
             map(res =>{
                 return plainToInstance(ProfileType, res)
             })
@@ -131,7 +135,7 @@ export class AuthService {
     }
 
     public changeProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
-        return this._authRepository.changeProfilePin(token,arg).pipe(
+        return this._authRepository.changeProfilePin(this.extractJwt(token), arg).pipe(
             map(res =>{
                 return plainToInstance(ProfileType, res)
             })

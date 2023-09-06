@@ -14,7 +14,7 @@ export class ProfileResolver {
 
     @Query(() => [BaseProfileType])
     getProfiles(@Context() ctx: any){
-        return this._authService.getProfiles(ctx.req.headers['token'])
+        return this._authService.getProfiles(ctx.req.headers.authorization)
     }
 
     @Mutation(()=> ProfileType)
@@ -22,7 +22,7 @@ export class ProfileResolver {
         @Context() ctx: any,
         @Args(CreateProfilePinInput.name) arg: CreateProfilePinInput
     ){  
-        return this._authService.createProfilePin(ctx.req.headers['token'], arg)
+        return this._authService.createProfilePin(ctx.req.headers.authorization, arg)
     }
 
     @Mutation(()=> ProfileType)
@@ -30,7 +30,7 @@ export class ProfileResolver {
         @Context() ctx: any,
         @Args(CreateProfilePinInput.name) arg: CreateProfilePinInput
     ){  
-        return this._authService.changeProfilePin(ctx.req.headers['token'], arg)
+        return this._authService.changeProfilePin(ctx.req.headers.authorization, arg)
     }
 
 }
