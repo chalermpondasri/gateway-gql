@@ -18,10 +18,12 @@ import {
     CategoryType,
     CreateUserResponseType,
     RequestOtpType,
+    UserType,
 } from '@/types/objects'
 import {
     CreateUserInput,
     RequestOtpInput,
+    VerifyEmailInput,
     VerifyOtpInput,
 } from '@/types/inputs'
 import {
@@ -107,6 +109,15 @@ export class AuthService {
                 return plainToInstance(TokenType, response)
             })
         )
+    }
+
+    public verifyEmail(request: VerifyEmailInput): Observable<UserType> {
+        return this._authRepository.verifyEmail(request).pipe(
+            map( response => {
+                return plainToInstance(UserType, response)
+            })
+        )
+
     }
 
 }
