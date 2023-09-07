@@ -1,10 +1,13 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { 
+    Field, 
+    InputType 
+} from '@nestjs/graphql';
 
 @InputType()
 export class CreateProfilePinInput {
     @Field({nullable: false})
-    profileId: string
+    public profileId: string
 
     @Field({nullable: false})
-    pin: string
+    public pin: string
 }

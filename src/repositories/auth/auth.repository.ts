@@ -96,7 +96,7 @@ export class AuthRepository implements IAuthRepository{
     }
 
     public getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>> {
-        return from(this._axiosInstance.get<ListResponse<BaseProfileRespose>>("user/me/profiles",{headers: {Authorization: "Bearer " + token}})).pipe(
+        return from(this._axiosInstance.get<ListResponse<BaseProfileRespose>>('user/me/profiles',{headers: {Authorization: 'Bearer ' + token}})).pipe(
             map(res=> res.data)
         )
     }
@@ -106,7 +106,7 @@ export class AuthRepository implements IAuthRepository{
           this._axiosInstance.post<ProfileRespose>(
             `user/me/profile/${arg.profileId}/pin`,
             { pin: arg.pin },
-            { headers: { Authorization: "Bearer " + token } }
+            { headers: { Authorization: 'Bearer ' + token } }
           )
         ).pipe(map((res) => res.data));
     }
@@ -116,7 +116,7 @@ export class AuthRepository implements IAuthRepository{
           this._axiosInstance.patch<ProfileRespose>(
             `user/me/profile/${arg.profileId}/pin`,
             { pin: arg.pin },
-            { headers: { Authorization: "Bearer " + token } }
+            { headers: { Authorization: 'Bearer ' + token } }
           )
         ).pipe(map((res) => res.data));
     }

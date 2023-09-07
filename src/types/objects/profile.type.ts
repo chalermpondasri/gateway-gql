@@ -1,6 +1,12 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { IdStringType } from "./id-string.type";
-import { BaseProfileRespose, ProfileRespose } from "@/repositories/auth";
+import { 
+    Field, 
+    ObjectType 
+} from '@nestjs/graphql';
+import { IdStringType } from './id-string.type';
+import { 
+    BaseProfileRespose, 
+    ProfileRespose 
+} from '@/repositories/auth';
 
 
 @ObjectType()
