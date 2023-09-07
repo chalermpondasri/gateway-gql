@@ -11,7 +11,9 @@ import {
      Resolver 
 } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { CreateProfilePinInput } from '@/types/inputs';
+import { CreateProfilePinInput, 
+    UpdateProfilePinInput 
+} from '@/types/inputs';
 
 @Resolver()
 export class ProfileResolver {
@@ -37,7 +39,7 @@ export class ProfileResolver {
     @Mutation(()=> ProfileType)
     public changeProfilePin(
         @Context() ctx: any,
-        @Args(CreateProfilePinInput.name) arg: CreateProfilePinInput
+        @Args(UpdateProfilePinInput.name) arg: UpdateProfilePinInput
     ){  
         return this._authService.changeProfilePin(ctx.req.headers.authorization, arg)
     }

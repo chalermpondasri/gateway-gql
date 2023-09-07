@@ -27,6 +27,7 @@ import {
     CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
+    UpdateProfilePinInput,
     VerifyOtpInput,
 } from '@/types/inputs'
 import {
@@ -134,7 +135,7 @@ export class AuthService {
         )
     }
 
-    public changeProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
+    public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileType>{
         return this._authRepository.changeProfilePin(this.extractJwt(token), arg).pipe(
             map(res =>{
                 return plainToInstance(ProfileType, res)

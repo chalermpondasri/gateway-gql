@@ -9,5 +9,12 @@ export class CreateProfilePinInput {
     public profileId: string
 
     @Field({nullable: false})
-    public pin: string
+    public newPin: string
 }
+
+@InputType()
+export class UpdateProfilePinInput extends CreateProfilePinInput {
+    @Field({nullable: false})
+    public oldPin: string
+}
+

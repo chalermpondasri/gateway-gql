@@ -24,7 +24,10 @@ import axios, {
 import { BadRequestException } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
 import * as http from 'http'
-import { CreateProfilePinInput } from '@/types/inputs'
+import { 
+    CreateProfilePinInput,
+    UpdateProfilePinInput 
+} from '@/types/inputs'
 
 export class AuthRepository implements IAuthRepository{
     private readonly _axiosInstance: AxiosInstance
@@ -105,17 +108,18 @@ export class AuthRepository implements IAuthRepository{
         return from(
           this._axiosInstance.post<ProfileRespose>(
             `user/me/profile/${arg.profileId}/pin`,
-            { pin: arg.pin },
+            { newPin: arg.newPin },
             { headers: { Authorization: 'Bearer ' + token } }
           )
         ).pipe(map((res) => res.data));
     }
 
-    public changeProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>{
+    public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileRespose>{
+        const {newPin, oldPin} = arg
         return from(
           this._axiosInstance.patch<ProfileRespose>(
             `user/me/profile/${arg.profileId}/pin`,
-            { pin: arg.pin },
+            { newPin, oldPin  },
             { headers: { Authorization: 'Bearer ' + token } }
           )
         ).pipe(map((res) => res.data));
