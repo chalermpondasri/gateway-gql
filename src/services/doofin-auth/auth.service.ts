@@ -9,21 +9,27 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
+    concatMap,
     from,
     map,
     Observable,
+    toArray,
 } from 'rxjs'
 import {
+    BaseProfileType,
     BaseUserType,
     CategoryType,
     CreateUserResponseType,
+    ProfileType,
     RequestOtpType,
     UserType,
 } from '@/types/objects'
 import {
+    CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
     VerifyEmailInput,
+    UpdateProfilePinInput,
     VerifyOtpInput,
 } from '@/types/inputs'
 import {
@@ -118,6 +124,34 @@ export class AuthService {
             })
         )
 
+    }
+
+    private extractJwt(token: string = ''){
+        return token.substring(token.indexOf(' ')+1)
+    }
+
+    public getProfiles(token: string): Observable<BaseProfileType[]>{
+        return this._authRepository.getProfiles(this.extractJwt(token)).pipe(
+            map((profile) =>{    
+                return plainToInstance(Array<BaseProfileType>, instanceToPlain(profile.data))
+            }),
+        )
+    }
+
+    public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
+        return this._authRepository.createProfilePin(this.extractJwt(token), arg).pipe(
+            map(res =>{
+                return plainToInstance(ProfileType, res)
+            })
+        )
+    }
+
+    public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileType>{
+        return this._authRepository.changeProfilePin(this.extractJwt(token), arg).pipe(
+            map(res =>{
+                return plainToInstance(ProfileType, res)
+            })
+        )
     }
 
 }

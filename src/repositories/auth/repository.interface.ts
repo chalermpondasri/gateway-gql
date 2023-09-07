@@ -13,10 +13,16 @@ import {
     LocalizedKeyLabelResponse,
     UserVerifyEmailRequest,
     UserResponse,
+    BaseProfileRespose,
+    ProfileRespose,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
 import { VerifyOtpResponse } from '@/repositories/auth/verify-otp.response'
+import { 
+    CreateProfilePinInput, 
+    UpdateProfilePinInput 
+} from '@/types/inputs'
 
 export interface IAuthRepository {
     createNewUser(request: CreateUserRequest): Observable<CreateUserResponse>
@@ -26,6 +32,9 @@ export interface IAuthRepository {
     getCategories(): Observable<ListResponse<CategoryResponse>>
     login(identity: string, password: string): Observable<{ accessToken: string, refreshToken: string }>
     verifyEmail(request: UserVerifyEmailRequest): Observable<UserResponse>
+    getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>>
+    createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
+    changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileRespose>
 }
 
 export interface ILocaleRepository {
