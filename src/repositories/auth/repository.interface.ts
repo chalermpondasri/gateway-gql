@@ -11,6 +11,8 @@ import {
     UpdateLocaleRequest,
     PaginationQueryRequest,
     LocalizedKeyLabelResponse,
+    UserVerifyEmailRequest,
+    UserResponse,
     BaseProfileRespose,
     ProfileRespose,
 } from '@/repositories/auth'
@@ -26,6 +28,7 @@ export interface IAuthRepository {
     updateUserPreferences(userId: string, preferences: string[]): Observable<string[]>
     getCategories(): Observable<ListResponse<CategoryResponse>>
     login(identity: string, password: string): Observable<{ accessToken: string, refreshToken: string }>
+    verifyEmail(request: UserVerifyEmailRequest): Observable<UserResponse>
     getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>>
     createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
     changeProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>

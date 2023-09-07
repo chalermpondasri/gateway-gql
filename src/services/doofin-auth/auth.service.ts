@@ -22,11 +22,13 @@ import {
     CreateUserResponseType,
     ProfileType,
     RequestOtpType,
+    UserType,
 } from '@/types/objects'
 import {
     CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
+    VerifyEmailInput,
     UpdateProfilePinInput,
     VerifyOtpInput,
 } from '@/types/inputs'
@@ -113,6 +115,15 @@ export class AuthService {
                 return plainToInstance(TokenType, response)
             })
         )
+    }
+
+    public verifyEmail(request: VerifyEmailInput): Observable<UserType> {
+        return this._authRepository.verifyEmail(request).pipe(
+            map( response => {
+                return plainToInstance(UserType, response)
+            })
+        )
+
     }
 
     private extractJwt(token: string = ''){
