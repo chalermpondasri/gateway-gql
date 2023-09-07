@@ -6,12 +6,13 @@ import { Inject } from '@nestjs/common';
 import { 
     Args, 
     Context,
-     Mutation, 
-     Query, 
-     Resolver 
+    Mutation, 
+    Query, 
+    Resolver 
 } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { CreateProfilePinInput, 
+import { 
+    CreateProfilePinInput, 
     UpdateProfilePinInput 
 } from '@/types/inputs';
 
