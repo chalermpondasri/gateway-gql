@@ -13,12 +13,14 @@ import {
     CreateUserResponseType,
     RequestOtpType,
     TokenType,
+    UserType,
     VerifyOtpType,
 } from '@/types/objects'
 
 import {
     CreateUserInput,
     RequestOtpInput,
+    VerifyEmailInput,
     VerifyOtpInput,
 } from '@/types/inputs'
 
@@ -60,5 +62,12 @@ export class AuthResolver {
         password: string,
     ) {
         return this._authService.doLogin(identity, password)
+    }
+
+    @Mutation(() => UserType)
+    public verifyEmail(
+        @Args(VerifyEmailInput.name) input: VerifyEmailInput
+    ) {
+        return this._authService.verifyEmail(input)
     }
 }

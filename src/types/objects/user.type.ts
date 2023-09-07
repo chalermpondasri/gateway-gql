@@ -21,3 +21,18 @@ export class CreateUserResponseType extends BaseUserType{
     @Field()
     public otpToken: string
 }
+
+@ObjectType()
+export class UserType {
+    @Field(() => ID)
+    public id: string
+
+    @Field()
+    public email: string
+
+    @Field()
+    public status: string
+
+    @Field()
+    public dob: string
+}
