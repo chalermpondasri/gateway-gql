@@ -1,4 +1,7 @@
-import { UserRequestOtpType, UserVerifyOtpType } from '@/types/objects';
+import { 
+    UserRequestOtpType, 
+    UserVerifyOtpType, 
+} from '@/types/objects';
 import { 
     Args, 
     Mutation, 
