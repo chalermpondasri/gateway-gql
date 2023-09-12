@@ -5,6 +5,7 @@ import {
     CategoryResolver,
     LocaleService,
     ProfileResolver,
+    UserResolver,
 } from '@/services/doofin-auth'
 import {
     authRepositoryProvider,
@@ -21,7 +22,8 @@ import { LocaleResolver } from '@/services/doofin-auth/locale.resolver'
         CategoryResolver,
         LocaleResolver,
         LocaleService,
-        ProfileResolver
+        ProfileResolver,
+        UserResolver,
     ],
 })
 export class AuthModule {}

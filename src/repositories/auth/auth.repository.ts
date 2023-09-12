@@ -5,6 +5,7 @@ import {
     CreateUserResponse,
     IAuthRepository,
     ListResponse,
+    OtpChangePhoneResponse,
     ProfileRespose,
     SendOtpRequest,
     SendOtpResponse,
@@ -28,7 +29,7 @@ import { plainToInstance } from 'class-transformer'
 import * as http from 'http'
 import { 
     CreateProfilePinInput,
-    UpdateProfilePinInput 
+    UpdateProfilePinInput, 
 } from '@/types/inputs'
 
 export class AuthRepository implements IAuthRepository{
@@ -133,6 +134,20 @@ export class AuthRepository implements IAuthRepository{
             { headers: { Authorization: 'Bearer ' + token } }
           )
         ).pipe(map((res) => res.data));
+    }
+
+    public requestToChangePhoneNumber(token: string, phoneNumber: string): Observable<OtpChangePhoneResponse> {
+        return from(
+          this._axiosInstance.post(
+            '/user/me/request/phone-number',
+            { phoneNumber },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+        ).pipe(map((res) => plainToInstance(OtpChangePhoneResponse, res.data)));
     }
 
 }

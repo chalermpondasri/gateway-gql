@@ -1,7 +1,9 @@
 import {
     Field,
+    GraphQLISODateTime,
     ID,
-    ObjectType
+    Int,
+    ObjectType,
 } from '@nestjs/graphql'
 
 @ObjectType()
@@ -35,4 +37,19 @@ export class UserType {
 
     @Field()
     public dob: string
+}
+
+@ObjectType()
+export class UserRequestOtpType {
+    @Field()
+    public referenceNumber: string
+
+    @Field(type => Int)
+    public remaining: number
+
+    @Field(type => GraphQLISODateTime)
+    public expiredAt: Date
+
+    @Field()
+    public token: string
 }

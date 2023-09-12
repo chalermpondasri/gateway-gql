@@ -22,6 +22,7 @@ import {
     CreateUserResponseType,
     ProfileType,
     RequestOtpType,
+    UserRequestOtpType,
     UserType,
 } from '@/types/objects'
 import {
@@ -152,6 +153,12 @@ export class AuthService {
                 return plainToInstance(ProfileType, res)
             })
         )
+    }
+
+    public requestToChangePhoneNumber(token: string, phoneNumber: string){
+        return this._authRepository
+          .requestToChangePhoneNumber(this.extractJwt(token), phoneNumber)
+          .pipe(map((res) => plainToInstance(UserRequestOtpType, res)));
     }
 
 }
