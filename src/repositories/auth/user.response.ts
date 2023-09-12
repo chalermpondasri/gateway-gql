@@ -4,3 +4,7 @@ export class OtpChangePhoneResponse {
     public expiredAt: Date
     public token: string
 }
+
+export class OtpVerifyPhoneResponse {
+    public status: boolean
+}

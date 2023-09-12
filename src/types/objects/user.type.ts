@@ -53,3 +53,9 @@ export class UserRequestOtpType {
     @Field()
     public token: string
 }
+
+@ObjectType()
+export class UserVerifyOtpType {
+    @Field(() => Boolean)
+    public status: boolean
+}

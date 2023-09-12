@@ -81,6 +81,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type UserVerifyOtpType {
+  status: Boolean!
+}
+
 type RequestOtpType {
   referenceNumber: String!
   remaining: Int!
@@ -173,6 +177,8 @@ type Mutation {
   patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
   createProfilePin(CreateProfilePinInput: CreateProfilePinInput!): ProfileType!
   changeProfilePin(UpdateProfilePinInput: UpdateProfilePinInput!): ProfileType!
+  verifyToChangePhoneNumber(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
+  changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
 }
 
 input CreateUserInput {
@@ -225,4 +231,15 @@ input UpdateProfilePinInput {
   profileId: String!
   newPin: String!
   oldPin: String!
+}
+
+input UserVerifyOtpInput {
+  token: String!
+  referenceNumber: String!
+  otpCode: String!
+}
+
+input UserChangePasswordInput {
+  oldPassword: String!
+  newPassword: String!
 }
