@@ -139,6 +139,13 @@ export class AuthRepository implements IAuthRepository{
         ).pipe(map((res) => res.data));
     }
 
+    public refreshToken(token: string): Observable<{ accessToken: string; refreshToken: string }>{
+        return from(this._axiosInstance.get('/auth/token/refresh',{ headers: { Authorization: `Bearer ${token}` } })).pipe(
+            map(({data})=>{
+                return data
+            })
+        )
+    }
     public requestToChangePhoneNumber(token: string, phoneNumber: string): Observable<OtpChangePhoneResponse> {
         return from(
           this._axiosInstance.post(

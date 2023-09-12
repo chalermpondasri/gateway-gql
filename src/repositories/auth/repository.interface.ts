@@ -39,6 +39,7 @@ export interface IAuthRepository {
     getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>>
     createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
     changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileRespose>
+    refreshToken(token: string): Observable<{ accessToken: string, refreshToken: string }>
     requestToChangePhoneNumber(token: string,phoneNumber: string): Observable<OtpChangePhoneResponse>
     verifyToChangePhoneNumber(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
     changePassword(token: string, input: UserChangePasswordInput): Observable<OtpVerifyPhoneResponse>
