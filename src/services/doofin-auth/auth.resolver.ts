@@ -1,5 +1,6 @@
 import {
     Args,
+    Context,
     Mutation,
     Query,
     Resolver,
@@ -69,5 +70,10 @@ export class AuthResolver {
         @Args(VerifyEmailInput.name) input: VerifyEmailInput
     ) {
         return this._authService.verifyEmail(input)
+    }
+
+    @Query(() => TokenType)
+    public userRefreshToken(@Context() ctx: any) {
+        return this._authService.doRefreshToken(ctx.req.headers.authorization)
     }
 }

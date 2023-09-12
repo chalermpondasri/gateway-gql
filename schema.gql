@@ -62,6 +62,13 @@ type CreateUserResponseType {
   otpToken: String!
 }
 
+type UserType {
+  id: ID!
+  email: String!
+  status: String!
+  dob: String!
+}
+
 type RequestOtpType {
   referenceNumber: String!
   remaining: Int!
@@ -112,16 +119,35 @@ type TokenType {
   refreshToken: String!
 }
 
+type BaseProfileType {
+  id: ID!
+  name: String!
+  avatar: String!
+  audienceLevel: String!
+}
+
+type ProfileType {
+  id: ID!
+  name: String!
+  avatar: String!
+  audienceLevel: String!
+  dob: String!
+  categories: [String!]!
+  contentRating: String!
+}
+
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
   userLogin(identity: String!, password: String!): TokenType!
+  userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!
   getLocaleByCode(localeKey: String!): [LocalizedKeyLabelType!]!
+  getProfiles: [BaseProfileType!]!
 }
 
 input PaginationInput {
@@ -133,10 +159,13 @@ type Mutation {
   createUser(CreateUserInput: CreateUserInput!): CreateUserResponseType!
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
+  verifyEmail(VerifyEmailInput: VerifyEmailInput!): UserType!
   updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
   createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
   deleteLocale(id: String!): LocaleType!
   patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
+  createProfilePin(CreateProfilePinInput: CreateProfilePinInput!): ProfileType!
+  changeProfilePin(UpdateProfilePinInput: UpdateProfilePinInput!): ProfileType!
 }
 
 input CreateUserInput {
@@ -157,6 +186,11 @@ input VerifyOtpInput {
   confirmationCode: String!
 }
 
+input VerifyEmailInput {
+  email: String!
+  token: String!
+}
+
 """Create system-wide localization"""
 input CreateLocaleLabelInput {
   key: String!
@@ -173,4 +207,15 @@ input LabelInput {
 input UpdateLocaleLabelInput {
   key: String!
   labels: LabelInput!
+}
+
+input CreateProfilePinInput {
+  profileId: String!
+  newPin: String!
+}
+
+input UpdateProfilePinInput {
+  profileId: String!
+  newPin: String!
+  oldPin: String!
 }

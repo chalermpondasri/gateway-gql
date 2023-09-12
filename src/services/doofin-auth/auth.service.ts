@@ -126,12 +126,12 @@ export class AuthService {
 
     }
 
-    private extractJwt(token: string = ''){
+    private _extractJwt(token: string = ''){
         return token.substring(token.indexOf(' ')+1)
     }
 
     public getProfiles(token: string): Observable<BaseProfileType[]>{
-        return this._authRepository.getProfiles(this.extractJwt(token)).pipe(
+        return this._authRepository.getProfiles(this._extractJwt(token)).pipe(
             map((profile) =>{    
                 return plainToInstance(Array<BaseProfileType>, instanceToPlain(profile.data))
             }),
@@ -139,7 +139,7 @@ export class AuthService {
     }
 
     public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
-        return this._authRepository.createProfilePin(this.extractJwt(token), arg).pipe(
+        return this._authRepository.createProfilePin(this._extractJwt(token), arg).pipe(
             map(res =>{
                 return plainToInstance(ProfileType, res)
             })
@@ -147,9 +147,17 @@ export class AuthService {
     }
 
     public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileType>{
-        return this._authRepository.changeProfilePin(this.extractJwt(token), arg).pipe(
+        return this._authRepository.changeProfilePin(this._extractJwt(token), arg).pipe(
             map(res =>{
                 return plainToInstance(ProfileType, res)
+            })
+        )
+    }
+
+    public doRefreshToken(refreshToken: string): Observable<TokenType>{
+        return this._authRepository.refreshToken(this._extractJwt(refreshToken)).pipe(
+            map(value =>{
+                return plainToInstance(TokenType, value)
             })
         )
     }

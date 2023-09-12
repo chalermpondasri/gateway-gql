@@ -35,6 +35,7 @@ export interface IAuthRepository {
     getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>>
     createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
     changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileRespose>
+    refreshToken(token: string): Observable<{ accessToken: string, refreshToken: string }>
 }
 
 export interface ILocaleRepository {
