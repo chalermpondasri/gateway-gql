@@ -22,7 +22,9 @@ import {
     CreateUserResponseType,
     ProfileType,
     RequestOtpType,
+    UserRequestOtpType,
     UserType,
+    UserVerifyOtpType,
 } from '@/types/objects'
 import {
     CreateProfilePinInput,
@@ -31,6 +33,8 @@ import {
     VerifyEmailInput,
     UpdateProfilePinInput,
     VerifyOtpInput,
+    UserVerifyOtpInput,
+    UserChangePasswordInput,
 } from '@/types/inputs'
 import {
     instanceToPlain,
@@ -160,6 +164,24 @@ export class AuthService {
                 return plainToInstance(TokenType, value)
             })
         )
+    }
+
+    public requestToChangePhoneNumber(token: string, phoneNumber: string): Observable<UserRequestOtpType>{
+        return this._authRepository
+          .requestToChangePhoneNumber(this._extractJwt(token), phoneNumber)
+          .pipe(map((res) => plainToInstance(UserRequestOtpType, res)));
+    }
+
+    public verifyToChangePhoneNumber(token: string, input: UserVerifyOtpInput): Observable<UserVerifyOtpType> {
+        return this._authRepository
+          .verifyToChangePhoneNumber(this._extractJwt(token), input)
+          .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
+    }
+
+    public changePassword(token: string, input: UserChangePasswordInput): Observable<UserVerifyOtpType> {
+        return this._authRepository
+          .changePassword(this._extractJwt(token), input)
+          .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
     }
 
 }

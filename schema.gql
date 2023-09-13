@@ -69,16 +69,27 @@ type UserType {
   dob: String!
 }
 
-type RequestOtpType {
+type UserRequestOtpType {
   referenceNumber: String!
   remaining: Int!
   expiredAt: DateTime!
+  token: String!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type UserVerifyOtpType {
+  status: Boolean!
+}
+
+type RequestOtpType {
+  referenceNumber: String!
+  remaining: Int!
+  expiredAt: DateTime!
+}
 
 type VerifyOtpType {
   userId: ID!
@@ -142,12 +153,12 @@ type Query {
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
   userLogin(identity: String!, password: String!): TokenType!
-  userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!
   getLocaleByCode(localeKey: String!): [LocalizedKeyLabelType!]!
   getProfiles: [BaseProfileType!]!
+  requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
 }
 
 input PaginationInput {
@@ -166,6 +177,8 @@ type Mutation {
   patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
   createProfilePin(CreateProfilePinInput: CreateProfilePinInput!): ProfileType!
   changeProfilePin(UpdateProfilePinInput: UpdateProfilePinInput!): ProfileType!
+  verifyToChangePhoneNumber(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
+  changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
 }
 
 input CreateUserInput {
@@ -218,4 +231,15 @@ input UpdateProfilePinInput {
   profileId: String!
   newPin: String!
   oldPin: String!
+}
+
+input UserVerifyOtpInput {
+  token: String!
+  referenceNumber: String!
+  otpCode: String!
+}
+
+input UserChangePasswordInput {
+  oldPassword: String!
+  newPassword: String!
 }

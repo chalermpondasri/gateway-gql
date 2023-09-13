@@ -15,13 +15,17 @@ import {
     UserResponse,
     BaseProfileRespose,
     ProfileRespose,
+    OtpChangePhoneResponse,
+    OtpVerifyPhoneResponse,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
 import { VerifyOtpResponse } from '@/repositories/auth/verify-otp.response'
 import { 
     CreateProfilePinInput, 
-    UpdateProfilePinInput 
+    UpdateProfilePinInput,
+    UserChangePasswordInput,
+    UserVerifyOtpInput,
 } from '@/types/inputs'
 
 export interface IAuthRepository {
@@ -36,6 +40,9 @@ export interface IAuthRepository {
     createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose>
     changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileRespose>
     refreshToken(token: string): Observable<{ accessToken: string, refreshToken: string }>
+    requestToChangePhoneNumber(token: string,phoneNumber: string): Observable<OtpChangePhoneResponse>
+    verifyToChangePhoneNumber(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
+    changePassword(token: string, input: UserChangePasswordInput): Observable<OtpVerifyPhoneResponse>
 }
 
 export interface ILocaleRepository {
