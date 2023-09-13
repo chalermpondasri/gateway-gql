@@ -10,3 +10,8 @@ export class ProfileRespose extends BaseProfileRespose {
     public categories: string[]
     public contentRating: string
 }
+
+export class ProfileHasAccountInformationResponse extends ProfileRespose {
+    public email: string
+    public phoneNumber: string
+}

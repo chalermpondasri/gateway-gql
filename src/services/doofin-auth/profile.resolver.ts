@@ -1,5 +1,6 @@
 import { 
     BaseProfileType, 
+    ProfileHasAccountInformationType, 
     ProfileType 
 } from '@/types/objects';
 import { Inject } from '@nestjs/common';
@@ -43,6 +44,14 @@ export class ProfileResolver {
         @Args(UpdateProfilePinInput.name) arg: UpdateProfilePinInput
     ){  
         return this._authService.changeProfilePin(ctx.req.headers.authorization, arg)
+    }
+
+    @Query(() => ProfileHasAccountInformationType)
+    public getProfileAndAccountInformation(
+        @Context() ctx: any,
+        @Args('profileId') profileId: string,
+    ){
+        return this._authService.getProfileAndAccountInformation(ctx.req.headers.authorization, profileId)
     }
 
 }

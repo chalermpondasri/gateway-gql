@@ -17,6 +17,7 @@ import {
     ProfileRespose,
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
+    ProfileHasAccountInformationResponse,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
@@ -43,6 +44,7 @@ export interface IAuthRepository {
     requestToChangePhoneNumber(token: string,phoneNumber: string): Observable<OtpChangePhoneResponse>
     verifyToChangePhoneNumber(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
     changePassword(token: string, input: UserChangePasswordInput): Observable<OtpVerifyPhoneResponse>
+    getProfileAndAccountInformation(token: string, profileId: string): Observable<ProfileHasAccountInformationResponse>
 }
 
 export interface ILocaleRepository {

@@ -20,6 +20,7 @@ import {
     BaseUserType,
     CategoryType,
     CreateUserResponseType,
+    ProfileHasAccountInformationType,
     ProfileType,
     RequestOtpType,
     UserRequestOtpType,
@@ -182,6 +183,14 @@ export class AuthService {
         return this._authRepository
           .changePassword(this._extractJwt(token), input)
           .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
+    }
+
+    public getProfileAndAccountInformation(token: string, profileId: string): Observable<ProfileHasAccountInformationType>{
+        return this._authRepository
+          .getProfileAndAccountInformation(this._extractJwt(token), profileId)
+          .pipe(
+            map(data => plainToInstance(ProfileHasAccountInformationType, data))
+          )
     }
 
 }
