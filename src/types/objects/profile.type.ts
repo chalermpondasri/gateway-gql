@@ -28,3 +28,15 @@ export class ProfileType extends BaseProfileType implements ProfileRespose {
     @Field()
     public contentRating: string
 }
+
+@ObjectType()
+export class ProfileHasAccountInformationType extends ProfileType {
+    @Field()
+    public email: string
+
+    @Field()
+    public phoneNumber: string
+
+    @Field()
+    public emailVerificationStatus: string
+}
