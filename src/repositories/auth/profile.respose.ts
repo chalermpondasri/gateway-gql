@@ -14,4 +14,5 @@ export class ProfileRespose extends BaseProfileRespose {
 export class ProfileHasAccountInformationResponse extends ProfileRespose {
     public email: string
     public phoneNumber: string
+    public emailVerificationStatus: string
 }

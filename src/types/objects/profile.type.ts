@@ -36,4 +36,7 @@ export class ProfileHasAccountInformationType extends ProfileType {
 
     @Field()
     public phoneNumber: string
+
+    @Field()
+    public emailVerificationStatus: string
 }
