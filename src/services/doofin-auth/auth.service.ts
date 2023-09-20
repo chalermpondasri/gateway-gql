@@ -194,4 +194,10 @@ export class AuthService {
         )
     }
 
+    public revokeSessions(token: string): Observable<string[]> {
+        return this._authRepository.revokeSessions(this._extractJwt(token)).pipe(
+            map(data => data.ids)
+        )
+    }
+
 }

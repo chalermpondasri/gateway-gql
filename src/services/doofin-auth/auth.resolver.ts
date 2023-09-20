@@ -76,4 +76,9 @@ export class AuthResolver {
     public userRefreshToken(@Context() ctx: any) {
         return this._authService.doRefreshToken(ctx.req.headers.authorization)
     }
+
+    @Mutation(() => [String])
+    public revokeUserSessions(@Context() ctx: any) {
+        return this._authService.revokeSessions(ctx.req.headers.authorization)
+    }
 }
