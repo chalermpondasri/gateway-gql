@@ -78,29 +78,6 @@ type ProfileHasAccountInformationType {
   emailVerificationStatus: String!
 }
 
-type ProfileType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-  dob: String!
-  categories: [String!]!
-  contentRating: String!
-}
-
-type ProfileHasAccountInformationType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-  dob: String!
-  categories: [String!]!
-  contentRating: String!
-  email: String!
-  phoneNumber: String!
-  emailVerificationStatus: String!
-}
-
 type CreateUserResponseType {
   userId: ID!
   status: String!
@@ -206,47 +183,6 @@ type Mutation {
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   verifyEmail(VerifyEmailInput: VerifyEmailInput!): UserType!
-  revokeUserSessions: [String!]!
-  verifiedPhoneNumber: String!
-  emailVerificationStatus: String!
-  dob: String! @deprecated(reason: "Moved to profile instead")
-  profiles: [ProfileType!]!
-type BaseProfileType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-}
-
-type ProfileType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-  dob: String!
-  categories: [String!]!
-  contentRating: String!
-}
-
-type ProfileHasAccountInformationType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-  dob: String!
-  categories: [String!]!
-  contentRating: String!
-  email: String!
-  phoneNumber: String!
-  emailVerificationStatus: String!
-}
-
-  userRefreshToken: TokenType!
-  getProfiles: [BaseProfileType!]!
-  getProfileAndAccountInformation(profileId: String!): ProfileHasAccountInformationType!
-  getProfiles: [ProfileType!]!
-  getProfileAndAccountInformation(profileId: String!): ProfileHasAccountInformationType!
-  getUser: UserType!
   revokeUserSessions: [String!]!
   updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
   createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
