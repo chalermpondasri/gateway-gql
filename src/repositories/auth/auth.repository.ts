@@ -193,4 +193,16 @@ export class AuthRepository implements IAuthRepository{
         )
     }
 
+    public revokeSessions(token: string): Observable<{ ids: string[] }> {
+        const promise = this._axiosInstance.delete(`/auth/sessions`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        return from(promise).pipe(
+            map(res => res.data)
+        )
+    }
+
 }

@@ -45,6 +45,7 @@ export interface IAuthRepository {
     verifyToChangePhoneNumber(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
     changePassword(token: string, input: UserChangePasswordInput): Observable<OtpVerifyPhoneResponse>
     getProfileAndAccountInformation(token: string, profileId: string): Observable<ProfileHasAccountInformationResponse>
+    revokeSessions(token: string): Observable<{ids: string[]}>
 }
 
 export interface ILocaleRepository {

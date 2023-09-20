@@ -1,7 +1,6 @@
 import {
     Inject,
     Injectable,
-    LoggerService,
 } from '@nestjs/common'
 import {
     CreateUserRequest,
@@ -9,11 +8,9 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
-    concatMap,
     from,
     map,
     Observable,
-    toArray,
 } from 'rxjs'
 import {
     BaseProfileType,
@@ -45,7 +42,6 @@ import { TokenType } from '@/types/objects/token.type'
 
 @Injectable()
 export class AuthService {
-    private readonly _logger: LoggerService
 
     constructor(
         @Inject(ProviderName.AUTH_REPOSITORY)
@@ -191,6 +187,12 @@ export class AuthService {
           .pipe(
             map(data => plainToInstance(ProfileHasAccountInformationType, data))
           )
+    }
+
+    public revokeSessions(token: string): Observable<string[]> {
+        return this._authRepository.revokeSessions(this._extractJwt(token)).pipe(
+            map(data => data.ids)
+        )
     }
 
 }
