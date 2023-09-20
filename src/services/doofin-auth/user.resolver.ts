@@ -1,14 +1,18 @@
-import { 
-    UserRequestOtpType, 
-    UserVerifyOtpType, 
-} from '@/types/objects';
-import { 
-    Args, 
-    Mutation, 
-    Query, 
+import {
+    ProfileType,
+    UserRequestOtpType,
+    UserType,
+    UserVerifyOtpType,
+} from '@/types/objects'
+import {
+    Args,
+    Mutation,
+    Query,
     Resolver,
     Context,
-} from '@nestjs/graphql';
+    ResolveField,
+    Parent,
+} from '@nestjs/graphql'
 import { AuthService } from './auth.service';
 import { Inject } from '@nestjs/common';
 import { 
@@ -16,7 +20,7 @@ import {
     UserVerifyOtpInput, 
 } from '@/types/inputs';
 
-@Resolver()
+@Resolver( () => UserType)
 export class UserResolver {
     constructor(
         @Inject(AuthService)
@@ -24,7 +28,7 @@ export class UserResolver {
     ) {}
 
     @Query(() => UserRequestOtpType)
-    requestToChangePhoneNumber(
+    public requestToChangePhoneNumber(
         @Args('phoneNumber') phoneNumber: string,
         @Context() ctx: any,
     ) {
@@ -35,7 +39,7 @@ export class UserResolver {
     }
 
     @Mutation(() => UserVerifyOtpType)
-    verifyToChangePhoneNumber(
+    public verifyToChangePhoneNumber(
         @Args(UserVerifyOtpInput.name) input: UserVerifyOtpInput,
         @Context() ctx: any,
     ) {
@@ -46,7 +50,7 @@ export class UserResolver {
     }
 
     @Mutation(() => UserVerifyOtpType)
-    changePassword(
+    public changePassword(
         @Args(UserChangePasswordInput.name) input: UserChangePasswordInput,
         @Context() ctx: any,
     ) {
@@ -55,4 +59,21 @@ export class UserResolver {
             input,
         )
     }
+
+    @Query(() => UserType)
+    public getUser(
+        @Context() ctx: any
+    ) {
+        return this._authService.getUser(ctx.req.headers.authorization)
+    }
+
+    @ResolveField('profiles',() => [ProfileType])
+    public profiles(
+        @Parent() user: UserType,
+        @Context() ctx,
+    ) {
+
+        return this._authService.getProfiles(ctx.req.headers.authorization)
+    }
+
 }

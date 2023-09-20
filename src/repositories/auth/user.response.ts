@@ -8,3 +8,12 @@ export class OtpChangePhoneResponse {
 export class OtpVerifyPhoneResponse {
     public status: boolean
 }
+
+
+export class UserResponse {
+    public id: string
+    public email: string
+    public status: string
+    public emailVerificationStatus: string
+    public verifiedPhoneNumber: string
+}

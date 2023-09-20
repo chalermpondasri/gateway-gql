@@ -1,7 +1,6 @@
 import {
     Inject,
     Injectable,
-    LoggerService,
 } from '@nestjs/common'
 import {
     CreateUserRequest,
@@ -9,14 +8,11 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
-    concatMap,
     from,
     map,
     Observable,
-    toArray,
 } from 'rxjs'
 import {
-    BaseProfileType,
     BaseUserType,
     CategoryType,
     CreateUserResponseType,
@@ -31,11 +27,11 @@ import {
     CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
-    VerifyEmailInput,
     UpdateProfilePinInput,
-    VerifyOtpInput,
-    UserVerifyOtpInput,
     UserChangePasswordInput,
+    UserVerifyOtpInput,
+    VerifyEmailInput,
+    VerifyOtpInput,
 } from '@/types/inputs'
 import {
     instanceToPlain,
@@ -45,7 +41,6 @@ import { TokenType } from '@/types/objects/token.type'
 
 @Injectable()
 export class AuthService {
-    private readonly _logger: LoggerService
 
     constructor(
         @Inject(ProviderName.AUTH_REPOSITORY)
@@ -135,10 +130,10 @@ export class AuthService {
         return token.substring(token.indexOf(' ')+1)
     }
 
-    public getProfiles(token: string): Observable<BaseProfileType[]>{
+    public getProfiles(token: string): Observable<ProfileType[]>{
         return this._authRepository.getProfiles(this._extractJwt(token)).pipe(
             map((profile) =>{    
-                return plainToInstance(Array<BaseProfileType>, instanceToPlain(profile.data))
+                return plainToInstance(Array<ProfileType>, instanceToPlain(profile.data))
             }),
         )
     }
@@ -191,6 +186,12 @@ export class AuthService {
           .pipe(
             map(data => plainToInstance(ProfileHasAccountInformationType, data))
           )
+    }
+
+    public getUser(token: string): Observable<UserType> {
+        return this._authRepository.getCurrentUser(this._extractJwt(token)).pipe(
+            map( data => plainToInstance(UserType, data))
+        )
     }
 
 }
