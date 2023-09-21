@@ -13,7 +13,6 @@ import {
     Observable,
 } from 'rxjs'
 import {
-    BaseProfileType,
     BaseUserType,
     CategoryType,
     CreateUserResponseType,
@@ -28,11 +27,11 @@ import {
     CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
-    VerifyEmailInput,
     UpdateProfilePinInput,
-    VerifyOtpInput,
-    UserVerifyOtpInput,
     UserChangePasswordInput,
+    UserVerifyOtpInput,
+    VerifyEmailInput,
+    VerifyOtpInput,
 } from '@/types/inputs'
 import {
     instanceToPlain,
@@ -131,10 +130,10 @@ export class AuthService {
         return token.substring(token.indexOf(' ')+1)
     }
 
-    public getProfiles(token: string): Observable<BaseProfileType[]>{
+    public getProfiles(token: string): Observable<ProfileType[]>{
         return this._authRepository.getProfiles(this._extractJwt(token)).pipe(
             map((profile) =>{    
-                return plainToInstance(Array<BaseProfileType>, instanceToPlain(profile.data))
+                return plainToInstance(Array<ProfileType>, instanceToPlain(profile.data))
             }),
         )
     }
@@ -187,6 +186,12 @@ export class AuthService {
           .pipe(
             map(data => plainToInstance(ProfileHasAccountInformationType, data))
           )
+    }
+
+    public getUser(token: string): Observable<UserType> {
+        return this._authRepository.getCurrentUser(this._extractJwt(token)).pipe(
+            map( data => plainToInstance(UserType, data))
+        )
     }
 
     public revokeSessions(token: string): Observable<string[]> {

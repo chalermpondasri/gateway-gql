@@ -7,7 +7,7 @@ export class CreateUserResponse extends BaseUserResponse{
     public otpToken: string
 }
 
-export class UserResponse  {
+export class VerifyEmailUserResponse  {
     public id: string
     public email: string
     public name?: string

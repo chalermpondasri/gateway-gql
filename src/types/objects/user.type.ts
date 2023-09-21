@@ -5,6 +5,10 @@ import {
     Int,
     ObjectType,
 } from '@nestjs/graphql'
+import {
+    ProfileType,
+} from '@/types/objects/profile.type'
+import { IdStringType } from '@/types/objects/id-string.type'
 
 @ObjectType()
 export class BaseUserType {
@@ -16,7 +20,7 @@ export class BaseUserType {
 }
 
 @ObjectType()
-export class CreateUserResponseType extends BaseUserType{
+export class CreateUserResponseType extends BaseUserType {
     @Field()
     public email: string
 
@@ -25,18 +29,24 @@ export class CreateUserResponseType extends BaseUserType{
 }
 
 @ObjectType()
-export class UserType {
-    @Field(() => ID)
-    public id: string
-
+export class UserType extends IdStringType {
     @Field()
     public email: string
+
+    @Field()
+    public verifiedPhoneNumber: string
 
     @Field()
     public status: string
 
     @Field()
+    public emailVerificationStatus: string
+
+    @Field({deprecationReason: 'Moved to profile instead'})
     public dob: string
+
+    @Field(() => [ProfileType])
+    public profiles: [ProfileType]
 }
 
 @ObjectType()
@@ -44,10 +54,10 @@ export class UserRequestOtpType {
     @Field()
     public referenceNumber: string
 
-    @Field(type => Int)
+    @Field(() => Int)
     public remaining: number
 
-    @Field(type => GraphQLISODateTime)
+    @Field(() => GraphQLISODateTime)
     public expiredAt: Date
 
     @Field()

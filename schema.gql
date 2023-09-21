@@ -55,6 +55,29 @@ type TermType {
   publishedAt: String!
 }
 
+type ProfileType {
+  id: ID!
+  name: String!
+  avatar: String!
+  audienceLevel: String!
+  dob: String!
+  categories: [String!]!
+  contentRating: String!
+}
+
+type ProfileHasAccountInformationType {
+  id: ID!
+  name: String!
+  avatar: String!
+  audienceLevel: String!
+  dob: String!
+  categories: [String!]!
+  contentRating: String!
+  email: String!
+  phoneNumber: String!
+  emailVerificationStatus: String!
+}
+
 type CreateUserResponseType {
   userId: ID!
   status: String!
@@ -65,8 +88,11 @@ type CreateUserResponseType {
 type UserType {
   id: ID!
   email: String!
+  verifiedPhoneNumber: String!
   status: String!
-  dob: String!
+  emailVerificationStatus: String!
+  dob: String! @deprecated(reason: "Moved to profile instead")
+  profiles: [ProfileType!]!
 }
 
 type UserRequestOtpType {
@@ -130,36 +156,6 @@ type TokenType {
   refreshToken: String!
 }
 
-type BaseProfileType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-}
-
-type ProfileType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-  dob: String!
-  categories: [String!]!
-  contentRating: String!
-}
-
-type ProfileHasAccountInformationType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-  dob: String!
-  categories: [String!]!
-  contentRating: String!
-  email: String!
-  phoneNumber: String!
-  emailVerificationStatus: String!
-}
-
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
@@ -171,9 +167,10 @@ type Query {
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!
   getLocaleByCode(localeKey: String!): [LocalizedKeyLabelType!]!
-  getProfiles: [BaseProfileType!]!
+  getProfiles: [ProfileType!]!
   getProfileAndAccountInformation(profileId: String!): ProfileHasAccountInformationType!
   requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
+  getUser: UserType!
 }
 
 input PaginationInput {

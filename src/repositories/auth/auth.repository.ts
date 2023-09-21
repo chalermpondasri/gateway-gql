@@ -13,6 +13,7 @@ import {
     SendOtpResponse,
     UserResponse,
     UserVerifyEmailRequest,
+    VerifyEmailUserResponse,
     VerifyOtpRequest,
     VerifyOtpResponse,
 } from '@/repositories/auth'
@@ -105,7 +106,7 @@ export class AuthRepository implements IAuthRepository{
         )
     }
 
-    public verifyEmail(request: UserVerifyEmailRequest): Observable<UserResponse> {
+    public verifyEmail(request: UserVerifyEmailRequest): Observable<VerifyEmailUserResponse> {
         return from(this._axiosInstance.patch(`/user/verify/email`,request)).pipe(
             map(({data}) => {
                 return data
@@ -190,6 +191,18 @@ export class AuthRepository implements IAuthRepository{
           })
         ).pipe(
             map(res=> plainToInstance(ProfileHasAccountInformationResponse, res.data))
+        )
+    }
+
+    public getCurrentUser(token: string): Observable<UserResponse> {
+        return from(
+            this._axiosInstance.get(`/user/me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+        ).pipe(
+            map(res=> plainToInstance(UserResponse, res.data))
         )
     }
 
