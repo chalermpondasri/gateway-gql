@@ -218,4 +218,10 @@ export class AuthRepository implements IAuthRepository{
         )
     }
 
+    public getContentRating(): Observable<string[]> {
+        return from(this._axiosInstance.get<string[]>('/content-rating')).pipe(
+            map(res=> res?.data ?? [])
+        )
+    }
+
 }

@@ -200,4 +200,8 @@ export class AuthService {
         )
     }
 
+    public getContentRating(): Observable<string[]> {
+        return this._authRepository.getContentRating()
+    }
+
 }
