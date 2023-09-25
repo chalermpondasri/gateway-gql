@@ -7,7 +7,10 @@ import {
     UserRoleResponse,
 } from '@/repositories/cms'
 import { Observable } from 'rxjs'
-import { BaseRequest, IBaseRequest } from '@/repositories/cms/base.request'
+import { 
+    BaseRequest, 
+    IBaseRequest, 
+} from '@/repositories/cms/base.request'
 import { PromotionalResponse } from '@/repositories/cms/promotional.response'
 
 export interface ICmsRepository {
