@@ -22,7 +22,7 @@ import {
 
 @Resolver( () => UserType)
 export class UserResolver {
-    constructor(
+    public constructor(
         @Inject(AuthService)
         private readonly _authService: AuthService,
     ) {}

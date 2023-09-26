@@ -4,17 +4,17 @@ import {
 
 export class EnvironmentConfig {
     @IsNotEmpty()
-    declare readonly NODE_ENV: string
+    public declare readonly NODE_ENV: string
 
     @IsNotEmpty()
-    declare readonly CMS_ENDPOINT: string
+    public declare readonly CMS_ENDPOINT: string
 
     @IsNotEmpty()
-    declare readonly CMS_API_KEY
+    public declare readonly CMS_API_KEY
 
     @IsNotEmpty()
-    declare readonly AUTH_ENDPOINT: string
+    public declare readonly AUTH_ENDPOINT: string
 
     @IsNotEmpty()
-    declare readonly LOCALE_ENDPOINT: string
+    public declare readonly LOCALE_ENDPOINT: string
 }

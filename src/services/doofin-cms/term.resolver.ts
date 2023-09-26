@@ -10,7 +10,7 @@ import { TermType } from '@/types/objects'
 @Resolver(of => TermType)
 export class TermResolver {
 
-    constructor(
+    public constructor(
         @Inject(CmsService)
         private readonly _cmsService: CmsService
     ) {

@@ -30,19 +30,19 @@ import { IdStringType } from '@/types/objects/id-string.type'
 
 @Injectable()
 export class LocaleService {
-    constructor(
+    public constructor(
         @Inject(ProviderName.LOCALE_REPOSITORY)
         private readonly _localeRepository: ILocaleRepository
     ) {
     }
 
-    private extractJwt(token: string = ''){
+    private _extractJwt(token = ''){
         return token.substring(token.indexOf(' ')+1)
     }
 
     public createNewLocale(input: CreateLocaleLabelInput, token: string): Observable<IdStringType> {
         const request = plainToInstance(CreateLocaleRequest, instanceToPlain(input))
-        return this._localeRepository.createLabel(this.extractJwt(token),request).pipe(
+        return this._localeRepository.createLabel(this._extractJwt(token),request).pipe(
             map(data => {
                 const result = new IdStringType()
                 result.id = data.id
@@ -52,7 +52,7 @@ export class LocaleService {
     }
 
     public getLocale(id: string, token: string): Observable<LocaleType> {
-        return this._localeRepository.getById(this.extractJwt(token), id).pipe(
+        return this._localeRepository.getById(this._extractJwt(token), id).pipe(
             map( data => {
                 return plainToInstance(LocaleType, instanceToPlain(data))
             })
@@ -67,7 +67,7 @@ export class LocaleService {
             queryRequest.query = query
         }
 
-        return this._localeRepository.listLabels(this.extractJwt(token), queryRequest).pipe(
+        return this._localeRepository.listLabels(this._extractJwt(token), queryRequest).pipe(
             map(result => {
                 return plainToInstance(LocaleListType, instanceToPlain(result))
             })
@@ -75,7 +75,7 @@ export class LocaleService {
     }
 
     public deleteLocale(id: string, token: string): Observable<LocaleType> {
-        return this._localeRepository.deleteLabel(this.extractJwt(token), id).pipe(
+        return this._localeRepository.deleteLabel(this._extractJwt(token), id).pipe(
             map( data => {
                 return plainToInstance(LocaleType, instanceToPlain(data))
             })
@@ -83,7 +83,7 @@ export class LocaleService {
     }
 
     public patchLocale(id: string, payload: UpdateLocaleLabelInput, token: string): Observable<LocaleType> {
-        return this._localeRepository.updateLabel(this.extractJwt(token), id, payload).pipe(
+        return this._localeRepository.updateLabel(this._extractJwt(token), id, payload).pipe(
             map( data => {
                 return plainToInstance(LocaleType, instanceToPlain(data))
             })

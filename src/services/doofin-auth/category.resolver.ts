@@ -10,7 +10,7 @@ import { AuthService } from '@/services/doofin-auth/auth.service'
 
 @Resolver(() => CategoryType)
 export class CategoryResolver {
-    constructor(
+    public constructor(
         @Inject(AuthService)
         private readonly _authService: AuthService,
     ) {

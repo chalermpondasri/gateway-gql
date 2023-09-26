@@ -26,12 +26,14 @@ import {
     Logger,
 } from '@nestjs/common'
 import { LocalizedKeyLabelType } from '@/types/objects'
+import { RequestContext } from '@/providers/request-context.provider'
 
 export class LocaleRepository implements ILocaleRepository {
     private readonly _axiosInstance: AxiosInstance
 
-    constructor(
+    public constructor(
         private readonly _config: EnvironmentConfig,
+        private readonly _context: RequestContext,
         ) {
         const agent = new http.Agent({family: 4})
         this._axiosInstance = axios.create({
