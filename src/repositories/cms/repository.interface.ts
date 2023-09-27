@@ -7,7 +7,10 @@ import {
     UserRoleResponse,
 } from '@/repositories/cms'
 import { Observable } from 'rxjs'
-import { IBaseRequest } from '@/repositories/cms/base.request'
+import { 
+    BaseRequest, 
+    IBaseRequest, 
+} from '@/repositories/cms/base.request'
 import { PromotionalResponse } from '@/repositories/cms/promotional.response'
 
 export interface ICmsRepository {
@@ -15,5 +18,5 @@ export interface ICmsRepository {
     login(identifier: string, password: string): Observable<LoginResponse>
     getUserData(userId: number): Observable<UserRoleResponse>
     getPromotionalContents(): Observable<ListResponse<BaseResponse<PromotionalResponse>>>
-    getFaqs(): Observable<ListResponse<BaseResponse<FaqResponse>>>
+    getFaqs(request: BaseRequest): Observable<ListResponse<BaseResponse<FaqResponse>>>
 }
