@@ -37,7 +37,7 @@ export class CmsService {
 
     private readonly _logger: LoggerService
 
-    constructor(
+    public constructor(
         @Inject(ProviderName.CMS_REPOSITORY)
         private readonly _cmsRepository: ICmsRepository,
     ) {
@@ -114,7 +114,7 @@ export class CmsService {
         )
     }
 
-    public getFaqs(locale: string = 'en'): Observable<SubjectType[]> { 
+    public getFaqs(locale = 'en'): Observable<SubjectType[]> { 
         return this._cmsRepository.getFaqs().pipe(
             concatMap(faqResponse => from(faqResponse.data)),
             map(faq =>{

@@ -1,7 +1,7 @@
 export class FaqResponse {
-    subjectEn: string
-    subjectTh: string
+    public subjectEn: string
+    public subjectTh: string
 
-    contentEn: string
-    contentTh: string
+    public contentEn: string
+    public contentTh: string
 }

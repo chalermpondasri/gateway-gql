@@ -27,7 +27,7 @@ import {
 
 @Resolver(() => CreateUserResponseType)
 export class AuthResolver {
-    constructor(
+    public constructor(
         @Inject(AuthService)
         private readonly _authService: AuthService
     ) {

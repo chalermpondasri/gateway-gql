@@ -24,7 +24,7 @@ import http from 'http'
 export class CmsRepository implements ICmsRepository {
     private readonly _axiosInstance: AxiosInstance
 
-    constructor(config: EnvironmentConfig) {
+    public constructor(config: EnvironmentConfig) {
         const agent = new http.Agent({family: 4})
         this._axiosInstance = axios.create({
             baseURL: `${config.CMS_ENDPOINT}/api`,

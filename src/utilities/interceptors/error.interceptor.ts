@@ -13,10 +13,6 @@ import {
 
 @Injectable()
 export class ErrorsInterceptor implements NestInterceptor {
-    constructor(
-
-    ) {
-    }
     public intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {
         return next.handle().pipe(
             catchError( err => {

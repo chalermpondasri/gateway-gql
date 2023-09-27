@@ -9,7 +9,7 @@ import { CmsUserType } from '@/types/objects/cms.type'
 
 @Resolver()
 export class LocaleResolver {
-    constructor(
+    public constructor(
         @Inject(CmsService)
         private readonly _cmsService: CmsService,
     ) {
