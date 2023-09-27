@@ -3,14 +3,14 @@ import {
     ObjectType 
 } from '@nestjs/graphql';
 import { IdStringType } from './id-string.type';
-import { 
-    BaseProfileRespose, 
-    ProfileRespose 
-} from '@/repositories/auth';
+import {
+    BaseProfileResponse,
+    ProfileResponse,
+} from '@/repositories/auth'
 
 
 @ObjectType()
-export class BaseProfileType extends IdStringType implements BaseProfileRespose {
+export class BaseProfileType extends IdStringType implements BaseProfileResponse {
     @Field()
     public name: string
     @Field()
@@ -20,13 +20,15 @@ export class BaseProfileType extends IdStringType implements BaseProfileRespose 
 }
 
 @ObjectType()
-export class ProfileType extends BaseProfileType implements ProfileRespose {
+export class ProfileType extends BaseProfileType implements ProfileResponse {
     @Field()
     public dob: string
     @Field(()=> [String])
     public categories: string[]
     @Field()
     public contentRating: string
+    @Field()
+    public pinSettingStatus: string
 }
 
 @ObjectType()

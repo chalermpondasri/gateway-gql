@@ -63,6 +63,7 @@ type ProfileType {
   dob: String!
   categories: [String!]!
   contentRating: String!
+  pinSettingStatus: String!
 }
 
 type ProfileHasAccountInformationType {
@@ -73,6 +74,7 @@ type ProfileHasAccountInformationType {
   dob: String!
   categories: [String!]!
   contentRating: String!
+  pinSettingStatus: String!
   email: String!
   phoneNumber: String!
   emailVerificationStatus: String!
@@ -171,6 +173,7 @@ type Query {
   getProfileAndAccountInformation(profileId: String!): ProfileHasAccountInformationType!
   requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
   getUser: UserType!
+  getContentRating: [String!]!
 }
 
 input PaginationInput {

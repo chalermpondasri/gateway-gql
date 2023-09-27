@@ -1,5 +1,5 @@
 import {
-    BaseProfileRespose,
+    BaseProfileResponse,
     CategoryResponse,
     CreateUserRequest,
     CreateUserResponse,
@@ -8,7 +8,7 @@ import {
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
     ProfileHasAccountInformationResponse,
-    ProfileRespose,
+    ProfileResponse,
     SendOtpRequest,
     SendOtpResponse,
     UserResponse,
@@ -121,15 +121,15 @@ export class AuthRepository implements IAuthRepository {
         )
     }
 
-    public getProfiles(token: string): Observable<ListResponse<BaseProfileRespose>> {
-        return from(this._axiosInstance.get<ListResponse<BaseProfileRespose>>('user/me/profiles', {headers: {Authorization: 'Bearer ' + token}})).pipe(
+    public getProfiles(token: string): Observable<ListResponse<BaseProfileResponse>> {
+        return from(this._axiosInstance.get<ListResponse<BaseProfileResponse>>('user/me/profiles', {headers: {Authorization: 'Bearer ' + token}})).pipe(
             map(res => res.data),
         )
     }
 
-    public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileRespose> {
+    public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileResponse> {
         return from(
-            this._axiosInstance.post<ProfileRespose>(
+            this._axiosInstance.post<ProfileResponse>(
                 `user/me/profile/${arg.profileId}/pin`,
                 {newPin: arg.newPin},
                 {headers: {Authorization: 'Bearer ' + token}},
@@ -137,10 +137,10 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map((res) => res.data))
     }
 
-    public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileRespose> {
+    public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileResponse> {
         const {newPin, oldPin} = arg
         return from(
-            this._axiosInstance.patch<ProfileRespose>(
+            this._axiosInstance.patch<ProfileResponse>(
                 `user/me/profile/${arg.profileId}/pin`,
                 {newPin, oldPin},
                 {headers: {Authorization: 'Bearer ' + token}},
