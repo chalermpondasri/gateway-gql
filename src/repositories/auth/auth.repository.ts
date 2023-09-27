@@ -106,10 +106,6 @@ export class AuthRepository implements IAuthRepository {
         return from(this._axiosInstance.post(
             `/auth/login`,
             {identity, password},
-            {
-                headers: this._context.headers,
-                withCredentials: true,
-            }
         )).pipe(
             map(({data}) => {
                 return data
