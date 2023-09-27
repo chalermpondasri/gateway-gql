@@ -3,6 +3,7 @@ import {
     AuthResolver,
     AuthService,
     CategoryResolver,
+    ResourceResolver,
     LocaleService,
     ProfileResolver,
     UserResolver,
@@ -24,6 +25,7 @@ import { LocaleResolver } from '@/services/doofin-auth/locale.resolver'
         LocaleService,
         ProfileResolver,
         UserResolver,
+        ResourceResolver,
     ],
 })
 export class AuthModule {}
