@@ -37,7 +37,7 @@ export class CmsService {
 
     private readonly _logger: LoggerService
 
-    constructor(
+    public constructor(
         @Inject(ProviderName.CMS_REPOSITORY)
         private readonly _cmsRepository: ICmsRepository,
     ) {

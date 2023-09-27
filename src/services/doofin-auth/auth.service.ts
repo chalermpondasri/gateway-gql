@@ -42,7 +42,7 @@ import { TokenType } from '@/types/objects/token.type'
 @Injectable()
 export class AuthService {
 
-    constructor(
+    public constructor(
         @Inject(ProviderName.AUTH_REPOSITORY)
         private readonly _authRepository: IAuthRepository,
     ) {
@@ -126,7 +126,7 @@ export class AuthService {
 
     }
 
-    private _extractJwt(token: string = ''){
+    private _extractJwt(token = ''){
         return token.substring(token.indexOf(' ')+1)
     }
 
@@ -198,6 +198,10 @@ export class AuthService {
         return this._authRepository.revokeSessions(this._extractJwt(token)).pipe(
             map(data => data.ids)
         )
+    }
+
+    public getContentRating(): Observable<string[]> {
+        return this._authRepository.getContentRating()
     }
 
 }

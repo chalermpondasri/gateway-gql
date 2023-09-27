@@ -18,7 +18,7 @@ import {
 
 @Resolver(() => ProfileType)
 export class ProfileResolver {
-    constructor(
+    public constructor(
         @Inject(AuthService)
         private readonly _authService: AuthService,
     ) {

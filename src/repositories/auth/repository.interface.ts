@@ -48,6 +48,7 @@ export interface IAuthRepository {
     getProfileAndAccountInformation(token: string, profileId: string): Observable<ProfileHasAccountInformationResponse>
     getCurrentUser(token: string): Observable<UserResponse>
     revokeSessions(token: string): Observable<{ids: string[]}>
+    getContentRating(): Observable<string[]>
 }
 
 export interface ILocaleRepository {

@@ -1,6 +1,6 @@
 export class ListResponse<T>{
-    data: T[]
-    meta: ResponseMeta
+    public data: T[]
+    public meta: ResponseMeta
 }
 
 export class ResponseMeta {

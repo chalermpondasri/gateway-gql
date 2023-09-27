@@ -10,7 +10,7 @@ import { parse } from 'accept-language-parser'
 
 @Resolver()
 export class PromotionResolver {
-    constructor(
+    public constructor(
         @Inject(CmsService)
         private readonly _cmsService: CmsService,
     ) {

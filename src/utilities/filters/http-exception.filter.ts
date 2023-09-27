@@ -10,7 +10,7 @@ import {
 
 @Catch(HttpException)
 export class GqlHttpExceptionFilter implements GqlExceptionFilter {
-    catch(exception: HttpException, host: ArgumentsHost) {
+    public catch(exception: HttpException, host: ArgumentsHost) {
         const gqlHost = GqlArgumentsHost.create(host)
         return exception
     }

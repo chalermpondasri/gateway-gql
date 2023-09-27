@@ -21,7 +21,7 @@ import { PaginationInput } from '@/types/inputs/pagination.input'
 
 @Resolver()
 export class LocaleResolver {
-    constructor(
+    public constructor(
         @Inject(LocaleService)
         private readonly _localeService: LocaleService
     ) {
