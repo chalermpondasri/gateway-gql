@@ -232,4 +232,27 @@ export class AuthRepository implements IAuthRepository {
         )
     }
 
+    public requestToChangeEmail(token: string, newEmail: string): Observable<Omit<OtpChangePhoneResponse, 'remaining'>> {
+        return from(
+            this._axiosInstance.post(`/user/me/request/email`,
+            {email: newEmail},
+            {headers: {Authorization: `Bearer ${token}`}},
+            )
+        ).pipe(
+            map(res => res.data)
+        )
+    }
+
+    public verifyToChangeEmail(token: string, input: UserVerifyOtpInput): Observable<OtpVerifyPhoneResponse> {
+        return from(
+            this._axiosInstance.patch('/user/me/verify/email', input, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+        ).pipe(
+            map((res) => plainToInstance(OtpVerifyPhoneResponse, res.data))
+        )        
+    }
+
 }
