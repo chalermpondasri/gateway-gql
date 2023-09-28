@@ -1,5 +1,6 @@
 import {
     ProfileType,
+    UserRequestEmailType,
     UserRequestOtpType,
     UserType,
     UserVerifyOtpType,
@@ -74,6 +75,28 @@ export class UserResolver {
     ) {
 
         return this._authService.getProfiles(ctx.req.headers.authorization)
+    }
+
+    @Mutation(() => UserRequestEmailType)
+    public requestToChangeEmail(
+        @Context() ctx: any,
+        @Args('newEmail') newEmail: string,
+    ){
+        return this._authService.requestToChangeEmail(
+            ctx.req.headers.authorization,
+            newEmail,
+        )
+    }
+
+    @Mutation(() => UserVerifyOtpType)
+    public verifyToChangeEmail(
+        @Args(UserVerifyOtpInput.name) input: UserVerifyOtpInput,
+        @Context() ctx: any,
+    ) {
+       return this._authService.verifyToChangeEmail(
+        ctx.req.headers.authorization,
+        input,
+       )
     }
 
 }

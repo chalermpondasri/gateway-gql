@@ -13,6 +13,7 @@ import {
     localeRepositoryProvider,
 } from '@/providers/auth.provider'
 import { LocaleResolver } from '@/services/doofin-auth/locale.resolver'
+import { CmsModule } from './cms.module'
 
 @Module({
     providers: [
@@ -27,5 +28,6 @@ import { LocaleResolver } from '@/services/doofin-auth/locale.resolver'
         UserResolver,
         ResourceResolver,
     ],
+    imports: [ CmsModule ],
 })
 export class AuthModule {}

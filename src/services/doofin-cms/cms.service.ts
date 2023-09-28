@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 import {
     concatMap,
+    filter,
     from,
     map,
     mergeMap,
@@ -18,18 +19,22 @@ import {
 import { ICmsRepository } from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
 import { ProviderName } from '@/constants/provider-name.const'
-import { TermType } from '@/types/objects'
-import {
+import { 
+    AvatarType, 
+    TermType, 
     CmsPromotionalContentType,
     CmsRoleType,
     CmsUserType,
-} from '@/types/objects/cms.type'
+} from '@/types/objects'
 import {
     instanceToPlain,
     plainToInstance,
 } from 'class-transformer'
 import { capitalize } from 'lodash/fp'
-import { get } from 'lodash'
+import { 
+    get,
+    isEqual,  
+} from 'lodash'
 import { SubjectType } from '@/types/objects/subject.type'
 
 @Injectable()
@@ -130,6 +135,27 @@ export class CmsService {
                 return result
             }),
             toArray()
+        )
+    }
+
+    public getAvatars(id: number): Observable<AvatarType[]>{
+        return this._cmsRepository.getAvatars().pipe(
+            concatMap(avatarRes=> avatarRes.data),
+            filter((e)=>{
+                if(id){
+                    return isEqual(e.id, id)
+                }
+                return true
+            }),
+            map((res)=>{
+                const preMap = new AvatarType()
+                preMap.id = res.id
+                preMap.color = res.attributes.color
+                preMap.resourcePath = res.attributes.resourcePath.data.attributes               
+                return preMap
+            }),
+            toArray(),
+
         )
     }
 
