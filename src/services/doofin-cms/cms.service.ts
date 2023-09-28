@@ -18,12 +18,13 @@ import {
 import { ICmsRepository } from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
 import { ProviderName } from '@/constants/provider-name.const'
-import { TermType } from '@/types/objects'
-import {
+import { 
+    AvatarType, 
+    TermType, 
     CmsPromotionalContentType,
     CmsRoleType,
     CmsUserType,
-} from '@/types/objects/cms.type'
+} from '@/types/objects'
 import {
     instanceToPlain,
     plainToInstance,
@@ -128,6 +129,16 @@ export class CmsService {
                 result.content =  get(faq, `attributes.content${langSuffix}`) ?? get(faq, `attributes.contentEn}`)
                 result.subject =  get(faq, `attributes.subject${langSuffix}`) ?? get(faq, `attributes.subjectEn}`)              
                 return result
+            }),
+            toArray()
+        )
+    }
+
+    public getAvatars(): Observable<AvatarType[]>{
+        return this._cmsRepository.getAvatars().pipe(
+            concatMap(avatarRes=> avatarRes.data),
+            map(({ attributes })=>{
+                return plainToInstance(AvatarType, attributes)
             }),
             toArray()
         )

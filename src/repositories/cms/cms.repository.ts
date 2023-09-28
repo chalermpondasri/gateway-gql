@@ -6,6 +6,7 @@ import {
     UserRoleResponse,
     BaseResponse,
     FaqResponse,
+    AvatarResponse,
 } from '@/repositories/cms'
 import {
     from,
@@ -88,4 +89,13 @@ export class CmsRepository implements ICmsRepository {
             map(result => result.data),
         )
     }
+
+    public getAvatars(): Observable<ListResponse<BaseResponse<AvatarResponse>>> {
+        const path = `/avatars`
+        const promise = this._axiosInstance.get(path)
+        return from(promise).pipe(
+            map(result => result.data),
+        )
+    }
+
 }

@@ -14,6 +14,7 @@ import { FaqResolver } from '@/services/doofin-cms/faq.resolver'
         LocaleResolver,
         PromotionResolver,
         FaqResolver,
-    ]
+    ],
+    exports: [ CmsService ]
 })
 export class CmsModule {}
