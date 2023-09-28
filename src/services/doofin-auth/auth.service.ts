@@ -19,6 +19,7 @@ import {
     ProfileHasAccountInformationType,
     ProfileType,
     RequestOtpType,
+    UserRequestEmailType,
     UserRequestOtpType,
     UserType,
     UserVerifyOtpType,
@@ -202,6 +203,16 @@ export class AuthService {
 
     public getContentRating(): Observable<string[]> {
         return this._authRepository.getContentRating()
+    }
+
+    public requestToChangeEmail(token: string, newEmail: string): Observable<UserRequestEmailType>{
+        return this._authRepository.requestToChangeEmail(this._extractJwt(token), newEmail)
+    }
+
+    public verifyToChangeEmail(token: string, input: UserVerifyOtpInput): Observable<UserVerifyOtpType> {
+        return this._authRepository
+          .verifyToChangeEmail(this._extractJwt(token), input)
+          .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
     }
 
 }
