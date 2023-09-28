@@ -70,3 +70,12 @@ export class CmsPromotionalContentType extends IdType {
     @Field( () => CmsImageType)
     public imageMobile: CmsImageType
 }
+
+@ObjectType()
+export class AvatarType extends IdType {
+    @Field(()=> CmsImageType)
+    public resourcePath: CmsImageType
+
+    @Field()
+    public color: string
+}

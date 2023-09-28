@@ -1,4 +1,5 @@
 import {
+    AvatarResponse,
     BaseResponse,
     FaqResponse,
     ListResponse,
@@ -19,4 +20,5 @@ export interface ICmsRepository {
     getUserData(userId: number): Observable<UserRoleResponse>
     getPromotionalContents(): Observable<ListResponse<BaseResponse<PromotionalResponse>>>
     getFaqs(request: BaseRequest): Observable<ListResponse<BaseResponse<FaqResponse>>>
+    getAvatars(): Observable<ListResponse<BaseResponse<AvatarResponse>>>
 }
