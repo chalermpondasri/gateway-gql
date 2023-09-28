@@ -16,6 +16,7 @@ import {
     BaseUserType,
     CategoryType,
     CreateUserResponseType,
+    DeviceSessionType,
     ProfileHasAccountInformationType,
     ProfileType,
     RequestOtpType,
@@ -195,14 +196,20 @@ export class AuthService {
         )
     }
 
-    public revokeSessions(token: string): Observable<string[]> {
-        return this._authRepository.revokeSessions(this._extractJwt(token)).pipe(
+    public revokeSessions(): Observable<string[]> {
+        return this._authRepository.flushSessions().pipe(
             map(data => data.ids)
         )
     }
 
     public getContentRating(): Observable<string[]> {
         return this._authRepository.getContentRating()
+    }
+    public getUserSessions(): Observable<DeviceSessionType[]> {
+        return this._authRepository.listUserSessions().pipe(
+            map( data => plainToInstance(DeviceSessionType, data))
+        )
+
     }
 
     public requestToChangeEmail(token: string, newEmail: string): Observable<UserRequestEmailType>{

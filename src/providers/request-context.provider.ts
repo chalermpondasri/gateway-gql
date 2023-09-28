@@ -18,23 +18,29 @@ import {
 } from 'express'
 import {
     EMPTY,
-    mergeMap,
     of,
     tap,
 } from 'rxjs'
-import { v4 } from 'uuid'
 import { ProviderName } from '@/constants/provider-name.const'
 import { extractTokenFromHeader } from '@/utilities/token.util'
+import { pick } from 'lodash'
 export class RequestContext {
     public readonly ts = Date.now()
     public request: Request
     public languages: Language[] = []
-    public cookies: Record<string, any>
     public headers: any
     public token: string
 
     public parseLanguageFromHeader(acceptLang: string): void {
         this.languages = parse(acceptLang)
+    }
+
+    public getHeaders(): Record<string,string> {
+        return pick(this.headers, [
+            'authorization',
+            'accept-language',
+            'user-agent',
+        ])
     }
 }
 
@@ -57,10 +63,6 @@ export class RequestContextMiddleware implements NestMiddleware {
                 tap((r) => {
                     this._rc.headers = r.headers
 
-                    if (!r.cookies['machineId']) {
-                        res.cookie('machineId', v4())
-                    }
-                    this._rc.cookies = r.cookies
                     this._rc.request = r
 
                     this._rc.parseLanguageFromHeader(r.headers['accept-language'] ?? 'en')

@@ -19,6 +19,7 @@ import {
     BaseProfileResponse,
     ProfileResponse,
     ProfileHasAccountInformationResponse,
+    DeviceSessionResponse,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
@@ -47,7 +48,9 @@ export interface IAuthRepository {
     changePassword(token: string, input: UserChangePasswordInput): Observable<OtpVerifyPhoneResponse>
     getProfileAndAccountInformation(token: string, profileId: string): Observable<ProfileHasAccountInformationResponse>
     getCurrentUser(token: string): Observable<UserResponse>
-    revokeSessions(token: string): Observable<{ids: string[]}>
+    listUserSessions(): Observable<DeviceSessionResponse[]>
+    revokeSingleSession(sessionId: string): Observable<DeviceSessionResponse>
+    flushSessions(): Observable<{ids: string[]}>
     getContentRating(): Observable<string[]>
     requestToChangeEmail(token: string, newEmail: string): Observable<Omit<OtpChangePhoneResponse, 'remaining'>>
     verifyToChangeEmail(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>

@@ -12,6 +12,7 @@ import { Observable } from 'rxjs'
 
 import {
     CreateUserResponseType,
+    DeviceSessionType,
     RequestOtpType,
     TokenType,
     UserType,
@@ -78,7 +79,11 @@ export class AuthResolver {
     }
 
     @Mutation(() => [String])
-    public revokeUserSessions(@Context() ctx: any) {
-        return this._authService.revokeSessions(ctx.req.headers.authorization)
+    public revokeUserSessions() {
+        return this._authService.revokeSessions()
+    }
+    @Query(() => [DeviceSessionType])
+    public getUserSessions() {
+        return this._authService.getUserSessions()
     }
 }
