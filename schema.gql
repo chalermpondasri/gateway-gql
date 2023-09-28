@@ -158,6 +158,12 @@ type TokenType {
   refreshToken: String!
 }
 
+type DeviceSessionType {
+  id: ID!
+  deviceName: String!
+  lastAccess: DateTime!
+}
+
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
@@ -165,6 +171,7 @@ type Query {
   getFAQs: [SubjectType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
+  getUserSessions: [DeviceSessionType!]!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!

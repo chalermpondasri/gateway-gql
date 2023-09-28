@@ -3,6 +3,7 @@ import {
     CategoryResponse,
     CreateUserRequest,
     CreateUserResponse,
+    DeviceSessionResponse,
     IAuthRepository,
     ListResponse,
     OtpChangePhoneResponse,
@@ -49,7 +50,7 @@ export class AuthRepository implements IAuthRepository {
         this._axiosInstance = axios.create({
             baseURL: `${config.AUTH_ENDPOINT}`,
             httpAgent: agent,
-            withCredentials: true,
+            headers: this._context.getHeaders()
         })
         this._axiosInstance.interceptors.response.use(null, error => {
             throw new BadRequestException(error?.response?.data)
@@ -103,6 +104,7 @@ export class AuthRepository implements IAuthRepository {
     }
 
     public login(identity: string, password: string): Observable<{ accessToken: string; refreshToken: string }> {
+        console.log(this._axiosInstance.defaults.headers)
         return from(this._axiosInstance.post(
             `/auth/login`,
             {identity, password},
@@ -214,12 +216,24 @@ export class AuthRepository implements IAuthRepository {
         )
     }
 
-    public revokeSessions(token: string): Observable<{ ids: string[] }> {
-        const promise = this._axiosInstance.delete(`/auth/sessions`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
+    public listUserSessions(): Observable<DeviceSessionResponse[]> {
+        const promise = this._axiosInstance.get(`/user/me/sessions`)
+        return from(promise).pipe(
+            map( res => {
+                return plainToInstance(DeviceSessionResponse,<Array<object>>res.data)
+            })
+        )
+    }
+
+    public revokeSingleSession(sessionId: string): Observable<DeviceSessionResponse> {
+        const promise = this._axiosInstance.delete(`/user/me/session/${sessionId}`)
+        return from(promise).pipe(
+            map( res => res.data)
+        )
+    }
+
+    public flushSessions(): Observable<{ ids: string[] }> {
+        const promise = this._axiosInstance.delete(`/user/me/sessions`)
 
         return from(promise).pipe(
             map(res => res.data),
