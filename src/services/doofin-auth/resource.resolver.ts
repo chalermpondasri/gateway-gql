@@ -1,5 +1,7 @@
 import { Inject } from "@nestjs/common";
 import { 
+  Args,
+  Int,
   Query, 
   Resolver, 
 } from "@nestjs/graphql";
@@ -22,8 +24,8 @@ export class ResourceResolver {
     }
 
     @Query(() => [AvatarType])
-    public getAvatars(){
-      return this._cmsService.getAvatars()
+    public getAvatars(@Args('id', { type: () => Int, nullable: true }) id: number){
+      return this._cmsService.getAvatars(id)
     }
 
 }
