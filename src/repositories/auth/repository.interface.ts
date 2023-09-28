@@ -49,6 +49,8 @@ export interface IAuthRepository {
     getCurrentUser(token: string): Observable<UserResponse>
     revokeSessions(token: string): Observable<{ids: string[]}>
     getContentRating(): Observable<string[]>
+    requestToChangeEmail(token: string, newEmail: string): Observable<Omit<OtpChangePhoneResponse, 'remaining'>>
+    verifyToChangeEmail(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
 }
 
 export interface ILocaleRepository {

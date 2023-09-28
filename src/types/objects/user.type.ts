@@ -69,3 +69,15 @@ export class UserVerifyOtpType {
     @Field(() => Boolean)
     public status: boolean
 }
+
+@ObjectType()
+export class UserRequestEmailType {
+    @Field()
+    public referenceNumber: string
+
+    @Field(() => GraphQLISODateTime)
+    public expiredAt: Date
+
+    @Field()
+    public token: string
+}
