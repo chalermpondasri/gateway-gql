@@ -91,10 +91,10 @@ export class CmsRepository implements ICmsRepository {
     }
 
     public getAvatars(): Observable<ListResponse<BaseResponse<AvatarResponse>>> {
-        const path = `/avatars`
+        const path = `/avatars?populate=*`
         const promise = this._axiosInstance.get(path)
         return from(promise).pipe(
-            map(result => result.data),
+            map(result =>  result.data),
         )
     }
 

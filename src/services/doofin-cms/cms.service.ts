@@ -137,8 +137,12 @@ export class CmsService {
     public getAvatars(): Observable<AvatarType[]>{
         return this._cmsRepository.getAvatars().pipe(
             concatMap(avatarRes=> avatarRes.data),
-            map(({ attributes })=>{
-                return plainToInstance(AvatarType, attributes)
+            map((res)=>{
+                const preMap = new AvatarType()
+                preMap.id = res.id
+                preMap.color = res.attributes.color
+                preMap.resourcePath = res.attributes.resourcePath.data.attributes               
+                return preMap
             }),
             toArray()
         )
