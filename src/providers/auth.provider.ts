@@ -3,15 +3,18 @@ import { ProviderName } from '@/constants/provider-name.const'
 import { AuthRepository } from '@/repositories/auth/auth.repository'
 import { LocaleRepository } from '@/repositories/auth/locale.repository'
 import { EnvironmentConfig } from '@/models/common'
-import { RequestContext } from '@/providers/request-context.provider'
+import { AxiosInstance } from 'axios'
 
 export const authRepositoryProvider: Provider = {
     provide: ProviderName.AUTH_REPOSITORY,
     inject: [
         ProviderName.ENV_CONFIG,
-        ProviderName.REQUEST_CONTEXT,
+        ProviderName.HTTP_CLIENT,
     ],
-    useFactory: (config: EnvironmentConfig, context: RequestContext) => new AuthRepository(config, context)
+    useFactory: (config: EnvironmentConfig, client: AxiosInstance) => {
+        client.defaults.baseURL = config.AUTH_ENDPOINT
+        return new AuthRepository(client)
+    }
 
 }
 
@@ -19,7 +22,10 @@ export const localeRepositoryProvider: Provider = {
     provide: ProviderName.LOCALE_REPOSITORY,
     inject: [
         ProviderName.ENV_CONFIG,
-        ProviderName.REQUEST_CONTEXT,
+        ProviderName.HTTP_CLIENT,
     ],
-    useFactory: (config: EnvironmentConfig, context: RequestContext) => new LocaleRepository(config, context)
+    useFactory: (config: EnvironmentConfig, client: AxiosInstance) => {
+        client.defaults.baseURL = `${config.LOCALE_ENDPOINT}/i18n`
+        return new LocaleRepository( client, config)
+    }
 }

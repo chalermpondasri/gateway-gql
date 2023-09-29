@@ -18,32 +18,16 @@ import {
     LocalizedKeyLabelResponse,
 } from '@/repositories/auth/locale.response'
 import { ListResponse } from '@/repositories/auth/list.response'
-import { EnvironmentConfig } from '@/models/common'
-import http from 'http'
-import axios, { AxiosInstance } from 'axios'
-import {
-    BadRequestException,
-    Logger,
-} from '@nestjs/common'
+import { AxiosInstance } from 'axios'
 import { LocalizedKeyLabelType } from '@/types/objects'
-import { RequestContext } from '@/providers/request-context.provider'
+import { EnvironmentConfig } from '@/models/common'
 
 export class LocaleRepository implements ILocaleRepository {
-    private readonly _axiosInstance: AxiosInstance
 
     public constructor(
+        private readonly _axiosInstance: AxiosInstance,
         private readonly _config: EnvironmentConfig,
-        private readonly _context: RequestContext,
         ) {
-        const agent = new http.Agent({family: 4})
-        this._axiosInstance = axios.create({
-            baseURL: `${_config.LOCALE_ENDPOINT}/i18n`,
-            httpAgent: agent,
-        })
-        this._axiosInstance.interceptors.response.use(null, error => {
-            Logger.error(error, LocaleRepository.name)
-            throw new BadRequestException(error?.response?.data)
-        })
     }
     public createLabel(token: string,request: CreateLocaleRequest): Observable<IdResponse> {
         const opts = {

@@ -69,6 +69,8 @@ export class RequestContextMiddleware implements NestMiddleware {
                         res.cookie('did', did)
                         this._rc.deviceId = did
                     }
+
+                    this._rc.deviceId = req.cookies['did']
                     this._rc.headers = r.headers
 
                     this._rc.request = r

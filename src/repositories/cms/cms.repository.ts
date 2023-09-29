@@ -1,41 +1,28 @@
 import {
-    ListResponse,
+    AvatarResponse,
+    BaseResponse,
+    FaqResponse,
     ICmsRepository,
+    ListResponse,
     LoginResponse,
     TermResponse,
     UserRoleResponse,
-    BaseResponse,
-    FaqResponse,
-    AvatarResponse,
 } from '@/repositories/cms'
 import {
     from,
     map,
     Observable,
 } from 'rxjs'
-import {
-    BaseRequest,
-} from '@/repositories/cms/base.request'
-import { EnvironmentConfig } from '@/models/common'
-import axios, { AxiosInstance } from 'axios'
+import { BaseRequest } from '@/repositories/cms/base.request'
+import { AxiosInstance } from 'axios'
 import * as querystring from 'querystring'
 import { PromotionalResponse } from '@/repositories/cms/promotional.response'
-import http from 'http'
 import { isNil } from 'lodash'
 
 export class CmsRepository implements ICmsRepository {
-    private readonly _axiosInstance: AxiosInstance
-
-    public constructor(config: EnvironmentConfig) {
-        const agent = new http.Agent({family: 4})
-        this._axiosInstance = axios.create({
-            baseURL: `${config.CMS_ENDPOINT}/api`,
-            httpAgent: agent,
-            headers: {
-                Authorization: `Bearer ${config.CMS_API_KEY}`,
-            },
-        })
-
+    public constructor(
+        private readonly _axiosInstance: AxiosInstance
+    ) {
     }
 
     public getTermsAndConditions(request: BaseRequest): Observable<ListResponse<TermResponse>> {
