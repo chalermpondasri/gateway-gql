@@ -1,13 +1,16 @@
 import {
-    ProfileHasAccountInformationType,
+    AvatarType,
     ProfileType,
+    UserType,
 } from '@/types/objects'
 import { Inject } from '@nestjs/common'
 import {
     Args,
     Context,
     Mutation,
+    Parent,
     Query,
+    ResolveField,
     Resolver,
 } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
@@ -15,12 +18,16 @@ import {
     CreateProfilePinInput,
     UpdateProfilePinInput,
 } from '@/types/inputs'
+import { CmsService } from '../doofin-cms/cms.service'
+import { map } from 'rxjs'
 
-@Resolver(() => ProfileType)
+@Resolver(() =>  ProfileType)
 export class ProfileResolver {
     public constructor(
         @Inject(AuthService)
         private readonly _authService: AuthService,
+        @Inject(CmsService) 
+        private readonly _cmsService: CmsService,
     ) {
     }
 
@@ -45,11 +52,26 @@ export class ProfileResolver {
         return this._authService.changeProfilePin(ctx.req.headers.authorization, arg)
     }
 
-    @Query(() => ProfileHasAccountInformationType)
+    @Query(() => ProfileType)
     public getProfileAndAccountInformation(
         @Context() ctx: any,
         @Args('profileId') profileId: string,
     ) {
-        return this._authService.getProfileAndAccountInformation(ctx.req.headers.authorization, profileId)
+        return this._authService.getProfileInformation(ctx.req.headers.authorization, profileId)
+    }
+
+    @ResolveField('avatar',() => AvatarType)
+    public avatar(
+        @Parent() parent: ProfileType,
+       
+    ) {
+        return this._cmsService.getAvatars((parent.avatar as unknown as number)).pipe(
+            map(res=> res[0] ?? {})
+        )
+    }
+
+    @ResolveField('userAccount',() => UserType)
+    public userAccount(@Context() ctx: any) {
+       return this._authService.getUser(ctx.req.headers.authorization)
     }
 }

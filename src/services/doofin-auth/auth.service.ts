@@ -17,7 +17,6 @@ import {
     CategoryType,
     CreateUserResponseType,
     DeviceSessionType,
-    ProfileHasAccountInformationType,
     ProfileType,
     RequestOtpType,
     UserRequestEmailType,
@@ -182,17 +181,17 @@ export class AuthService {
           .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
     }
 
-    public getProfileAndAccountInformation(token: string, profileId: string): Observable<ProfileHasAccountInformationType>{
+    public getProfileInformation(token: string, profileId: string): Observable<ProfileType>{
         return this._authRepository
-          .getProfileAndAccountInformation(this._extractJwt(token), profileId)
+          .getProfileById(this._extractJwt(token), profileId)
           .pipe(
-            map(data => plainToInstance(ProfileHasAccountInformationType, data))
+            map(data => plainToInstance(ProfileType, data))
           )
     }
 
     public getUser(token: string): Observable<UserType> {
         return this._authRepository.getCurrentUser(this._extractJwt(token)).pipe(
-            map( data => plainToInstance(UserType, data))
+            map(data => plainToInstance(UserType, data))
         )
     }
 

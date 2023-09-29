@@ -1,26 +1,24 @@
 import { 
     Field, 
-    ObjectType 
+    ObjectType, 
 } from '@nestjs/graphql';
 import { IdStringType } from './id-string.type';
-import {
-    BaseProfileResponse,
-    ProfileResponse,
-} from '@/repositories/auth'
+import { AvatarType } from './cms.type';
+import { UserType } from './user.type';
 
 
 @ObjectType()
-export class BaseProfileType extends IdStringType implements BaseProfileResponse {
+export class BaseProfileType extends IdStringType  {
     @Field()
     public name: string
-    @Field()
-    public avatar: string
+    @Field(()=> AvatarType)
+    public avatar: AvatarType
     @Field()
     public audienceLevel: string
 }
 
 @ObjectType()
-export class ProfileType extends BaseProfileType implements ProfileResponse {
+export class ProfileType extends BaseProfileType  {
     @Field()
     public dob: string
     @Field(()=> [String])
@@ -29,16 +27,7 @@ export class ProfileType extends BaseProfileType implements ProfileResponse {
     public contentRating: string
     @Field()
     public pinSettingStatus: string
+    @Field(()=> UserType)
+    public userAccount: UserType
 }
 
-@ObjectType()
-export class ProfileHasAccountInformationType extends ProfileType {
-    @Field()
-    public email: string
-
-    @Field()
-    public phoneNumber: string
-
-    @Field()
-    public emailVerificationStatus: string
-}
