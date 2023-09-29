@@ -22,39 +22,22 @@ import {
     map,
     Observable,
 } from 'rxjs'
-import { EnvironmentConfig } from '@/models/common'
-import axios, {
+import {
     AxiosInstance,
     AxiosResponse,
 } from 'axios'
-import { BadRequestException } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
-import * as http from 'http'
 import {
     CreateProfilePinInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
 } from '@/types/inputs'
-import { RequestContext } from '@/providers/request-context.provider'
 
 export class AuthRepository implements IAuthRepository {
-    private readonly _axiosInstance: AxiosInstance
-
     public constructor(
-        config: EnvironmentConfig,
-        private readonly _context: RequestContext,
-    ) {
-        const agent = new http.Agent({family: 4})
-        this._axiosInstance = axios.create({
-            baseURL: `${config.AUTH_ENDPOINT}`,
-            httpAgent: agent,
-            headers: this._context.getHeaders()
-        })
-        this._axiosInstance.interceptors.response.use(null, error => {
-            throw new BadRequestException(error?.response?.data)
-        })
-    }
+        private readonly _axiosInstance: AxiosInstance
+    ) {}
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
         return from(this._axiosInstance.post<CreateUserResponse>(`/user`, request)).pipe(
             map((result: AxiosResponse<CreateUserResponse>) => {
@@ -103,7 +86,6 @@ export class AuthRepository implements IAuthRepository {
     }
 
     public login(identity: string, password: string): Observable<{ accessToken: string; refreshToken: string }> {
-        console.log(this._axiosInstance.defaults.headers)
         return from(this._axiosInstance.post(
             `/auth/login`,
             {identity, password},
