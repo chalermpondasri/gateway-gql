@@ -8,7 +8,6 @@ import {
     ListResponse,
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
-    ProfileHasAccountInformationResponse,
     ProfileResponse,
     SendOtpRequest,
     SendOtpResponse,
@@ -192,7 +191,7 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map((res) => plainToInstance(OtpVerifyPhoneResponse, res.data)))
     }
 
-    public getProfileAndAccountInformation(token: string, profileId: string): Observable<ProfileHasAccountInformationResponse> {
+    public getProfileById(token: string, profileId: string): Observable<ProfileResponse> {
         return from(
             this._axiosInstance.get(`/user/me/profile/${profileId}`, {
                 headers: {
@@ -200,7 +199,7 @@ export class AuthRepository implements IAuthRepository {
                 },
             }),
         ).pipe(
-            map(res => plainToInstance(ProfileHasAccountInformationResponse, res.data)),
+            map(res => plainToInstance(ProfileResponse, res.data)),
         )
     }
 

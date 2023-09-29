@@ -18,7 +18,6 @@ import {
     VerifyEmailUserResponse,
     BaseProfileResponse,
     ProfileResponse,
-    ProfileHasAccountInformationResponse,
     DeviceSessionResponse,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
@@ -46,7 +45,7 @@ export interface IAuthRepository {
     requestToChangePhoneNumber(token: string,phoneNumber: string): Observable<OtpChangePhoneResponse>
     verifyToChangePhoneNumber(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
     changePassword(token: string, input: UserChangePasswordInput): Observable<OtpVerifyPhoneResponse>
-    getProfileAndAccountInformation(token: string, profileId: string): Observable<ProfileHasAccountInformationResponse>
+    getProfileById(token: string, profileId: string): Observable<ProfileResponse>
     getCurrentUser(token: string): Observable<UserResponse>
     listUserSessions(): Observable<DeviceSessionResponse[]>
     revokeSingleSession(sessionId: string): Observable<DeviceSessionResponse>
