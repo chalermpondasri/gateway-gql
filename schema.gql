@@ -2,46 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type CmsRoleType {
-  id: ID!
-  name: String!
-  description: String!
-  type: String!
-}
-
-type CmsUserType {
-  id: ID!
-  username: String!
-  email: String!
-  provider: String!
-  role: CmsRoleType!
-  jwt: String!
-}
-
-type CmsImageType {
-  id: ID!
-  width: Float!
-  height: Float!
-  hash: String!
-  ext: String!
-  mime: String!
-  url: String!
-}
-
-type CmsPromotionalContentType {
-  id: ID!
-  title: String!
-  description: String!
-  imageWeb: CmsImageType!
-  imageMobile: CmsImageType!
-}
-
-type SubjectType {
-  id: ID!
-  subject: String!
-  content: String!
-}
-
 type IdStringType {
   id: ID!
 }
@@ -113,6 +73,12 @@ type UserVerifyOtpType {
   status: Boolean!
 }
 
+type UserRequestEmailType {
+  referenceNumber: String!
+  expiredAt: DateTime!
+  token: String!
+}
+
 type RequestOtpType {
   referenceNumber: String!
   remaining: Int!
@@ -164,6 +130,52 @@ type DeviceSessionType {
   lastAccess: DateTime!
 }
 
+type CmsRoleType {
+  id: ID!
+  name: String!
+  description: String!
+  type: String!
+}
+
+type CmsUserType {
+  id: ID!
+  username: String!
+  email: String!
+  provider: String!
+  role: CmsRoleType!
+  jwt: String!
+}
+
+type CmsImageType {
+  id: ID!
+  width: Float!
+  height: Float!
+  hash: String!
+  ext: String!
+  mime: String!
+  url: String!
+}
+
+type CmsPromotionalContentType {
+  id: ID!
+  title: String!
+  description: String!
+  imageWeb: CmsImageType!
+  imageMobile: CmsImageType!
+}
+
+type AvatarType {
+  id: ID!
+  resourcePath: CmsImageType!
+  color: String!
+}
+
+type SubjectType {
+  id: ID!
+  subject: String!
+  content: String!
+}
+
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
@@ -181,6 +193,7 @@ type Query {
   requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
   getUser: UserType!
   getContentRating: [String!]!
+  getAvatars(id: Int): [AvatarType!]!
 }
 
 input PaginationInput {
@@ -202,6 +215,8 @@ type Mutation {
   changeProfilePin(UpdateProfilePinInput: UpdateProfilePinInput!): ProfileType!
   verifyToChangePhoneNumber(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
   changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
+  requestToChangeEmail(newEmail: String!): UserRequestEmailType!
+  verifyToChangeEmail(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
 }
 
 input CreateUserInput {

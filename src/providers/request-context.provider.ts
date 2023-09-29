@@ -24,12 +24,14 @@ import {
 import { ProviderName } from '@/constants/provider-name.const'
 import { extractTokenFromHeader } from '@/utilities/token.util'
 import { pick } from 'lodash'
+import { randomUUID } from 'crypto'
 export class RequestContext {
     public readonly ts = Date.now()
     public request: Request
     public languages: Language[] = []
     public headers: any
     public token: string
+    public deviceId: string
 
     public parseLanguageFromHeader(acceptLang: string): void {
         this.languages = parse(acceptLang)
@@ -61,6 +63,12 @@ export class RequestContextMiddleware implements NestMiddleware {
         return of(req)
             .pipe(
                 tap((r) => {
+
+                    if(!req.cookies['did']) {
+                        const did = randomUUID()
+                        res.cookie('did', did)
+                        this._rc.deviceId = did
+                    }
                     this._rc.headers = r.headers
 
                     this._rc.request = r
