@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    Logger,
     Provider,
     Scope,
 } from '@nestjs/common'
@@ -15,6 +16,7 @@ export const httpClientProvider: Provider = {
         ProviderName.REQUEST_CONTEXT,
     ],
     useFactory: (requestContext:RequestContext): AxiosInstance => {
+        Logger.log(requestContext.deviceId, requestContext.deviceId, ProviderName.HTTP_CLIENT)
         const agent = new http.Agent({family: 4})
         const axiosInstance = axios.create({
             httpAgent: agent,

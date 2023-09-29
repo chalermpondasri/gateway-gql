@@ -64,13 +64,9 @@ export class RequestContextMiddleware implements NestMiddleware {
             .pipe(
                 tap((r) => {
 
-                    if(!req.cookies['did']) {
-                        const did = randomUUID()
-                        res.cookie('did', did)
-                        this._rc.deviceId = did
-                    }
-
-                    this._rc.deviceId = req.cookies['did']
+                    const did = req.cookies['did'] ?? randomUUID()
+                    res.cookie('did', did)
+                    this._rc.deviceId = did
                     this._rc.headers = r.headers
 
                     this._rc.request = r

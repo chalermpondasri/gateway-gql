@@ -15,29 +15,56 @@ type TermType {
   publishedAt: String!
 }
 
+type CmsRoleType {
+  id: ID!
+  name: String!
+  description: String!
+  type: String!
+}
+
+type CmsUserType {
+  id: ID!
+  username: String!
+  email: String!
+  provider: String!
+  role: CmsRoleType!
+  jwt: String!
+}
+
+type CmsImageType {
+  id: ID!
+  width: Float!
+  height: Float!
+  hash: String!
+  ext: String!
+  mime: String!
+  url: String!
+}
+
+type CmsPromotionalContentType {
+  id: ID!
+  title: String!
+  description: String!
+  imageWeb: CmsImageType!
+  imageMobile: CmsImageType!
+}
+
+type AvatarType {
+  id: ID!
+  resourcePath: CmsImageType!
+  color: String!
+}
+
 type ProfileType {
   id: ID!
   name: String!
-  avatar: String!
+  avatar: AvatarType!
   audienceLevel: String!
   dob: String!
   categories: [String!]!
   contentRating: String!
   pinSettingStatus: String!
-}
-
-type ProfileHasAccountInformationType {
-  id: ID!
-  name: String!
-  avatar: String!
-  audienceLevel: String!
-  dob: String!
-  categories: [String!]!
-  contentRating: String!
-  pinSettingStatus: String!
-  email: String!
-  phoneNumber: String!
-  emailVerificationStatus: String!
+  userAccount: UserType!
 }
 
 type CreateUserResponseType {
@@ -130,46 +157,6 @@ type DeviceSessionType {
   lastAccess: DateTime!
 }
 
-type CmsRoleType {
-  id: ID!
-  name: String!
-  description: String!
-  type: String!
-}
-
-type CmsUserType {
-  id: ID!
-  username: String!
-  email: String!
-  provider: String!
-  role: CmsRoleType!
-  jwt: String!
-}
-
-type CmsImageType {
-  id: ID!
-  width: Float!
-  height: Float!
-  hash: String!
-  ext: String!
-  mime: String!
-  url: String!
-}
-
-type CmsPromotionalContentType {
-  id: ID!
-  title: String!
-  description: String!
-  imageWeb: CmsImageType!
-  imageMobile: CmsImageType!
-}
-
-type AvatarType {
-  id: ID!
-  resourcePath: CmsImageType!
-  color: String!
-}
-
 type SubjectType {
   id: ID!
   subject: String!
@@ -189,7 +176,7 @@ type Query {
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!
   getLocaleByCode(localeKey: String!): [LocalizedKeyLabelType!]!
   getProfiles: [ProfileType!]!
-  getProfileAndAccountInformation(profileId: String!): ProfileHasAccountInformationType!
+  getProfileAndAccountInformation(profileId: String!): ProfileType!
   requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
   getUser: UserType!
   getContentRating: [String!]!
