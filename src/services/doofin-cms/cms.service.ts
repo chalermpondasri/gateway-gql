@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common'
 import {
     concatMap,
-    filter,
     from,
     map,
     mergeMap,
@@ -33,7 +32,6 @@ import {
 import { capitalize } from 'lodash/fp'
 import { 
     get,
-    isEqual,  
 } from 'lodash'
 import { SubjectType } from '@/types/objects/subject.type'
 
@@ -139,14 +137,8 @@ export class CmsService {
     }
 
     public getAvatars(id: number): Observable<AvatarType[]>{
-        return this._cmsRepository.getAvatars().pipe(
-            concatMap(avatarRes=> avatarRes.data),
-            filter((e)=>{
-                if(id){
-                    return isEqual(e.id, id)
-                }
-                return true
-            }),
+        return this._cmsRepository.getAvatars(id).pipe(
+            concatMap(avatarRes=> from(avatarRes.data)),
             map((res)=>{
                 const preMap = new AvatarType()
                 preMap.id = res.id

@@ -21,6 +21,7 @@ import axios, { AxiosInstance } from 'axios'
 import * as querystring from 'querystring'
 import { PromotionalResponse } from '@/repositories/cms/promotional.response'
 import http from 'http'
+import { isNil } from 'lodash'
 
 export class CmsRepository implements ICmsRepository {
     private readonly _axiosInstance: AxiosInstance
@@ -90,11 +91,22 @@ export class CmsRepository implements ICmsRepository {
         )
     }
 
-    public getAvatars(): Observable<ListResponse<BaseResponse<AvatarResponse>>> {
-        const path = `/avatars?populate=*`
-        const promise = this._axiosInstance.get(path)
+    public getAvatars(id: number): Observable<ListResponse<BaseResponse<AvatarResponse>>> {
+        let path = `/avatars?populate=*`
+        if(!isNil(id)){
+            path = `/avatars/${id}?populate=*`
+        }      
+        const promise = this._axiosInstance.get<ListResponse<BaseResponse<AvatarResponse>>>(path)
         return from(promise).pipe(
-            map(result =>  result.data),
+            map(result =>  {
+                const preMap = new ListResponse<BaseResponse<AvatarResponse>>()
+                preMap.data = result.data?.data
+                preMap.meta = result.data?.meta
+                if(result.data && !Array.isArray(result.data?.data)){
+                    preMap.data = [result.data?.data]
+                }
+                return preMap
+            }),
         )
     }
 
