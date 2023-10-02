@@ -54,19 +54,24 @@ export const requestContextProvider: Provider = {
 
 @Injectable()
 export class RequestContextMiddleware implements NestMiddleware {
+    private readonly _logger: Logger
     public constructor(
         @Inject(ProviderName.REQUEST_CONTEXT)
         private readonly _rc: RequestContext,
-    ) {}
+    ) {
+        this._logger = new Logger(RequestContextMiddleware.name)
+    }
 
     public use(req: Request, res: Response, next: NextFunction) {
         return of(req)
             .pipe(
                 tap((r) => {
-
+                    this._logger.debug(`cookie id: ${req.cookies['did']}`)
                     const did = req.cookies['did'] ?? randomUUID()
+                    this._logger.debug(`target did: ${did}`)
                     res.cookie('did', did)
                     this._rc.deviceId = did
+                    this._logger.debug(`deviceId: ${this._rc.deviceId}`)
                     this._rc.headers = r.headers
 
                     this._rc.request = r
@@ -76,12 +81,14 @@ export class RequestContextMiddleware implements NestMiddleware {
                         return EMPTY
                     }
                     this._rc.token = extractTokenFromHeader(r.headers['authorization'])
+
+
                 }),
             )
             .subscribe({
                 complete: () => next(),
                 error: (e) => {
-                    Logger.log(e, `RequestContext`)
+                    this._logger.error(e)
                     next()
                 },
             })

@@ -16,7 +16,6 @@ export const httpClientProvider: Provider = {
         ProviderName.REQUEST_CONTEXT,
     ],
     useFactory: (requestContext:RequestContext): AxiosInstance => {
-        Logger.log(requestContext.deviceId, requestContext.deviceId, ProviderName.HTTP_CLIENT)
         const agent = new http.Agent({family: 4})
         const axiosInstance = axios.create({
             httpAgent: agent,
@@ -28,6 +27,10 @@ export const httpClientProvider: Provider = {
 
         axiosInstance.interceptors.response.use(null, error => {
             throw new BadRequestException(error?.response?.data)
+        })
+        axiosInstance.interceptors.request.use( (conf) => {
+            Logger.debug(requestContext.deviceId, requestContext.deviceId, ProviderName.HTTP_CLIENT)
+            return conf
         })
 
         return axiosInstance
