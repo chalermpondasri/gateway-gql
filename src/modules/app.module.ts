@@ -17,9 +17,15 @@ import { AuthModule } from '@/modules/auth.module'
             driver: ApolloDriver,
             autoSchemaFile: 'schema.gql',
             installSubscriptionHandlers: true,
-            playground: process.env.NODE_ENV !== 'production',
-            context: ({req}) => ({req})
+            playground: process.env.NODE_ENV !== 'production' ? {
+                endpoint: '/graphql',
+                settings: {
+                    'request.credentials': 'include',
+                },
+            } : false,
+            context: ({ req }) => ({ req }),
         }),
     ],
 })
-export class AppModule {}
+export class AppModule {
+}
