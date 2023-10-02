@@ -18,3 +18,12 @@ export class UpdateProfilePinInput extends CreateProfilePinInput {
     public oldPin: string
 }
 
+@InputType()
+export class ValidateProfilePinInputType {
+    @Field()
+    public profileId: string
+
+    @Field()
+    public pin: string
+}
+

@@ -53,6 +53,7 @@ export interface IAuthRepository {
     getContentRating(): Observable<string[]>
     requestToChangeEmail(token: string, newEmail: string): Observable<Omit<OtpChangePhoneResponse, 'remaining'>>
     verifyToChangeEmail(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
+    validateProfilePin(profileId: string, pin: string): Observable<{isValid: boolean}>
 }
 
 export interface ILocaleRepository {
