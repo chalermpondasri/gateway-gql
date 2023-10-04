@@ -26,6 +26,7 @@ import {
     ValidateProfilePinType,
 } from '@/types/objects'
 import {
+    CreateProfileInput,
     CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
@@ -225,6 +226,12 @@ export class AuthService {
     public validateProfilePin(profileId: string, pin: string): Observable<ValidateProfilePinType>{
         return this._authRepository.validateProfilePin(profileId, pin).pipe(
             map(data => plainToInstance(ValidateProfilePinType, data))
+        )
+    }
+
+    public createProfile(body: CreateProfileInput): Observable<ProfileType> {
+        return this._authRepository.createProfile(body).pipe(
+            map(data => plainToInstance(ProfileType, data))
         )
     }
 }

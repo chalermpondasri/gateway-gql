@@ -24,6 +24,7 @@ import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
 import { VerifyOtpResponse } from '@/repositories/auth/verify-otp.response'
 import { 
+    CreateProfileInput,
     CreateProfilePinInput, 
     UpdateProfilePinInput,
     UserChangePasswordInput,
@@ -54,6 +55,7 @@ export interface IAuthRepository {
     requestToChangeEmail(token: string, newEmail: string): Observable<Omit<OtpChangePhoneResponse, 'remaining'>>
     verifyToChangeEmail(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
     validateProfilePin(profileId: string, pin: string): Observable<{isValid: boolean}>
+    createProfile(body: CreateProfileInput): Observable<ProfileResponse>
 }
 
 export interface ILocaleRepository {

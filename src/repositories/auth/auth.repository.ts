@@ -28,6 +28,7 @@ import {
 } from 'axios'
 import { plainToInstance } from 'class-transformer'
 import {
+    CreateProfileInput,
     CreateProfilePinInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
@@ -258,6 +259,14 @@ export class AuthRepository implements IAuthRepository {
             )
         ).pipe(
             map(({ data }) => ({ isValid: data.isValid}))
+        )
+    }
+    
+    public createProfile(body: CreateProfileInput): Observable<ProfileResponse> {
+        return from(
+            this._axiosInstance.post(`/user/me/profile`, body)
+        ).pipe(
+            map(res=> plainToInstance(ProfileResponse, res.data))
         )
     }
 
