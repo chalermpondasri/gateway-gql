@@ -250,4 +250,15 @@ export class AuthRepository implements IAuthRepository {
         )        
     }
 
+    public validateProfilePin(profileId: string, pin: string): Observable<{isValid: boolean}> {       
+        return from(
+            this._axiosInstance.post<{isValid: boolean}>(
+                `/user/me/profile/${profileId}/validate/pin`,
+                { pin }
+            )
+        ).pipe(
+            map(({ data }) => ({ isValid: data.isValid}))
+        )
+    }
+
 }

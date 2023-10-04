@@ -23,6 +23,7 @@ import {
     UserRequestOtpType,
     UserType,
     UserVerifyOtpType,
+    ValidateProfilePinType,
 } from '@/types/objects'
 import {
     CreateProfilePinInput,
@@ -221,4 +222,9 @@ export class AuthService {
           .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
     }
 
+    public validateProfilePin(profileId: string, pin: string): Observable<ValidateProfilePinType>{
+        return this._authRepository.validateProfilePin(profileId, pin).pipe(
+            map(data => plainToInstance(ValidateProfilePinType, data))
+        )
+    }
 }

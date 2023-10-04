@@ -2,6 +2,7 @@ import {
     AvatarType,
     ProfileType,
     UserType,
+    ValidateProfilePinType,
 } from '@/types/objects'
 import { Inject } from '@nestjs/common'
 import {
@@ -17,6 +18,7 @@ import { AuthService } from './auth.service'
 import {
     CreateProfilePinInput,
     UpdateProfilePinInput,
+    ValidateProfilePinInputType,
 } from '@/types/inputs'
 import { CmsService } from '../doofin-cms/cms.service'
 import { map } from 'rxjs'
@@ -73,5 +75,10 @@ export class ProfileResolver {
     @ResolveField('userAccount',() => UserType)
     public userAccount(@Context() ctx: any) {
        return this._authService.getUser(ctx.req.headers.authorization)
+    }
+
+    @Query(() => ValidateProfilePinType)
+    public validateProfilePin(@Args(ValidateProfilePinInputType.name) arg: ValidateProfilePinInputType){
+        return this._authService.validateProfilePin(arg.profileId, arg.pin)
     }
 }

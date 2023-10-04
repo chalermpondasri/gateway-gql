@@ -31,3 +31,9 @@ export class ProfileType extends BaseProfileType  {
     public userAccount: UserType
 }
 
+@ObjectType()
+export class ValidateProfilePinType {
+    @Field()
+    public isValid: boolean
+}
+
