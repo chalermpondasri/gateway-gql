@@ -1,6 +1,9 @@
+import { Transform } from 'class-transformer'
+
 export class OtpChangePhoneResponse {
     public referenceNumber: string
     public remaining: number
+    @Transform(v => v.value ? new Date(v.value) : null)
     public expiredAt: Date
     public token: string
 }
