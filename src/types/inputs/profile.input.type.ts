@@ -1,6 +1,6 @@
 import { 
     Field, 
-    InputType 
+    InputType, 
 } from '@nestjs/graphql';
 
 @InputType()
@@ -25,5 +25,28 @@ export class ValidateProfilePinInputType {
 
     @Field()
     public pin: string
+}
+@InputType()
+export class CreateProfileInput {
+    @Field()
+    public name: string;
+
+    @Field()
+    public avatar: number;
+
+    @Field()
+    public dob: string;
+
+    @Field({nullable: true})
+    public pinCode?: string;
+
+    @Field(()=> [String])
+    public categories: string[];
+
+    @Field()
+    public isLimit: boolean;
+
+    @Field()
+    public contentRating: string;
 }
 

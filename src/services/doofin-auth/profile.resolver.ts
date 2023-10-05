@@ -16,6 +16,7 @@ import {
 } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
 import {
+    CreateProfileInput,
     CreateProfilePinInput,
     UpdateProfilePinInput,
     ValidateProfilePinInputType,
@@ -80,5 +81,10 @@ export class ProfileResolver {
     @Query(() => ValidateProfilePinType)
     public validateProfilePin(@Args(ValidateProfilePinInputType.name) arg: ValidateProfilePinInputType){
         return this._authService.validateProfilePin(arg.profileId, arg.pin)
+    }
+
+    @Mutation(()=> ProfileType)
+    public createProfile(@Args(CreateProfileInput.name) body: CreateProfileInput){
+        return this._authService.createProfile(body)
     }
 }
