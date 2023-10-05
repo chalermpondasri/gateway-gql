@@ -203,6 +203,12 @@ export class AuthService {
         )
     }
 
+    public revokeSession(session: string): Observable<DeviceSessionType> {
+        return this._authRepository.revokeSingleSession(session).pipe(
+            map(data => plainToInstance(DeviceSessionType, data))
+        )
+    }
+
     public getContentRating(): Observable<string[]> {
         return this._authRepository.getContentRating()
     }

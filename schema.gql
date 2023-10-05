@@ -67,6 +67,10 @@ type ProfileType {
   userAccount: UserType!
 }
 
+type ValidateProfilePinType {
+  isValid: Boolean!
+}
+
 type CreateUserResponseType {
   userId: ID!
   status: String!
@@ -177,6 +181,7 @@ type Query {
   getLocaleByCode(localeKey: String!): [LocalizedKeyLabelType!]!
   getProfiles: [ProfileType!]!
   getProfileAndAccountInformation(profileId: String!): ProfileType!
+  validateProfilePin(ValidateProfilePinInputType: ValidateProfilePinInputType!): ValidateProfilePinType!
   requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
   getUser: UserType!
   getContentRating: [String!]!
@@ -188,18 +193,25 @@ input PaginationInput {
   page: Float = 1
 }
 
+input ValidateProfilePinInputType {
+  profileId: String!
+  pin: String!
+}
+
 type Mutation {
   createUser(CreateUserInput: CreateUserInput!): CreateUserResponseType!
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   verifyEmail(VerifyEmailInput: VerifyEmailInput!): UserType!
   revokeUserSessions: [String!]!
+  revokeSession(sessionId: String!): DeviceSessionType!
   updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
   createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
   deleteLocale(id: String!): LocaleType!
   patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
   createProfilePin(CreateProfilePinInput: CreateProfilePinInput!): ProfileType!
   changeProfilePin(UpdateProfilePinInput: UpdateProfilePinInput!): ProfileType!
+  createProfile(CreateProfileInput: CreateProfileInput!): ProfileType!
   verifyToChangePhoneNumber(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
   changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
   requestToChangeEmail(newEmail: String!): UserRequestEmailType!
@@ -256,6 +268,16 @@ input UpdateProfilePinInput {
   profileId: String!
   newPin: String!
   oldPin: String!
+}
+
+input CreateProfileInput {
+  name: String!
+  avatar: Float!
+  dob: String!
+  pinCode: String
+  categories: [String!]!
+  isLimit: Boolean!
+  contentRating: String!
 }
 
 input UserVerifyOtpInput {

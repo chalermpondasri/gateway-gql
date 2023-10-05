@@ -82,6 +82,14 @@ export class AuthResolver {
     public revokeUserSessions() {
         return this._authService.revokeSessions()
     }
+
+    @Mutation(()=> DeviceSessionType)
+    public revokeSession(
+        @Args('sessionId') sessionId: string,
+    ) {
+        return this._authService.revokeSession(sessionId)
+    }
+
     @Query(() => [DeviceSessionType])
     public getUserSessions() {
         return this._authService.getUserSessions()
