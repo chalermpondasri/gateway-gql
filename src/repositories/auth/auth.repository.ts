@@ -234,7 +234,7 @@ export class AuthRepository implements IAuthRepository {
             {headers: {Authorization: `Bearer ${token}`}},
             )
         ).pipe(
-            map(res => res.data)
+            map(res => plainToInstance(OtpChangePhoneResponse, res.data))
         )
     }
 
