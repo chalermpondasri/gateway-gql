@@ -17,6 +17,7 @@ import {
     CategoryType,
     CreateUserResponseType,
     DeviceSessionType,
+    ProfileRequestResetPinType,
     ProfileType,
     RequestOtpType,
     UserRequestEmailType,
@@ -240,4 +241,11 @@ export class AuthService {
             map(data => plainToInstance(ProfileType, data))
         )
     }
+
+    public requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinType> {
+       return this._authRepository.requestTokenToResetPin(profileId, password).pipe(
+        map(data => plainToInstance(ProfileRequestResetPinType, data))
+       ) 
+    }
+    
 }

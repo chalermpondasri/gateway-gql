@@ -1,5 +1,6 @@
 import { 
     Field, 
+    GraphQLISODateTime, 
     ObjectType, 
 } from '@nestjs/graphql';
 import { IdStringType } from './id-string.type';
@@ -35,5 +36,13 @@ export class ProfileType extends BaseProfileType  {
 export class ValidateProfilePinType {
     @Field()
     public isValid: boolean
+}
+
+@ObjectType()
+export class ProfileRequestResetPinType {
+    @Field()
+    public token: string
+    @Field(() => GraphQLISODateTime )
+    public expiredAt: Date
 }
 

@@ -8,6 +8,7 @@ import {
     ListResponse,
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
+    ProfileRequestResetPinResponse,
     ProfileResponse,
     SendOtpRequest,
     SendOtpResponse,
@@ -267,6 +268,14 @@ export class AuthRepository implements IAuthRepository {
             this._axiosInstance.post(`/user/me/profile`, body)
         ).pipe(
             map(res=> plainToInstance(ProfileResponse, res.data))
+        )
+    }
+
+    public requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinResponse> {
+        return from(
+            this._axiosInstance.post(`/user/me/profile/${profileId}/request/reset-pin`, { password })
+        ).pipe(
+            map(res => plainToInstance(ProfileRequestResetPinResponse, res.data))
         )
     }
 

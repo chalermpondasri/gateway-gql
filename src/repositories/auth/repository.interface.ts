@@ -19,6 +19,7 @@ import {
     BaseProfileResponse,
     ProfileResponse,
     DeviceSessionResponse,
+    ProfileRequestResetPinResponse,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
@@ -56,6 +57,7 @@ export interface IAuthRepository {
     verifyToChangeEmail(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
     validateProfilePin(profileId: string, pin: string): Observable<{isValid: boolean}>
     createProfile(body: CreateProfileInput): Observable<ProfileResponse>
+    requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinResponse>
 }
 
 export interface ILocaleRepository {

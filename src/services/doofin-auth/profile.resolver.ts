@@ -1,5 +1,6 @@
 import {
     AvatarType,
+    ProfileRequestResetPinType,
     ProfileType,
     UserType,
     ValidateProfilePinType,
@@ -87,4 +88,13 @@ export class ProfileResolver {
     public createProfile(@Args(CreateProfileInput.name) body: CreateProfileInput){
         return this._authService.createProfile(body)
     }
+
+    @Mutation(() => ProfileRequestResetPinType)
+    public requestTokenToResetPin(
+        @Args('profileId') profileId: string,
+        @Args('password') password: string,
+    ){
+        return this._authService.requestTokenToResetPin(profileId, password)
+    }
+    
 }
