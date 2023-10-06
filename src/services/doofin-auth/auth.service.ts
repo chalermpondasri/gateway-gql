@@ -36,6 +36,7 @@ import {
     UserVerifyOtpInput,
     VerifyEmailInput,
     VerifyOtpInput,
+    VerifyResetProfilePin,
 } from '@/types/inputs'
 import {
     instanceToPlain,
@@ -244,8 +245,14 @@ export class AuthService {
 
     public requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinType> {
        return this._authRepository.requestTokenToResetPin(profileId, password).pipe(
-        map(data => plainToInstance(ProfileRequestResetPinType, data))
+            map(data => plainToInstance(ProfileRequestResetPinType, data))
        ) 
+    }
+
+    public verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileType>{
+        return this._authRepository.verifyTokenToResetPin(input).pipe(
+            map(data => plainToInstance(ProfileType, data))
+        )
     }
     
 }

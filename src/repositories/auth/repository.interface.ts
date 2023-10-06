@@ -30,6 +30,7 @@ import {
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
+    VerifyResetProfilePin,
 } from '@/types/inputs'
 
 export interface IAuthRepository {
@@ -58,6 +59,7 @@ export interface IAuthRepository {
     validateProfilePin(profileId: string, pin: string): Observable<{isValid: boolean}>
     createProfile(body: CreateProfileInput): Observable<ProfileResponse>
     requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinResponse>
+    verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileResponse>
 }
 
 export interface ILocaleRepository {

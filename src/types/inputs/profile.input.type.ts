@@ -50,3 +50,9 @@ export class CreateProfileInput {
     public contentRating: string;
 }
 
+@InputType()
+export class VerifyResetProfilePin extends CreateProfilePinInput {
+    @Field()
+    public token: string
+}
+

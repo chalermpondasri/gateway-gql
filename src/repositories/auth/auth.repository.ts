@@ -34,7 +34,9 @@ import {
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
+    VerifyResetProfilePin,
 } from '@/types/inputs'
+import { omit } from 'lodash'
 
 export class AuthRepository implements IAuthRepository {
     public constructor(
@@ -276,6 +278,14 @@ export class AuthRepository implements IAuthRepository {
             this._axiosInstance.post(`/user/me/profile/${profileId}/request/reset-pin`, { password })
         ).pipe(
             map(res => plainToInstance(ProfileRequestResetPinResponse, res.data))
+        )
+    }
+
+    public verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileResponse> {
+        return from(
+            this._axiosInstance.patch(`/user/me/profile/${input.profileId}/verify/reset-pin`, omit(input,["profileId"]))
+        ).pipe(
+            map(res => plainToInstance(ProfileResponse, res.data))
         )
     }
 
