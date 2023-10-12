@@ -71,6 +71,19 @@ type ValidateProfilePinType {
   isValid: Boolean!
 }
 
+type DeviceSessionType {
+  id: ID!
+  deviceName: String!
+  deviceId: String!
+  isCurrentDevice: Boolean!
+  lastAccess: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type CreateUserResponseType {
   userId: ID!
   status: String!
@@ -86,6 +99,7 @@ type UserType {
   emailVerificationStatus: String!
   dob: String! @deprecated(reason: "Moved to profile instead")
   profiles: [ProfileType!]!
+  deviceSessions: [DeviceSessionType!]!
 }
 
 type UserRequestOtpType {
@@ -94,11 +108,6 @@ type UserRequestOtpType {
   expiredAt: DateTime!
   token: String!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type UserVerifyOtpType {
   status: Boolean!
@@ -153,14 +162,6 @@ type LocalizedKeyLabelType {
 type TokenType {
   accessToken: String!
   refreshToken: String!
-}
-
-type DeviceSessionType {
-  id: ID!
-  deviceName: String!
-  deviceId: String!
-  isCurrentDevice: Boolean!
-  lastAccess: DateTime!
 }
 
 type SubjectType {

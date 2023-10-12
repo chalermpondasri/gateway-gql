@@ -9,6 +9,7 @@ import {
     ProfileType,
 } from '@/types/objects/profile.type'
 import { IdStringType } from '@/types/objects/id-string.type'
+import { DeviceSessionType } from '@/types/objects/device-session.type'
 
 @ObjectType()
 export class BaseUserType {
@@ -47,6 +48,9 @@ export class UserType extends IdStringType {
 
     @Field(() => [ProfileType])
     public profiles: [ProfileType]
+
+    @Field(() => [DeviceSessionType])
+    public deviceSessions: [DeviceSessionType]
 }
 
 @ObjectType()

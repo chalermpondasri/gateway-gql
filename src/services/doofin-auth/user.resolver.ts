@@ -1,4 +1,5 @@
 import {
+    DeviceSessionType,
     ProfileType,
     UserRequestEmailType,
     UserRequestOtpType,
@@ -7,19 +8,19 @@ import {
 } from '@/types/objects'
 import {
     Args,
-    Mutation,
-    Query,
-    Resolver,
     Context,
-    ResolveField,
+    Mutation,
     Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql'
-import { AuthService } from './auth.service';
-import { Inject } from '@nestjs/common';
-import { 
-    UserChangePasswordInput, 
-    UserVerifyOtpInput, 
-} from '@/types/inputs';
+import { AuthService } from './auth.service'
+import { Inject } from '@nestjs/common'
+import {
+    UserChangePasswordInput,
+    UserVerifyOtpInput,
+} from '@/types/inputs'
 
 @Resolver( () => UserType)
 export class UserResolver {
@@ -66,6 +67,11 @@ export class UserResolver {
         @Context() ctx: any
     ) {
         return this._authService.getUser(ctx.req.headers.authorization)
+    }
+
+    @ResolveField('deviceSessions', () => [DeviceSessionType])
+    public deviceSessions() {
+        return this._authService.getUserSessions()
     }
 
     @ResolveField('profiles',() => [ProfileType])
