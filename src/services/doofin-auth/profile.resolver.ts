@@ -1,5 +1,6 @@
 import {
     AvatarType,
+    ProfileRequestResetPinType,
     ProfileType,
     UserType,
     ValidateProfilePinType,
@@ -20,6 +21,7 @@ import {
     CreateProfilePinInput,
     UpdateProfilePinInput,
     ValidateProfilePinInputType,
+    VerifyResetProfilePin,
 } from '@/types/inputs'
 import { CmsService } from '../doofin-cms/cms.service'
 import { map } from 'rxjs'
@@ -87,4 +89,18 @@ export class ProfileResolver {
     public createProfile(@Args(CreateProfileInput.name) body: CreateProfileInput){
         return this._authService.createProfile(body)
     }
+
+    @Mutation(() => ProfileRequestResetPinType)
+    public requestTokenToResetPin(
+        @Args('profileId') profileId: string,
+        @Args('password') password: string,
+    ){
+        return this._authService.requestTokenToResetPin(profileId, password)
+    }
+
+    @Mutation(() => ProfileType)
+    public verifyTokenToResetPin(@Args(VerifyResetProfilePin.name) input: VerifyResetProfilePin){
+        return this._authService.verifyTokenToResetPin(input)
+    }
+    
 }
