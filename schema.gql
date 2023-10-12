@@ -158,6 +158,8 @@ type TokenType {
 type DeviceSessionType {
   id: ID!
   deviceName: String!
+  deviceId: String!
+  isCurrentDevice: Boolean!
   lastAccess: DateTime!
 }
 
@@ -174,7 +176,6 @@ type Query {
   getFAQs: [SubjectType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
-  getUserSessions: [DeviceSessionType!]!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!
@@ -186,6 +187,7 @@ type Query {
   getUser: UserType!
   getContentRating: [String!]!
   getAvatars(id: Int): [AvatarType!]!
+  getUserSessions: [DeviceSessionType!]!
 }
 
 input PaginationInput {
@@ -203,8 +205,6 @@ type Mutation {
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   verifyEmail(VerifyEmailInput: VerifyEmailInput!): UserType!
-  revokeUserSessions: [String!]!
-  revokeSession(sessionId: String!): DeviceSessionType!
   updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
   createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
   deleteLocale(id: String!): LocaleType!
@@ -216,6 +216,8 @@ type Mutation {
   changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
   requestToChangeEmail(newEmail: String!): UserRequestEmailType!
   verifyToChangeEmail(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
+  revokeUserSessions: [String!]!
+  revokeSession(sessionId: String!): DeviceSessionType!
 }
 
 input CreateUserInput {

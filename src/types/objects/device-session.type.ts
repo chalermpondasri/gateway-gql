@@ -9,6 +9,10 @@ import { IdStringType } from '@/types/objects'
 export class DeviceSessionType extends IdStringType {
     @Field()
     public deviceName: string
+    @Field()
+    public deviceId: string
+    @Field()
+    public isCurrentDevice: boolean
     @Field(() => GraphQLISODateTime)
     public lastAccess: Date
 }

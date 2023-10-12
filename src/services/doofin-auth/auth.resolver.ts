@@ -12,7 +12,6 @@ import { Observable } from 'rxjs'
 
 import {
     CreateUserResponseType,
-    DeviceSessionType,
     RequestOtpType,
     TokenType,
     UserType,
@@ -76,22 +75,5 @@ export class AuthResolver {
     @Query(() => TokenType)
     public userRefreshToken(@Context() ctx: any) {
         return this._authService.doRefreshToken(ctx.req.headers.authorization)
-    }
-
-    @Mutation(() => [String])
-    public revokeUserSessions() {
-        return this._authService.revokeSessions()
-    }
-
-    @Mutation(()=> DeviceSessionType)
-    public revokeSession(
-        @Args('sessionId') sessionId: string,
-    ) {
-        return this._authService.revokeSession(sessionId)
-    }
-
-    @Query(() => [DeviceSessionType])
-    public getUserSessions() {
-        return this._authService.getUserSessions()
     }
 }
