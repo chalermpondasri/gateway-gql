@@ -5,7 +5,7 @@ async function bootstrap() {
 
     const app = await NestFactory.create(AppModule)
     app.enableCors({
-        origin:  /doofin\.(rest|live|tv)$/,
+        origin:  [/doofin\.(rest|live|tv)$/, 'http://localhost'],
         credentials: true,
     })
     app.use(cookieParser())
