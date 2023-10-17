@@ -8,7 +8,7 @@ async function bootstrap() {
     app.enableCors({
         origin: (requestOrigin, callback) => {
             Logger.log(requestOrigin, 'CORS')
-            callback(null)
+            callback(null, requestOrigin)
         },
         credentials: true,
     })
