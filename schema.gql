@@ -71,6 +71,16 @@ type ValidateProfilePinType {
   isValid: Boolean!
 }
 
+type ProfileRequestResetPinType {
+  token: String!
+  expiredAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type DeviceSessionType {
   id: ID!
   deviceName: String!
@@ -78,11 +88,6 @@ type DeviceSessionType {
   isCurrentDevice: Boolean!
   lastAccess: DateTime!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type CreateUserResponseType {
   userId: ID!
@@ -213,6 +218,8 @@ type Mutation {
   createProfilePin(CreateProfilePinInput: CreateProfilePinInput!): ProfileType!
   changeProfilePin(UpdateProfilePinInput: UpdateProfilePinInput!): ProfileType!
   createProfile(CreateProfileInput: CreateProfileInput!): ProfileType!
+  requestTokenToResetPin(profileId: String!, password: String!): ProfileRequestResetPinType!
+  verifyTokenToResetPin(VerifyResetProfilePin: VerifyResetProfilePin!): ProfileType!
   verifyToChangePhoneNumber(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
   changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
   requestToChangeEmail(newEmail: String!): UserRequestEmailType!
@@ -281,6 +288,12 @@ input CreateProfileInput {
   categories: [String!]!
   isLimit: Boolean!
   contentRating: String!
+}
+
+input VerifyResetProfilePin {
+  profileId: String!
+  newPin: String!
+  token: String!
 }
 
 input UserVerifyOtpInput {
