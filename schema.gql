@@ -96,6 +96,63 @@ type CreateUserResponseType {
   otpToken: String!
 }
 
+type LocalizationSettingType {
+  deviceLocale: Locale!
+}
+
+"""Supported localization"""
+enum Locale {
+  TH
+  EN
+  CN
+}
+
+type NotificationSettingType {
+  allowPushNotification: Boolean!
+  newRelease: Boolean!
+  newsAndPromotions: Boolean!
+}
+
+type PlaybackSettingType {
+  """Adjust streaming quality according to network connection"""
+  autoAdjustQuality: Boolean!
+
+  """allow playback when using wifi only"""
+  wifiOnly: Boolean!
+
+  """allow warning message when try to play on cellular"""
+  warnOnCellular: Boolean!
+
+  """
+  limit network usage by reducing video quality and disable some network consumption features
+  """
+  networkThrottlingMode: Boolean!
+
+  """auto play trailer when available"""
+  autoPlayTrailer: Boolean!
+
+  """auto play next video in queue"""
+  autoPlayNext: Boolean!
+}
+
+type VideoSettingType {
+  subtitle: SubtitleSelection!
+}
+
+enum SubtitleSelection {
+  OFF
+  TH
+  EN
+  CN
+}
+
+type UserSettingType {
+  localizationSetting: LocalizationSettingType!
+  notificationSetting: NotificationSettingType!
+  playbackSetting: PlaybackSettingType!
+  videoSetting: VideoSettingType!
+}
+
 type UserType {
   id: ID!
   email: String!
@@ -105,6 +162,7 @@ type UserType {
   dob: String! @deprecated(reason: "Moved to profile instead")
   profiles: [ProfileType!]!
   deviceSessions: [DeviceSessionType!]!
+  setting: UserSettingType!
 }
 
 type UserRequestOtpType {
