@@ -214,7 +214,7 @@ export class AuthRepository implements IAuthRepository {
     public revokeSingleSession(sessionId: string): Observable<DeviceSessionResponse> {
         const promise = this._axiosInstance.delete(`/user/me/session/${sessionId}`)
         return from(promise).pipe(
-            map( res => res.data)
+            map( res => plainToInstance(DeviceSessionResponse,res.data))
         )
     }
 
