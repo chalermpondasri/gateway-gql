@@ -5,6 +5,7 @@ import {
 import {
     CreateUserRequest,
     IAuthRepository,
+    UpdateUserDeviceSettingRequest,
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
@@ -33,6 +34,7 @@ import {
     RequestOtpInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
+    UserSettingInput,
     UserVerifyOtpInput,
     VerifyEmailInput,
     VerifyOtpInput,
@@ -252,6 +254,25 @@ export class AuthService {
     public verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileType>{
         return this._authRepository.verifyTokenToResetPin(input).pipe(
             map(data => plainToInstance(ProfileType, data))
+        )
+    }
+
+    public updateUserSetting(input: UserSettingInput): Observable<UserType> {
+        const payload = new UpdateUserDeviceSettingRequest()
+        payload.deviceLocale = input.lzDeviceLocale
+        payload.notificationAllowNewRelease = input.notificationNewRelease
+        payload.notificationAllowNewsAndPromotions = input.notificationNewsAndPromotions
+        payload.notificationAllowPush = input.notificationAllowPush
+        payload.pbAutoAdjustQuality = input.pbAutoAdjustQuality
+        payload.pbAutoPlayNext = input.pbAutoplayNext
+        payload.pbAutoPlayTrailer = input.pbAutoPlayTrailer
+        payload.pbNetworkThrottlingMode = input.pbNetworkThrottlingMode
+        payload.pbWarnOnCellular = input.pbWarnOnCellular
+        payload.pbWifiOnly = input.pbWifiOnly
+        payload.videoSubtitle = input.videoSubtitle
+
+        return this._authRepository.updateUserSetting(payload).pipe(
+            map( data => plainToInstance(UserType, data))
         )
     }
     

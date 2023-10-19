@@ -12,6 +12,7 @@ import {
     ProfileResponse,
     SendOtpRequest,
     SendOtpResponse,
+    UpdateUserDeviceSettingRequest,
     UserResponse,
     UserVerifyEmailRequest,
     VerifyEmailUserResponse,
@@ -286,6 +287,14 @@ export class AuthRepository implements IAuthRepository {
             this._axiosInstance.patch(`/user/me/profile/${input.profileId}/verify/reset-pin`, omit(input,["profileId"]))
         ).pipe(
             map(res => plainToInstance(ProfileResponse, res.data))
+        )
+    }
+
+    public updateUserSetting(input: UpdateUserDeviceSettingRequest): Observable<UserResponse> {
+        return from(
+            this._axiosInstance.patch(`/user/me/setting`, input)
+        ).pipe(
+            map( res => plainToInstance(UserResponse, res.data))
         )
     }
 
