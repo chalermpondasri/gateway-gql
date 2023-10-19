@@ -19,6 +19,7 @@ import { AuthService } from './auth.service'
 import { Inject } from '@nestjs/common'
 import {
     UserChangePasswordInput,
+    UserSettingInput,
     UserVerifyOtpInput,
 } from '@/types/inputs'
 
@@ -103,6 +104,13 @@ export class UserResolver {
         ctx.req.headers.authorization,
         input,
        )
+    }
+
+    @Mutation(() => UserType)
+    public updateUserSetting(
+        @Args(UserSettingInput.name) input: UserSettingInput,
+    ) {
+        return this._authService.updateUserSetting(input)
     }
 
 }

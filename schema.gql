@@ -282,6 +282,7 @@ type Mutation {
   changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
   requestToChangeEmail(newEmail: String!): UserRequestEmailType!
   verifyToChangeEmail(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
+  updateUserSetting(UserSettingInput: UserSettingInput!): UserType!
   revokeUserSessions: [String!]!
   revokeSession(sessionId: String!): DeviceSessionType!
 }
@@ -363,4 +364,18 @@ input UserVerifyOtpInput {
 input UserChangePasswordInput {
   oldPassword: String!
   newPassword: String!
+}
+
+input UserSettingInput {
+  lzDeviceLocale: Locale
+  notificationAllowPush: Boolean
+  notificationNewRelease: Boolean
+  notificationNewsAndPromotions: Boolean
+  pbAutoAdjustQuality: Boolean
+  pbWifiOnly: Boolean
+  pbWarnOnCellular: Boolean
+  pbNetworkThrottlingMode: Boolean
+  pbAutoPlayTrailer: Boolean
+  pbAutoplayNext: Boolean
+  videoSubtitle: SubtitleSelection
 }
