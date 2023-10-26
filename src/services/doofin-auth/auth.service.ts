@@ -18,6 +18,7 @@ import {
     CategoryType,
     CreateUserResponseType,
     DeviceSessionType,
+    MyListType,
     ProfileRequestResetPinType,
     ProfileType,
     RequestOtpType,
@@ -273,6 +274,12 @@ export class AuthService {
 
         return this._authRepository.updateUserSetting(payload).pipe(
             map( data => plainToInstance(UserType, data))
+        )
+    }
+
+    public getMyList(profileId: string): Observable<MyListType>{
+        return this._authRepository.getMyList(profileId).pipe(
+            map(res=> plainToInstance(MyListType,res))
         )
     }
     
