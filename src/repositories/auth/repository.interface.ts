@@ -21,6 +21,7 @@ import {
     DeviceSessionResponse,
     ProfileRequestResetPinResponse,
     UpdateUserDeviceSettingRequest,
+    MyListResponse,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
@@ -62,6 +63,7 @@ export interface IAuthRepository {
     requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinResponse>
     verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileResponse>
     updateUserSetting(input: UpdateUserDeviceSettingRequest): Observable<UserResponse>
+    getMyList(profileId: string): Observable<MyListResponse[]>
 }
 
 export interface ILocaleRepository {

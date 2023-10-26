@@ -6,6 +6,7 @@ import {
     DeviceSessionResponse,
     IAuthRepository,
     ListResponse,
+    MyListResponse,
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
     ProfileRequestResetPinResponse,
@@ -295,6 +296,12 @@ export class AuthRepository implements IAuthRepository {
             this._axiosInstance.patch(`/user/me/setting`, input)
         ).pipe(
             map( res => plainToInstance(UserResponse, res.data))
+        )
+    }
+    
+    public getMyList(profileId: string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.get(`my-list/${profileId}`)).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>res.data))
         )
     }
 
