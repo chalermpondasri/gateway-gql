@@ -19,3 +19,10 @@ export class ProfileRequestResetPinResponse {
     @Transform(({value})=> !!value ? new Date(value) : null)
     public expiredAt: Date
 }
+
+
+export class MyListResponse {
+    public programId: string
+    @Transform(({value})=> !!value? new Date(value): null)
+    public addDate: string
+}

@@ -9,9 +9,11 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
+    concatMap,
     from,
     map,
     Observable,
+    toArray,
 } from 'rxjs'
 import {
     BaseUserType,
@@ -277,9 +279,11 @@ export class AuthService {
         )
     }
 
-    public getMyList(profileId: string): Observable<MyListType>{
+    public getMyList(profileId: string): Observable<MyListType[]>{ 
         return this._authRepository.getMyList(profileId).pipe(
-            map(res=> plainToInstance(MyListType,res))
+            concatMap(res=> from(res)),
+            map(res=>plainToInstance(MyListType, res)),
+            toArray()
         )
     }
     

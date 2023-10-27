@@ -299,9 +299,9 @@ export class AuthRepository implements IAuthRepository {
         )
     }
     
-    public getMyList(profileId: string): Observable<MyListResponse> {
-        return from(this._axiosInstance.get(`my-list/${profileId}`)).pipe(
-            map(res=> plainToInstance(MyListResponse, res.data))
+    public getMyList(profileId: string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.get(`/user/me/${profileId}/my-list`)).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
         )
     }
 

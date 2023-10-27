@@ -30,6 +30,8 @@ export class ProfileType extends BaseProfileType  {
     public pinSettingStatus: string
     @Field(()=> UserType)
     public userAccount: UserType
+    @Field(()=> [MyListType])
+    public myList: MyListType[]
 }
 
 @ObjectType()
@@ -44,5 +46,14 @@ export class ProfileRequestResetPinType {
     public token: string
     @Field(() => GraphQLISODateTime )
     public expiredAt: Date
+}
+
+@ObjectType()
+export class MyListType{
+    @Field()
+    public programId:string
+
+    @Field(()=> GraphQLISODateTime)
+    public addDate:Date
 }
 
