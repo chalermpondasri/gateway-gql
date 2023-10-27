@@ -305,4 +305,17 @@ export class AuthRepository implements IAuthRepository {
         )
     }
 
+    public addToMyList(profileId: string, programId:string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.post(`/user/me/${profileId}/my-list`,{ programId })).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+        )
+    }
+
+    
+    public removeFromMyList(profileId: string, programId:string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.delete(`/user/me/${profileId}/my-list/${programId}`)).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+        )
+    }
+
 }

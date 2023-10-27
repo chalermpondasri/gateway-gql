@@ -64,6 +64,8 @@ export interface IAuthRepository {
     verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileResponse>
     updateUserSetting(input: UpdateUserDeviceSettingRequest): Observable<UserResponse>
     getMyList(profileId: string): Observable<MyListResponse[]>
+    addToMyList(profileId: string, programId: string): Observable<MyListResponse[]>
+    removeFromMyList(profileId: string, programId: string): Observable<MyListResponse[]>
 }
 
 export interface ILocaleRepository {

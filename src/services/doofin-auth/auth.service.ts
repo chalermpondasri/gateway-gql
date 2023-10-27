@@ -286,5 +286,21 @@ export class AuthService {
             toArray()
         )
     }
+
+    public addToMyList(profileId: string, programId: string): Observable<MyListType[]>{
+        return this._authRepository.addToMyList(profileId, programId).pipe(
+            concatMap(res=> from(res)),
+            map(res=>plainToInstance(MyListType, res)),
+            toArray()
+        )
+    }
+
+    public removeFromMyList(profileId: string, programId: string): Observable<MyListType[]>{
+        return this._authRepository.removeFromMyList(profileId, programId).pipe(
+            concatMap(res=> from(res)),
+            map(res=>plainToInstance(MyListType, res)),
+            toArray()
+        )
+    }
     
 }

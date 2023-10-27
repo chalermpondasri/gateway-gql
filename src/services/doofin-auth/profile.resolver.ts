@@ -108,5 +108,21 @@ export class ProfileResolver {
     public myList(@Parent() parent: ProfileType) {
        return this._authService.getMyList(parent.id)
     }
+
+    @Mutation(() => [MyListType])
+    public addToMyList(
+        @Args('profileId') profileId: string,
+        @Args('programId') programId: string,
+    ){
+        return this._authService.addToMyList(profileId, programId)
+    }
+
+    @Mutation(() => [MyListType])
+    public removeFromMyList(
+        @Args('profileId') profileId: string,
+        @Args('programId') programId: string,
+    ){
+        return this._authService.removeFromMyList(profileId, programId)
+    }
     
 }
