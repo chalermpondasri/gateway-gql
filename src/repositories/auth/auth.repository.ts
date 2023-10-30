@@ -6,6 +6,8 @@ import {
     DeviceSessionResponse,
     IAuthRepository,
     ListResponse,
+    NotificationQueryRequest,
+    NotificationResponse,
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
     ProfileRequestResetPinResponse,
@@ -295,6 +297,12 @@ export class AuthRepository implements IAuthRepository {
             this._axiosInstance.patch(`/user/me/setting`, input)
         ).pipe(
             map( res => plainToInstance(UserResponse, res.data))
+        )
+    }
+    
+    public getNotification(notiQueryRequest: NotificationQueryRequest): Observable<ListResponse<NotificationResponse>> { 
+        return from(this._axiosInstance.get('notifications',{params: notiQueryRequest})).pipe(
+            map(res => plainToInstance(ListResponse<NotificationResponse>, res.data))
         )
     }
 
