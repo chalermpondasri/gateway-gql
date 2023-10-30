@@ -65,6 +65,8 @@ export interface IAuthRepository {
     verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileResponse>
     updateUserSetting(input: UpdateUserDeviceSettingRequest): Observable<UserResponse>
     getNotification(paginationQueryRequest: NotificationQueryRequest): Observable<ListResponse<NotificationResponse>>
+    readAllNotification(profileId: string): Observable<{ status: boolean }>
+    readNotificationById(notificationId: string): Observable<NotificationResponse>
 }
 
 export interface ILocaleRepository {

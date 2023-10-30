@@ -306,4 +306,16 @@ export class AuthRepository implements IAuthRepository {
         )
     }
 
+    public readAllNotification(profileId: string): Observable<{ status: boolean }> {
+        return from(this._axiosInstance.patch('notifications/read',{},{params:{ profileId }})).pipe(
+            map(res =>  res.data)
+        )
+    }
+
+    public readNotificationById(notificationId: string): Observable<NotificationResponse> {
+        return from(this._axiosInstance.patch(`notifications/read/${notificationId}`)).pipe(
+            map(res => plainToInstance(NotificationResponse, res.data))
+        )
+    }
+
 }

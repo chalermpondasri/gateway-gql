@@ -34,3 +34,9 @@ export class NotificationListType extends ListType<NotificationType> {
     @Field(() => [NotificationType])
     public data: NotificationType[]
 }
+
+@ObjectType()
+export class ReadAllNotificationType  {
+    @Field()
+    public status: boolean
+}

@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import { 
     Args,
     Context,
+    Mutation,
     Parent,
     Query, 
     ResolveField, 
@@ -11,7 +12,8 @@ import { AuthService } from './auth.service';
 import { 
     NotificationListType, 
     NotificationType, 
-    ProfileType, 
+    ProfileType,
+    ReadAllNotificationType, 
 } from '@/types/objects';
 import { NotificationInput } from '@/types/inputs';
 
@@ -33,4 +35,15 @@ export class NotificationResolver {
     ){
         return this._authService.getProfileInformation(ctx.req.headers.authorization, parent.profileId)
     }
+
+    @Mutation(() => ReadAllNotificationType)
+    public markAllNotiAsRead(@Args('profileId', {nullable: true}) profileId: string){
+        return this._authService.markAllNotiAsRead(profileId)
+    }
+
+    @Mutation(() => NotificationType)
+    public markNotiAsRead(@Args('notificationId') notificationId: string){
+        return this._authService.markNotiAsRead(notificationId)
+    }
+
 }

@@ -20,6 +20,7 @@ import {
     CreateUserResponseType,
     DeviceSessionType,  
     NotificationListType,
+    NotificationType,
     ProfileRequestResetPinType,
     ProfileType,
     RequestOtpType,
@@ -281,6 +282,16 @@ export class AuthService {
     public getNotification(notiQuery: NotificationQueryRequest): Observable<NotificationListType> {
         return this._authRepository.getNotification(plainToInstance(NotificationQueryRequest, notiQuery)).pipe(
            map(res=> plainToInstance(NotificationListType, res))
+        )
+    }
+
+    public markAllNotiAsRead(profileId: string): Observable<{ status: boolean }>{
+        return this._authRepository.readAllNotification(profileId)
+    }
+
+    public markNotiAsRead(notificationId: string): Observable<NotificationType>{
+        return this._authRepository.readNotificationById(notificationId).pipe(
+            map(res=> plainToInstance(NotificationType, res))
         )
     }
     
