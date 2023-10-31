@@ -5,6 +5,7 @@ import {
 import {
     CreateUserRequest,
     IAuthRepository,
+    NotificationQueryRequest,
     UpdateUserDeviceSettingRequest,
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
@@ -17,7 +18,9 @@ import {
     BaseUserType,
     CategoryType,
     CreateUserResponseType,
-    DeviceSessionType,
+    DeviceSessionType,  
+    NotificationListType,
+    NotificationType,
     ProfileRequestResetPinType,
     ProfileType,
     RequestOtpType,
@@ -273,6 +276,22 @@ export class AuthService {
 
         return this._authRepository.updateUserSetting(payload).pipe(
             map( data => plainToInstance(UserType, data))
+        )
+    }
+
+    public getNotification(notiQuery: NotificationQueryRequest): Observable<NotificationListType> {
+        return this._authRepository.getNotification(plainToInstance(NotificationQueryRequest, notiQuery)).pipe(
+           map(res=> plainToInstance(NotificationListType, res))
+        )
+    }
+
+    public markAllNotiAsRead(profileId: string): Observable<{ status: boolean }>{
+        return this._authRepository.readAllNotification(profileId)
+    }
+
+    public markNotiAsRead(notificationId: string): Observable<NotificationType>{
+        return this._authRepository.readNotificationById(notificationId).pipe(
+            map(res=> plainToInstance(NotificationType, res))
         )
     }
     
