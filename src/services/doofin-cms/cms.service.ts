@@ -15,25 +15,30 @@ import {
     throwError,
     toArray,
 } from 'rxjs'
-import { ICmsRepository } from '@/repositories/cms'
+import {
+    ICmsRepository,
+} from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
 import { ProviderName } from '@/constants/provider-name.const'
-import { 
-    AvatarType, 
-    TermType, 
+import {
+    AvatarType,
+    TermType,
     CmsPromotionalContentType,
     CmsRoleType,
     CmsUserType,
+    SectionType,
+    SectionItemType,
 } from '@/types/objects'
 import {
     instanceToPlain,
     plainToInstance,
 } from 'class-transformer'
 import { capitalize } from 'lodash/fp'
-import { 
+import {
     get,
 } from 'lodash'
 import { SubjectType } from '@/types/objects/subject.type'
+import { RequestContext } from '@/providers/request-context.provider'
 
 @Injectable()
 export class CmsService {
@@ -43,6 +48,8 @@ export class CmsService {
     public constructor(
         @Inject(ProviderName.CMS_REPOSITORY)
         private readonly _cmsRepository: ICmsRepository,
+        @Inject(ProviderName.REQUEST_CONTEXT)
+        private readonly _requestContext: RequestContext,
     ) {
         this._logger = new Logger(this.constructor.name)
     }
@@ -53,8 +60,8 @@ export class CmsService {
             'publishedAt': 'desc',
         }
         return this._cmsRepository.getTermsAndConditions(request).pipe(
-            map(({data}) => {
-                const {id, attributes} = data[0]
+            map(({ data }) => {
+                const { id, attributes } = data[0]
                 return {
                     id,
                     createdAt: attributes.createdAt,
@@ -72,11 +79,11 @@ export class CmsService {
             mergeMap(loginResponse => {
                 return this._cmsRepository.getUserData(loginResponse.user.id).pipe(
                     map(userData => {
-                        return {loginResponse, userData}
+                        return { loginResponse, userData }
                     }),
                 )
             }),
-            mergeMap(({loginResponse, userData}) => {
+            mergeMap(({ loginResponse, userData }) => {
                 if (!userData?.role?.type || userData?.role?.type !== 'locale_manager') {
                     return throwError(() => new UnauthorizedException('Unauthorized'))
                 }
@@ -113,41 +120,86 @@ export class CmsService {
 
                 return result
             }),
-            toArray()
+            toArray(),
         )
     }
 
-    public getFaqs(locale: string = 'en'): Observable<SubjectType[]> { 
+    public getFaqs(locale: string = 'en'): Observable<SubjectType[]> {
         const request = new BaseRequest()
         request.sortMeta = {
             'seq': 'asc',
         }
         return this._cmsRepository.getFaqs(request).pipe(
             concatMap(faqResponse => from(faqResponse.data)),
-            map(faq =>{          
-                const langSuffix = capitalize(locale)              
-                const result =  new SubjectType()
+            map(faq => {
+                const langSuffix = capitalize(locale)
+                const result = new SubjectType()
                 result.id = faq.id
-                result.content =  get(faq, `attributes.content${langSuffix}`) ?? get(faq, `attributes.contentEn}`)
-                result.subject =  get(faq, `attributes.subject${langSuffix}`) ?? get(faq, `attributes.subjectEn}`)              
+                result.content = get(faq, `attributes.content${langSuffix}`) ?? get(faq, `attributes.contentEn}`)
+                result.subject = get(faq, `attributes.subject${langSuffix}`) ?? get(faq, `attributes.subjectEn}`)
                 return result
             }),
-            toArray()
+            toArray(),
         )
     }
 
-    public getAvatars(id: number): Observable<AvatarType[]>{
+    public getAvatars(id: number): Observable<AvatarType[]> {
         return this._cmsRepository.getAvatars(id).pipe(
-            concatMap(avatarRes=> from(avatarRes.data)),
-            map((res)=>{
+            concatMap(avatarRes => from(avatarRes.data)),
+            map((res) => {
                 const preMap = new AvatarType()
                 preMap.id = res.id
                 preMap.color = res.attributes.color
-                preMap.resourcePath = res.attributes.resourcePath.data.attributes               
+                preMap.resourcePath = res.attributes.resourcePath.data.attributes
                 return preMap
             }),
             toArray(),
+        )
+    }
 
+    public getMainPageSections(): Observable<SectionType[]> {
+        return this._cmsRepository.getMainPageSections().pipe(
+            concatMap(result => from(result.data)),
+            map(item => {
+                const { attributes } = item
+                const section = new SectionType()
+                section.id = item.id
+                section.sectionTitle = attributes.sectionTitle
+                section.sectionType =attributes.sectionType
+                section.sectionLink = attributes.sectionLink
+                section.sectionSubtitle = attributes.sectionSubtitle
+                section.order = attributes.order
+                section.createdAt = new Date(attributes.createdAt)
+                section.updatedAt = new Date(attributes.updatedAt)
+
+                section.sectionItems = attributes.sectionItems.map( i=>{
+                    const item = new SectionItemType()
+                    item.id = i.id
+                    item.contentRating = i.contentRating
+                    item.coverImage = i.coverImage.data.attributes
+                    item.trailer = i.trailer
+                    item.title = i.title
+                    item.link = i.link
+                    item.tags = i.tags
+                    item.shortVideo = i.shortVideo
+                    item.episodes  = i.episodes.map( v => {
+                        return {
+                            id: v.id,
+                            coverImage: v.coverImage.data.attributes,
+                            order: v.order,
+                            duration: String(v.duration),
+                            episodeName: v.episodeName,
+                        }
+                    })
+
+
+                    return item
+                })
+
+
+                return section
+            }),
+            toArray(),
         )
     }
 

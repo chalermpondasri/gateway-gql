@@ -4,6 +4,7 @@ import {
     FaqResponse,
     ListResponse,
     LoginResponse,
+    SectionResponse,
     TermResponse,
     UserRoleResponse,
 } from '@/repositories/cms'
@@ -21,4 +22,5 @@ export interface ICmsRepository {
     getPromotionalContents(): Observable<ListResponse<BaseResponse<PromotionalResponse>>>
     getFaqs(request: BaseRequest): Observable<ListResponse<BaseResponse<FaqResponse>>>
     getAvatars(id: number): Observable<ListResponse<BaseResponse<AvatarResponse>>>
+    getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>>
 }

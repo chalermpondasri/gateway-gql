@@ -5,6 +5,7 @@ import {
     ICmsRepository,
     ListResponse,
     LoginResponse,
+    SectionResponse,
     TermResponse,
     UserRoleResponse,
 } from '@/repositories/cms'
@@ -21,8 +22,25 @@ import { isNil } from 'lodash'
 
 export class CmsRepository implements ICmsRepository {
     public constructor(
-        private readonly _axiosInstance: AxiosInstance
+        private readonly _axiosInstance: AxiosInstance,
     ) {
+    }
+
+    public getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>> {
+        const populate = [
+            'sectionItems',
+            'sectionItems.episodes',
+            'sectionItems.shortVideo',
+            'sectionItems.trailer',
+            'sectionItems.coverImage',
+            'sectionItems.link',
+            'sectionItems.episodes.coverImage'
+        ]
+        const queryString = querystring.encode({populate})
+        const promise = this._axiosInstance.get(`/page-sections?${queryString}`)
+        return from(promise).pipe(
+            map(result => result.data)
+        )
     }
 
     public getTermsAndConditions(request: BaseRequest): Observable<ListResponse<TermResponse>> {
