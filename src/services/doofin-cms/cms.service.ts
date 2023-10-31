@@ -180,7 +180,7 @@ export class CmsService {
                     item.trailer = i.trailer
                     item.title = i.title
                     item.link = i.link
-                    item.tags = i.tags
+                    item.tags = i.tags ? i.tags.split(',') : []
                     item.shortVideo = i.shortVideo
                     item.episodes  = i.episodes.map( v => {
                         return {
@@ -189,6 +189,7 @@ export class CmsService {
                             order: v.order,
                             duration: String(v.duration),
                             episodeName: v.episodeName,
+                            continueWatchingAt: 0
                         }
                     })
 

@@ -27,6 +27,8 @@ export class EpisodeItemType extends IdType {
     public episodeName: string
     @Field(() => CmsImageType)
     public coverImage: CmsImageType
+    @Field()
+    public continueWatchingAt: number
 
 }
 @ObjectType()
@@ -43,9 +45,9 @@ export class SectionItemType extends IdType{
     public coverImage: CmsImageType
     @Field(() => ExternalContentType, { nullable: true})
     public link: ExternalContentType
-    @Field({ nullable: true})
-    public tags: string
-    @Field(() => EpisodeItemType, { nullable: true})
+    @Field(() => [String])
+    public tags: string[]
+    @Field(() => [EpisodeItemType], { nullable: true})
     public episodes: EpisodeItemType[]
     @Field()
     public recentlyPublished: boolean

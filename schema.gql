@@ -238,6 +238,7 @@ type EpisodeItemType {
   duration: String
   episodeName: String
   coverImage: CmsImageType!
+  continueWatchingAt: Float!
 }
 
 type SectionItemType {
@@ -248,8 +249,8 @@ type SectionItemType {
   trailer: ExternalContentType!
   coverImage: CmsImageType
   link: ExternalContentType
-  tags: String
-  episodes: EpisodeItemType
+  tags: [String!]!
+  episodes: [EpisodeItemType!]
   recentlyPublished: Boolean!
 }
 
