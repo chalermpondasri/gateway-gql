@@ -21,6 +21,8 @@ import {
     DeviceSessionResponse,
     ProfileRequestResetPinResponse,
     UpdateUserDeviceSettingRequest,
+    NotificationResponse,
+    NotificationQueryRequest,
     MyListResponse,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
@@ -63,6 +65,9 @@ export interface IAuthRepository {
     requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinResponse>
     verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileResponse>
     updateUserSetting(input: UpdateUserDeviceSettingRequest): Observable<UserResponse>
+    getNotification(paginationQueryRequest: NotificationQueryRequest): Observable<ListResponse<NotificationResponse>>
+    readAllNotification(profileId: string): Observable<{ status: boolean }>
+    readNotificationById(notificationId: string): Observable<NotificationResponse>
     getMyList(profileId: string): Observable<MyListResponse[]>
     addToMyList(profileId: string, programId: string): Observable<MyListResponse[]>
     removeFromMyList(profileId: string, programId: string): Observable<MyListResponse[]>
