@@ -250,6 +250,7 @@ type SectionItemType {
   link: ExternalContentType
   tags: String
   episodes: EpisodeItemType
+  recentlyPublished: Boolean!
 }
 
 type SectionType {

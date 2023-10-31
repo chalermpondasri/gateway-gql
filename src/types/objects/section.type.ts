@@ -47,6 +47,8 @@ export class SectionItemType extends IdType{
     public tags: string
     @Field(() => EpisodeItemType, { nullable: true})
     public episodes: EpisodeItemType[]
+    @Field()
+    public recentlyPublished: boolean
 }
 
 @ObjectType()

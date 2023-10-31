@@ -5,7 +5,10 @@ import { cmsRepositoryProvider } from '@/providers/cms.provider'
 import { LocaleResolver } from '@/services/doofin-cms/locale.resolver'
 import { PromotionResolver } from '@/services/doofin-cms/promotion.resolver'
 import { FaqResolver } from '@/services/doofin-cms/faq.resolver'
-import { SectionResolver } from '@/services/doofin-cms/section.resolver'
+import {
+    SectionItemResolver,
+    SectionResolver,
+} from '@/services/doofin-cms/section.resolver'
 
 @Module({
     providers: [
@@ -16,6 +19,7 @@ import { SectionResolver } from '@/services/doofin-cms/section.resolver'
         PromotionResolver,
         FaqResolver,
         SectionResolver,
+        SectionItemResolver,
     ],
     exports: [ CmsService ]
 })
