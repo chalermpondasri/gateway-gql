@@ -1,5 +1,6 @@
 import {
     AvatarType,
+    MyListType,
     ProfileRequestResetPinType,
     ProfileType,
     UserType,
@@ -101,6 +102,27 @@ export class ProfileResolver {
     @Mutation(() => ProfileType)
     public verifyTokenToResetPin(@Args(VerifyResetProfilePin.name) input: VerifyResetProfilePin){
         return this._authService.verifyTokenToResetPin(input)
+    }
+
+    @ResolveField('myList',() => [MyListType])
+    public myList(@Parent() parent: ProfileType) {
+       return this._authService.getMyList(parent.id)
+    }
+
+    @Mutation(() => [MyListType])
+    public addToMyList(
+        @Args('profileId') profileId: string,
+        @Args('programId') programId: string,
+    ){
+        return this._authService.addToMyList(profileId, programId)
+    }
+
+    @Mutation(() => [MyListType])
+    public removeFromMyList(
+        @Args('profileId') profileId: string,
+        @Args('programId') programId: string,
+    ){
+        return this._authService.removeFromMyList(profileId, programId)
     }
     
 }

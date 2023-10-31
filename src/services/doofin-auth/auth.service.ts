@@ -10,9 +10,11 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
+    concatMap,
     from,
     map,
     Observable,
+    toArray,
 } from 'rxjs'
 import {
     BaseUserType,
@@ -21,6 +23,7 @@ import {
     DeviceSessionType,  
     NotificationListType,
     NotificationType,
+    MyListType,
     ProfileRequestResetPinType,
     ProfileType,
     RequestOtpType,
@@ -292,6 +295,30 @@ export class AuthService {
     public markNotiAsRead(notificationId: string): Observable<NotificationType>{
         return this._authRepository.readNotificationById(notificationId).pipe(
             map(res=> plainToInstance(NotificationType, res))
+        )
+    }
+
+    public getMyList(profileId: string): Observable<MyListType[]>{ 
+        return this._authRepository.getMyList(profileId).pipe(
+            concatMap(res=> from(res)),
+            map(res=>plainToInstance(MyListType, res)),
+            toArray()
+        )
+    }
+
+    public addToMyList(profileId: string, programId: string): Observable<MyListType[]>{
+        return this._authRepository.addToMyList(profileId, programId).pipe(
+            concatMap(res=> from(res)),
+            map(res=>plainToInstance(MyListType, res)),
+            toArray()
+        )
+    }
+
+    public removeFromMyList(profileId: string, programId: string): Observable<MyListType[]>{
+        return this._authRepository.removeFromMyList(profileId, programId).pipe(
+            concatMap(res=> from(res)),
+            map(res=>plainToInstance(MyListType, res)),
+            toArray()
         )
     }
     

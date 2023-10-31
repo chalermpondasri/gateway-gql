@@ -8,6 +8,7 @@ import {
     ListResponse,
     NotificationQueryRequest,
     NotificationResponse,
+    MyListResponse,
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
     ProfileRequestResetPinResponse,
@@ -315,6 +316,25 @@ export class AuthRepository implements IAuthRepository {
     public readNotificationById(notificationId: string): Observable<NotificationResponse> {
         return from(this._axiosInstance.patch(`notifications/read/${notificationId}`)).pipe(
             map(res => plainToInstance(NotificationResponse, res.data))
+        )
+    }
+    
+    public getMyList(profileId: string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.get(`/user/me/${profileId}/my-list`)).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+        )
+    }
+
+    public addToMyList(profileId: string, programId:string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.post(`/user/me/${profileId}/my-list`,{ programId })).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+        )
+    }
+
+    
+    public removeFromMyList(profileId: string, programId:string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.delete(`/user/me/${profileId}/my-list/${programId}`)).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
         )
     }
 
