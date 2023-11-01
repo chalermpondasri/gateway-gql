@@ -11,3 +11,4 @@ export * from './device-session.type'
 export * from './cms.type'
 export * from './notification.type'
 
+export * from './section.type'

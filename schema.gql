@@ -227,6 +227,45 @@ type TokenType {
   refreshToken: String!
 }
 
+type ExternalContentType {
+  url: String!
+  mimeType: String
+}
+
+type EpisodeItemType {
+  id: ID!
+  order: Float!
+  duration: String
+  episodeName: String
+  coverImage: CmsImageType!
+  continueWatchingAt: Float!
+}
+
+type SectionItemType {
+  id: ID!
+  title: String
+  contentRating: String!
+  shortVideo: ExternalContentType!
+  trailer: ExternalContentType!
+  coverImage: CmsImageType
+  link: ExternalContentType
+  tags: [String!]!
+  episodes: [EpisodeItemType!]
+  recentlyPublished: Boolean!
+}
+
+type SectionType {
+  id: ID!
+  sectionTitle: String!
+  sectionSubtitle: String
+  sectionType: String!
+  sectionLink: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  order: Float!
+  sectionItems: [SectionItemType!]!
+}
+
 type SubjectType {
   id: ID!
   subject: String!
@@ -238,6 +277,7 @@ type Query {
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
+  getMainPage: [SectionType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
