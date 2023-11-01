@@ -6,6 +6,9 @@ import {
     DeviceSessionResponse,
     IAuthRepository,
     ListResponse,
+    NotificationQueryRequest,
+    NotificationResponse,
+    MyListResponse,
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
     ProfileRequestResetPinResponse,
@@ -295,6 +298,43 @@ export class AuthRepository implements IAuthRepository {
             this._axiosInstance.patch(`/user/me/setting`, input)
         ).pipe(
             map( res => plainToInstance(UserResponse, res.data))
+        )
+    }
+    
+    public getNotification(notiQueryRequest: NotificationQueryRequest): Observable<ListResponse<NotificationResponse>> { 
+        return from(this._axiosInstance.get('notifications',{params: notiQueryRequest})).pipe(
+            map(res => plainToInstance(ListResponse<NotificationResponse>, res.data))
+        )
+    }
+
+    public readAllNotification(profileId: string): Observable<{ status: boolean }> {
+        return from(this._axiosInstance.patch('notifications/read',{},{params:{ profileId }})).pipe(
+            map(res =>  res.data)
+        )
+    }
+
+    public readNotificationById(notificationId: string): Observable<NotificationResponse> {
+        return from(this._axiosInstance.patch(`notifications/read/${notificationId}`)).pipe(
+            map(res => plainToInstance(NotificationResponse, res.data))
+        )
+    }
+    
+    public getMyList(profileId: string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.get(`/user/me/${profileId}/my-list`)).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+        )
+    }
+
+    public addToMyList(profileId: string, programId:string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.post(`/user/me/${profileId}/my-list`,{ programId })).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+        )
+    }
+
+    
+    public removeFromMyList(profileId: string, programId:string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.delete(`/user/me/${profileId}/my-list/${programId}`)).pipe(
+            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
         )
     }
 
