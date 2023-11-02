@@ -88,7 +88,7 @@ export class CmsRepository implements ICmsRepository {
     }
 
     public getFaqs(request: BaseRequest): Observable<ListResponse<BaseResponse<FaqResponse>>> {
-        const queryString = querystring.encode(request.build())
+        const queryString = querystring.encode({...request.build(),populate:"*"})      
         const path = `/faqs?${queryString}`
         const promise = this._axiosInstance.get(path)
         return from(promise).pipe(

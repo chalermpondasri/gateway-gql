@@ -37,7 +37,10 @@ import { capitalize } from 'lodash/fp'
 import {
     get,
 } from 'lodash'
-import { SubjectType } from '@/types/objects/subject.type'
+import { 
+    SubFaqType, 
+    SubjectType, 
+} from '@/types/objects/subject.type'
 import { RequestContext } from '@/providers/request-context.provider'
 
 @Injectable()
@@ -131,12 +134,19 @@ export class CmsService {
         }
         return this._cmsRepository.getFaqs(request).pipe(
             concatMap(faqResponse => from(faqResponse.data)),
-            map(faq => {
+            map(faq => {   
                 const langSuffix = capitalize(locale)
                 const result = new SubjectType()
                 result.id = faq.id
-                result.content = get(faq, `attributes.content${langSuffix}`) ?? get(faq, `attributes.contentEn}`)
                 result.subject = get(faq, `attributes.subject${langSuffix}`) ?? get(faq, `attributes.subjectEn}`)
+                result.subFaq = faq.attributes.subFaq.sort((a,b)=> a.seq - b.seq).map(e=>{
+                    const sub:SubFaqType = {
+                        id: e.id,
+                        subject: get(e, `subject${langSuffix}`) ?? get(e, `subjectEn`),
+                        content: get(e, `content${langSuffix}`) ?? get(e, `contentEn`),
+                    }
+                    return plainToInstance(SubFaqType, sub)
+                })
                 return result
             }),
             toArray(),

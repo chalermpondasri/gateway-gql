@@ -15,7 +15,7 @@ export class FaqResolver {
         private readonly _cmsService: CmsService,
     ) {
     }
-    @Query(type => [SubjectType])
+    @Query(() => [SubjectType])
     public getFAQs(
         @Context() ctx,
     ) {
