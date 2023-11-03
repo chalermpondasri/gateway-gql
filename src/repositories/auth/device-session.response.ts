@@ -6,4 +6,5 @@ export class DeviceSessionResponse {
     public deviceId: string
     @Transform(v => v.value ? new Date(v.value) : null)
     public lastAccess: Date
+    public deviceType: string
 }
