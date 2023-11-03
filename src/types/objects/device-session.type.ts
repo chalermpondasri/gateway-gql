@@ -15,4 +15,6 @@ export class DeviceSessionType extends IdStringType {
     public isCurrentDevice: boolean
     @Field(() => GraphQLISODateTime)
     public lastAccess: Date
+    @Field()
+    public deviceType: string
 }
