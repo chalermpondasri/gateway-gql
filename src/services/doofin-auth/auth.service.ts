@@ -38,6 +38,7 @@ import {
     CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
+    UpdateProfileInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserSettingInput,
@@ -319,6 +320,18 @@ export class AuthService {
             concatMap(res=> from(res)),
             map(res=>plainToInstance(MyListType, res)),
             toArray()
+        )
+    }
+
+    public updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileType> {
+        return this._authRepository.updateProfile(profileId, input).pipe(
+            map(res=> plainToInstance(ProfileType, res))
+        )
+    }
+
+    public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinType>{
+        return this._authRepository.requestTokenToResetPinByAdmin(profileId, adminPin).pipe(
+            map(res=> plainToInstance(ProfileRequestResetPinType, res))
         )
     }
     

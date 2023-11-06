@@ -2,6 +2,7 @@ import {
     Field, 
     InputType, 
 } from '@nestjs/graphql';
+import { ContentRating } from '../enums';
 
 @InputType()
 export class CreateProfilePinInput {
@@ -56,3 +57,18 @@ export class VerifyResetProfilePin extends CreateProfilePinInput {
     public token: string
 }
 
+
+@InputType()
+export class UpdateProfileInput {
+    @Field({nullable:true})
+    public name: string;
+
+    @Field({nullable:true})
+    public avatar: number;
+
+    @Field({nullable:true})
+    public isLimit: boolean;
+
+    @Field(()=> ContentRating, {nullable:true})
+    public contentRating: ContentRating;
+}

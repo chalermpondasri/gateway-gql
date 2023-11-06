@@ -31,6 +31,7 @@ import { VerifyOtpResponse } from '@/repositories/auth/verify-otp.response'
 import { 
     CreateProfileInput,
     CreateProfilePinInput, 
+    UpdateProfileInput, 
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
@@ -71,6 +72,8 @@ export interface IAuthRepository {
     getMyList(profileId: string): Observable<MyListResponse[]>
     addToMyList(profileId: string, programId: string): Observable<MyListResponse[]>
     removeFromMyList(profileId: string, programId: string): Observable<MyListResponse[]>
+    updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileResponse>
+    requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>
 }
 
 export interface ILocaleRepository {
