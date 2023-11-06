@@ -20,6 +20,7 @@ import { AuthService } from './auth.service'
 import {
     CreateProfileInput,
     CreateProfilePinInput,
+    UpdateProfileInput,
     UpdateProfilePinInput,
     ValidateProfilePinInputType,
     VerifyResetProfilePin,
@@ -123,6 +124,14 @@ export class ProfileResolver {
         @Args('programId') programId: string,
     ){
         return this._authService.removeFromMyList(profileId, programId)
+    }
+
+    @Mutation(()=> ProfileType)
+    public updateProfile(
+        @Args('profileId') profileId: string,
+        @Args(UpdateProfileInput.name) input: UpdateProfileInput
+    ){
+        return this._authService.updateProfile(profileId, input)
     }
     
 }

@@ -35,6 +35,7 @@ import { plainToInstance } from 'class-transformer'
 import {
     CreateProfileInput,
     CreateProfilePinInput,
+    UpdateProfileInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
@@ -336,6 +337,12 @@ export class AuthRepository implements IAuthRepository {
         return from(this._axiosInstance.delete(`/user/me/${profileId}/my-list/${programId}`)).pipe(
             map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
         )
+    }
+    
+    public updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileResponse> {
+        return from(
+            this._axiosInstance.patch(`/user/me/profile/${profileId}`,input)
+        ).pipe(map(res => plainToInstance(ProfileResponse, res.data)))
     }
 
 }
