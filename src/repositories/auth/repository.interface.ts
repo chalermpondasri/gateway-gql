@@ -73,6 +73,7 @@ export interface IAuthRepository {
     addToMyList(profileId: string, programId: string): Observable<MyListResponse[]>
     removeFromMyList(profileId: string, programId: string): Observable<MyListResponse[]>
     updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileResponse>
+    requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>
 }
 
 export interface ILocaleRepository {

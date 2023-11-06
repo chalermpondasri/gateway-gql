@@ -133,5 +133,13 @@ export class ProfileResolver {
     ){
         return this._authService.updateProfile(profileId, input)
     }
+
+    @Mutation(()=>  ProfileRequestResetPinType)
+    public requestTokenToResetPinByAdmin(
+        @Args('profileId') profileId: string,
+        @Args('adminPin') adminPin: string
+    ){
+        return this._authService.requestTokenToResetPinByAdmin(profileId, adminPin)
+    }
     
 }

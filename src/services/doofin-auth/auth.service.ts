@@ -328,5 +328,11 @@ export class AuthService {
             map(res=> plainToInstance(ProfileType, res))
         )
     }
+
+    public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinType>{
+        return this._authRepository.requestTokenToResetPinByAdmin(profileId, adminPin).pipe(
+            map(res=> plainToInstance(ProfileRequestResetPinType, res))
+        )
+    }
     
 }

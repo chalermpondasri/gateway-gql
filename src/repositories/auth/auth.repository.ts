@@ -345,4 +345,10 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map(res => plainToInstance(ProfileResponse, res.data)))
     }
 
+    public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>{
+        return from(
+            this._axiosInstance.post(`/user/me/profile/${profileId}/request/reset-audience-pin`,{pin: adminPin})
+        ).pipe(map(res=> plainToInstance(ProfileRequestResetPinResponse, res.data)))
+    }
+
 }
