@@ -7,6 +7,9 @@ import {
     CmsImageType,
     IdType,
 } from '@/types/objects/cms.type'
+import {
+    LocalizedLabelType,
+} from '@/types/objects/label.type'
 
 
 @ObjectType()
@@ -37,16 +40,16 @@ export class SectionItemType extends IdType{
     public title: string
     @Field()
     public contentRating: string
-    @Field(() => ExternalContentType)
-    public shortVideo: ExternalContentType
-    @Field(() => ExternalContentType)
-    public trailer: ExternalContentType
+    @Field(() => [ExternalContentType])
+    public shortVideos: ExternalContentType[]
+    @Field(() => [ExternalContentType])
+    public trailers: ExternalContentType[]
     @Field(() => CmsImageType, {nullable: true})
     public coverImage: CmsImageType
     @Field(() => ExternalContentType, { nullable: true})
     public link: ExternalContentType
-    @Field(() => [String])
-    public tags: string[]
+    @Field(() => [LocalizedLabelType])
+    public tags: LocalizedLabelType[]
     @Field(() => [EpisodeItemType], { nullable: true})
     public episodes: EpisodeItemType[]
     @Field()

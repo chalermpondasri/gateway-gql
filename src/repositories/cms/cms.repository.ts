@@ -28,13 +28,20 @@ export class CmsRepository implements ICmsRepository {
 
     public getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>> {
         const populate = [
-            'sectionItems',
-            'sectionItems.episodes',
-            'sectionItems.shortVideo',
-            'sectionItems.trailer',
-            'sectionItems.coverImage',
-            'sectionItems.link',
-            'sectionItems.episodes.coverImage'
+            'items',
+            'items.title',
+            'items.subtitle',
+            'items.trailers',
+            'items.coverImage',
+            'items.link',
+            'title',
+            'subtitle',
+            'items.media_episodes',
+            'items.media_episodes.name',
+            'items.mediaTags',
+            'items.mediaTags.name',
+            'items.rating',
+            'items.media_episodes.coverImage',
         ]
         const queryString = querystring.encode({populate})
         const promise = this._axiosInstance.get(`/page-sections?${queryString}`)
