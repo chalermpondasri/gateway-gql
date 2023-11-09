@@ -65,6 +65,7 @@ type ProfileType {
   contentRating: String!
   pinSettingStatus: String!
   userAccount: UserType!
+  myList: [MyListType!]!
 }
 
 type ValidateProfilePinType {
@@ -81,12 +82,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type MyListType {
+  programId: String!
+  addDate: DateTime!
+}
+
 type DeviceSessionType {
   id: ID!
   deviceName: String!
   deviceId: String!
   isCurrentDevice: Boolean!
   lastAccess: DateTime!
+  deviceType: String!
 }
 
 type CreateUserResponseType {
@@ -227,6 +234,35 @@ type TokenType {
   refreshToken: String!
 }
 
+type NotificationType {
+  notificationId: String!
+  profileId: String!
+  type: String!
+  image: String!
+  title: String!
+  programName: String!
+  isRead: Boolean!
+  url: String!
+  timestamp: Float!
+  profile: ProfileType!
+}
+
+type NotificationListType {
+  total: Float!
+  page: Float!
+  limit: Float!
+  data: [NotificationType!]!
+}
+
+type ReadAllNotificationType {
+  status: Boolean!
+}
+
+type LocalizedLabelType {
+  label: String!
+  id: String!
+}
+
 type ExternalContentType {
   url: String!
   mimeType: String
@@ -245,11 +281,11 @@ type SectionItemType {
   id: ID!
   title: String
   contentRating: String!
-  shortVideo: ExternalContentType!
-  trailer: ExternalContentType!
+  shortVideos: [ExternalContentType!]!
+  trailers: [ExternalContentType!]!
   coverImage: CmsImageType
   link: ExternalContentType
-  tags: [String!]!
+  tags: [LocalizedLabelType!]!
   episodes: [EpisodeItemType!]
   recentlyPublished: Boolean!
 }
@@ -267,6 +303,12 @@ type SectionType {
 }
 
 type SubjectType {
+  id: ID!
+  subject: String!
+  subFaq: [SubFaqType!]!
+}
+
+type SubFaqType {
   id: ID!
   subject: String!
   content: String!
@@ -292,6 +334,7 @@ type Query {
   getContentRating: [String!]!
   getAvatars(id: Int): [AvatarType!]!
   getUserSessions: [DeviceSessionType!]!
+  getNotification(NotificationInput: NotificationInput): NotificationListType!
 }
 
 input PaginationInput {
@@ -302,6 +345,13 @@ input PaginationInput {
 input ValidateProfilePinInputType {
   profileId: String!
   pin: String!
+}
+
+input NotificationInput {
+  limit: Float = 20
+  page: Float = 1
+  profileId: String
+  isRead: Boolean
 }
 
 type Mutation {
@@ -318,6 +368,10 @@ type Mutation {
   createProfile(CreateProfileInput: CreateProfileInput!): ProfileType!
   requestTokenToResetPin(profileId: String!, password: String!): ProfileRequestResetPinType!
   verifyTokenToResetPin(VerifyResetProfilePin: VerifyResetProfilePin!): ProfileType!
+  addToMyList(profileId: String!, programId: String!): [MyListType!]!
+  removeFromMyList(profileId: String!, programId: String!): [MyListType!]!
+  updateProfile(profileId: String!, UpdateProfileInput: UpdateProfileInput!): ProfileType!
+  requestTokenToResetPinByAdmin(profileId: String!, adminPin: String!): ProfileRequestResetPinType!
   verifyToChangePhoneNumber(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
   changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
   requestToChangeEmail(newEmail: String!): UserRequestEmailType!
@@ -325,6 +379,8 @@ type Mutation {
   updateUserSetting(UserSettingInput: UserSettingInput!): UserType!
   revokeUserSessions: [String!]!
   revokeSession(sessionId: String!): DeviceSessionType!
+  markAllNotiAsRead(profileId: String): ReadAllNotificationType!
+  markNotiAsRead(notificationId: String!): NotificationType!
 }
 
 input CreateUserInput {
@@ -393,6 +449,22 @@ input VerifyResetProfilePin {
   profileId: String!
   newPin: String!
   token: String!
+}
+
+input UpdateProfileInput {
+  name: String
+  avatar: Float
+  isLimit: Boolean
+  contentRating: ContentRating
+}
+
+enum ContentRating {
+  GENERAL
+  KIDS_3P
+  KIDS_6P
+  MATURE_13P
+  MATURE_18P
+  NO_RESTRICT
 }
 
 input UserVerifyOtpInput {

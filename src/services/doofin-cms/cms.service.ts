@@ -16,7 +16,13 @@ import {
     toArray,
 } from 'rxjs'
 import {
+    BaseResponse,
+    CmsImageContent,
+    ContentRatingResponse,
     ICmsRepository,
+    MediaContentResponse,
+    MediaEpisodeResponse,
+    TagResponse,
 } from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
 import { ProviderName } from '@/constants/provider-name.const'
@@ -42,6 +48,7 @@ import {
     SubjectType, 
 } from '@/types/objects/subject.type'
 import { RequestContext } from '@/providers/request-context.provider'
+import { LocalizedLabelType } from '@/types/objects/label.type'
 
 @Injectable()
 export class CmsService {
@@ -118,8 +125,8 @@ export class CmsService {
                 result.id = data.id
                 result.description = description
                 result.title = title
-                result.imageWeb = imageWeb.data.attributes
-                result.imageMobile = imageMobile.data.attributes
+                result.imageWeb = (<BaseResponse<CmsImageContent>> imageWeb.data).attributes
+                result.imageMobile = (<BaseResponse<CmsImageContent>> imageMobile.data).attributes
 
                 return result
             }),
@@ -168,37 +175,51 @@ export class CmsService {
     }
 
     public getMainPageSections(): Observable<SectionType[]> {
+        const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMainPageSections().pipe(
             concatMap(result => from(result.data)),
-            map(item => {
-                const { attributes } = item
+            map(sectionResponse => {
+
+                const { attributes } = sectionResponse
                 const section = new SectionType()
-                section.id = item.id
-                section.sectionTitle = attributes.sectionTitle
+                section.id = sectionResponse.id
+                section.sectionTitle = attributes.title[lang]
                 section.sectionType =attributes.sectionType
                 section.sectionLink = attributes.sectionLink
-                section.sectionSubtitle = attributes.sectionSubtitle
+                section.sectionSubtitle = attributes.subtitle? attributes.subtitle[lang] : null
                 section.order = attributes.order
                 section.createdAt = new Date(attributes.createdAt)
                 section.updatedAt = new Date(attributes.updatedAt)
 
-                section.sectionItems = attributes.sectionItems.map( i=>{
+                section.sectionItems = (attributes.items.data as BaseResponse<MediaContentResponse>[]).map( i=>{
                     const item = new SectionItemType()
                     item.id = i.id
-                    item.contentRating = i.contentRating
-                    item.coverImage = i.coverImage.data.attributes
-                    item.trailer = i.trailer
-                    item.title = i.title
-                    item.link = i.link
-                    item.tags = i.tags ? i.tags.split(',') : []
-                    item.shortVideo = i.shortVideo
-                    item.episodes  = i.episodes.map( v => {
+                    item.contentRating = (<BaseResponse<ContentRatingResponse>> i.attributes.rating.data).attributes.value
+                    item.coverImage = (<BaseResponse<CmsImageContent>> i.attributes.coverImage.data).attributes
+                    item.trailers = i.attributes.trailers
+                    item.title = i.attributes.title[lang]
+                    item.link = i.attributes.link
+
+                    let tags: LocalizedLabelType[] = []
+                    if(!!i.attributes.mediaTags.data) {
+                        tags = (<BaseResponse<TagResponse>[]>i.attributes.mediaTags.data).map( t => {
+                            const label = new LocalizedLabelType()
+                            label.id = t.attributes.slug
+                            label.label = t.attributes.name[lang]
+                            return label
+                        })
+                    }
+                    item.tags = tags
+
+                    item.shortVideos = []
+
+                    item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> i.attributes.media_episodes.data).map( v => {
                         return {
                             id: v.id,
-                            coverImage: v.coverImage.data.attributes,
-                            order: v.order,
-                            duration: String(v.duration),
-                            episodeName: v.episodeName,
+                            coverImage: (<BaseResponse<CmsImageContent>> v.attributes.coverImage.data).attributes,
+                            order: v.attributes.ordering,
+                            duration: String(v.attributes.duration),
+                            episodeName: v.attributes.name[lang],
                             continueWatchingAt: 0
                         }
                     })

@@ -1,12 +1,14 @@
-import { BaseResponse } from '@/repositories/cms/base.response'
+import {
+    CmsDataResponse,
+} from '@/repositories/cms/base.response'
 
 export class PromotionalResponse {
     public titleEn: string
     public titleTh: string
     public descriptionEn: string
     public descriptionTh: string
-    public imageWeb: { data: BaseResponse<CmsImageContent>}
-    public imageMobile: { data: BaseResponse<CmsImageContent>}
+    public imageWeb: CmsDataResponse<CmsImageContent>
+    public imageMobile: CmsDataResponse<CmsImageContent>
 }
 
 export class CmsImageContent {
