@@ -153,6 +153,8 @@ export class MyListResolver {
     ) {}
     @ResolveField('mediaContent',() => [SectionItemType])
     public mediaContent(@Parent() parent: MyListType) { 
-       return this._cmsService.getMediaContentById(parent.mediaId)
+        console.log(parent.programId);
+        
+       return this._cmsService.getMediaContentById(parent.programId)
     }
 }
