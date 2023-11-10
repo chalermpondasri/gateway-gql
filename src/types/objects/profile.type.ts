@@ -6,6 +6,8 @@ import {
 import { IdStringType } from './id-string.type';
 import { AvatarType } from './cms.type';
 import { UserType } from './user.type';
+import { Expose } from 'class-transformer';
+import { SectionItemType } from './section.type';
 
 
 @ObjectType()
@@ -51,9 +53,13 @@ export class ProfileRequestResetPinType {
 @ObjectType()
 export class MyListType{
     @Field()
-    public programId:string
+    @Expose({ name: 'programId' })
+    public mediaId:string
 
     @Field(()=> GraphQLISODateTime)
     public addDate:Date
+
+    @Field(()=> SectionItemType)
+    public mediaContent: SectionItemType
 }
 

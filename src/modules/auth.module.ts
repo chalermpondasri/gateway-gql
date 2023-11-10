@@ -9,6 +9,7 @@ import {
     UserResolver,
     DeviceSessionResolver,
     NotificationResolver,
+    MyListResolver,
 } from '@/services/doofin-auth'
 import {
     authRepositoryProvider,
@@ -31,6 +32,7 @@ import { CmsModule } from './cms.module'
         ResourceResolver,
         DeviceSessionResolver,
         NotificationResolver,
+        MyListResolver
     ],
     imports: [ CmsModule ],
 })

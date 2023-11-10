@@ -3,6 +3,7 @@ import {
     MyListType,
     ProfileRequestResetPinType,
     ProfileType,
+    SectionItemType,
     UserType,
     ValidateProfilePinType,
 } from '@/types/objects'
@@ -142,4 +143,16 @@ export class ProfileResolver {
         return this._authService.requestTokenToResetPinByAdmin(profileId, adminPin)
     }
     
+}
+
+@Resolver(() =>  MyListType)
+export class MyListResolver {
+    public constructor(
+        @Inject(CmsService) 
+        private readonly _cmsService: CmsService,
+    ) {}
+    @ResolveField('mediaContent',() => [SectionItemType])
+    public mediaContent(@Parent() parent: MyListType) { 
+       return this._cmsService.getMediaContentById(parent.mediaId)
+    }
 }
