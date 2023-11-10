@@ -32,6 +32,7 @@ import {
     UserType,
     UserVerifyOtpType,
     ValidateProfilePinType,
+    VerifyOtpType,
 } from '@/types/objects'
 import {
     CreateProfileInput,
@@ -92,12 +93,13 @@ export class AuthService {
         )
     }
 
-    public verifyOtp(request: VerifyOtpInput): Observable<BaseUserType> {
+    public verifyOtp(request: VerifyOtpInput): Observable<VerifyOtpType> {
         return this._authRepository.verifyOtp(request).pipe(
             map(data => {
-                const typedResponse = new BaseUserType()
+                const typedResponse = new VerifyOtpType()
                 typedResponse.status = data.status
                 typedResponse.userId = data.userId
+                typedResponse.tokens = data.tokens
                 return typedResponse
             }),
         )

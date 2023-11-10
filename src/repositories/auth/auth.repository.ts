@@ -73,6 +73,7 @@ export class AuthRepository implements IAuthRepository {
                 const data = new VerifyOtpResponse()
                 data.userId = result.data.userId
                 data.status = result.data.status
+                data.tokens = result.data.tokens
                 return data
             }),
         )
