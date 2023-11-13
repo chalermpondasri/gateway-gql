@@ -6,6 +6,7 @@ import {
     Int,
     ObjectType,
 } from '@nestjs/graphql'
+import { TokenType } from './token.type'
 
 @ObjectType()
 export class RequestOtpType {
@@ -17,4 +18,7 @@ export class RequestOtpType {
     public expiredAt: Date
 }
 @ObjectType()
-export class VerifyOtpType extends BaseUserType {}
+export class VerifyOtpType extends BaseUserType {
+    @Field(()=> TokenType)
+    public tokens: TokenType
+}
