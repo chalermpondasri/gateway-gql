@@ -36,6 +36,7 @@ export class CmsRepository implements ICmsRepository {
             'items.link',
             'title',
             'subtitle',
+            'coverImage',
             'items.media_episodes',
             'items.media_episodes.name',
             'items.mediaTags',
