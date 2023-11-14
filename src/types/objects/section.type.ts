@@ -75,7 +75,7 @@ export class SectionType extends IdType {
     public order: number
     @Field(() => [SectionItemType])
     public sectionItems: SectionItemType[]
-    @Field(() => CmsImageContent)
+    @Field(() => CmsImageType)
     public coverImage: CmsImageType
 
 
