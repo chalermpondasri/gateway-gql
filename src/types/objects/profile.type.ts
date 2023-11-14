@@ -6,6 +6,7 @@ import {
 import { IdStringType } from './id-string.type';
 import { AvatarType } from './cms.type';
 import { UserType } from './user.type';
+import { SectionItemType } from './section.type';
 
 
 @ObjectType()
@@ -55,5 +56,8 @@ export class MyListType{
 
     @Field(()=> GraphQLISODateTime)
     public addDate:Date
+
+    @Field(()=> SectionItemType)
+    public mediaContent: SectionItemType
 }
 
