@@ -36,5 +36,6 @@ export class SectionResponse {
     public sectionLink?: string
     public order: number
     public items: CmsDataResponse<MediaContentResponse>
+    public coverImage: CmsDataResponse<CmsImageContent>
 
 }
