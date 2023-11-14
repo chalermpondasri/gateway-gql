@@ -10,6 +10,7 @@ import {
 import {
     LocalizedLabelType,
 } from '@/types/objects/label.type'
+import { CmsImageContent } from '@/repositories/cms'
 
 
 @ObjectType()
@@ -74,6 +75,8 @@ export class SectionType extends IdType {
     public order: number
     @Field(() => [SectionItemType])
     public sectionItems: SectionItemType[]
+    @Field(() => CmsImageContent)
+    public coverImage: CmsImageType
 
 
 

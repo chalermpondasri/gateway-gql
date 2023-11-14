@@ -190,6 +190,7 @@ export class CmsService {
                 section.order = attributes.order
                 section.createdAt = new Date(attributes.createdAt)
                 section.updatedAt = new Date(attributes.updatedAt)
+                section.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage.data).attributes
 
                 section.sectionItems = (attributes.items.data as BaseResponse<MediaContentResponse>[]).map( i=>{
                     const item = new SectionItemType()
