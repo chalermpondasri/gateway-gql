@@ -300,7 +300,7 @@ type SectionType {
   updatedAt: DateTime!
   order: Float!
   sectionItems: [SectionItemType!]!
-  coverImage: CmsImageType!
+  coverImage: CmsImageType
 }
 
 type SubjectType {
