@@ -79,9 +79,9 @@ export class AuthRepository implements IAuthRepository {
         )
     }
 
-    public updateUserPreferences(userId: string, preferences: string[]): Observable<string[]> {
-        return from(this._axiosInstance.patch(`/user/${userId}/categories`, preferences)).pipe(
-            map((result: AxiosResponse<string[]>) => {
+    public updateProfilePreferences(profileId: string, preferences: string[]): Observable<ProfileResponse> {
+        return from(this._axiosInstance.patch(`user/me/profile/${profileId}/category`, {categories: preferences})).pipe(
+            map((result: AxiosResponse<ProfileResponse>) => {
                 return result.data
             }),
         )

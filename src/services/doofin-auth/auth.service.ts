@@ -13,6 +13,7 @@ import {
     concatMap,
     from,
     map,
+    mergeMap,
     Observable,
     toArray,
 } from 'rxjs'
@@ -105,14 +106,19 @@ export class AuthService {
         )
     }
 
-    public updateUserPreferences(userId: string, preferences: string[]): Observable<CategoryType[]> {
-        return this._authRepository.updateUserPreferences(userId, preferences).pipe(
-            map(result => {
-                return result.map(r => {
-                    const c = new CategoryType()
-                    c.id = r
-                    return c
-                })
+    public updateUserPreferences(profileId: string, preferences: string[]): Observable<CategoryType[]> {
+        return this._authRepository.updateProfilePreferences(profileId, preferences).pipe(
+            mergeMap(result=>{
+                return this.getAllCategories().pipe(
+                    map(allCategories=>{
+                        return result.categories.map(r => {
+                            const c = new CategoryType()
+                            c.id = r
+                            c.label = allCategories.find(e=> e.id === r)?.label ?? ""
+                            return c
+                        })
+                    })
+                )
             }),
         )
     }
