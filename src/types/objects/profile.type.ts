@@ -7,6 +7,7 @@ import { IdStringType } from './id-string.type';
 import { AvatarType } from './cms.type';
 import { UserType } from './user.type';
 import { SectionItemType } from './section.type';
+import { CategoryType } from './category.type';
 
 
 @ObjectType()
@@ -23,8 +24,8 @@ export class BaseProfileType extends IdStringType  {
 export class ProfileType extends BaseProfileType  {
     @Field()
     public dob: string
-    @Field(()=> [String])
-    public categories: string[]
+    @Field(()=> [CategoryType])
+    public categories: CategoryType[]
     @Field()
     public contentRating: string
     @Field()

@@ -18,7 +18,6 @@ import {
     toArray,
 } from 'rxjs'
 import {
-    BaseUserType,
     CategoryType,
     CreateUserResponseType,
     DeviceSessionType,  
@@ -108,18 +107,7 @@ export class AuthService {
 
     public updateUserPreferences(profileId: string, preferences: string[]): Observable<CategoryType[]> {
         return this._authRepository.updateProfilePreferences(profileId, preferences).pipe(
-            mergeMap(result=>{
-                return this.getAllCategories().pipe(
-                    map(allCategories=>{
-                        return result.categories.map(r => {
-                            const c = new CategoryType()
-                            c.id = r
-                            c.label = allCategories.find(e=> e.id === r)?.label ?? ""
-                            return c
-                        })
-                    })
-                )
-            }),
+            mergeMap(result=>this.mapCategoryIdWithLabel(result.categories)),
         )
     }
 
@@ -340,6 +328,22 @@ export class AuthService {
     public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinType>{
         return this._authRepository.requestTokenToResetPinByAdmin(profileId, adminPin).pipe(
             map(res=> plainToInstance(ProfileRequestResetPinType, res))
+        )
+    }
+
+    public mapCategoryIdWithLabel(categoryIds: string[]): Observable<CategoryType[]>{
+        return this.getAllCategories().pipe(
+            concatMap(allCategories=>{
+                return from(categoryIds).pipe(
+                    map(categoryId=>{
+                        const c = new CategoryType()
+                        c.id = categoryId
+                        c.label = allCategories.find(e=> e.id === categoryId)?.label ?? ""
+                        return c
+                    }),
+                    toArray()
+                )
+            })
         )
     }
     
