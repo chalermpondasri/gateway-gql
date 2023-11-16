@@ -1,5 +1,6 @@
 import {
     AvatarType,
+    CategoryType,
     MyListType,
     ProfileRequestResetPinType,
     ProfileType,
@@ -141,6 +142,11 @@ export class ProfileResolver {
         @Args('adminPin') adminPin: string
     ){
         return this._authService.requestTokenToResetPinByAdmin(profileId, adminPin)
+    }
+
+    @ResolveField('categories',() => [CategoryType])
+    public categories(@Parent() parent: ProfileType) {
+       return this._authService.mapCategoryIdWithLabel((parent.categories as unknown as string[]))
     }
     
 }

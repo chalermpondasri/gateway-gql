@@ -13,11 +13,11 @@ import {
     concatMap,
     from,
     map,
+    mergeMap,
     Observable,
     toArray,
 } from 'rxjs'
 import {
-    BaseUserType,
     CategoryType,
     CreateUserResponseType,
     DeviceSessionType,  
@@ -105,15 +105,9 @@ export class AuthService {
         )
     }
 
-    public updateUserPreferences(userId: string, preferences: string[]): Observable<CategoryType[]> {
-        return this._authRepository.updateUserPreferences(userId, preferences).pipe(
-            map(result => {
-                return result.map(r => {
-                    const c = new CategoryType()
-                    c.id = r
-                    return c
-                })
-            }),
+    public updateUserPreferences(profileId: string, preferences: string[]): Observable<CategoryType[]> {
+        return this._authRepository.updateProfilePreferences(profileId, preferences).pipe(
+            mergeMap(result=>this.mapCategoryIdWithLabel(result.categories)),
         )
     }
 
@@ -334,6 +328,22 @@ export class AuthService {
     public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinType>{
         return this._authRepository.requestTokenToResetPinByAdmin(profileId, adminPin).pipe(
             map(res=> plainToInstance(ProfileRequestResetPinType, res))
+        )
+    }
+
+    public mapCategoryIdWithLabel(categoryIds: string[]): Observable<CategoryType[]>{
+        return this.getAllCategories().pipe(
+            concatMap(allCategories=>{
+                return from(categoryIds).pipe(
+                    map(categoryId=>{
+                        const c = new CategoryType()
+                        c.id = categoryId
+                        c.label = allCategories.find(e=> e.id === categoryId)?.label ?? ""
+                        return c
+                    }),
+                    toArray()
+                )
+            })
         )
     }
     

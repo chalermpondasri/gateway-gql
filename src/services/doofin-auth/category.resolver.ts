@@ -18,10 +18,11 @@ export class CategoryResolver {
     }
 
     @Mutation(() => [CategoryType])
-    public updateUserPreferences(
+    public updateProfilePreferences(
         @Args({name: 'categoryIds', type: () => [String]}) ids: string[],
+        @Args('profileId') profileId: string,
     ) {
-        return this._authService.updateUserPreferences('mockupId', ids)
+        return this._authService.updateUserPreferences(profileId, ids)
     }
 
     @Query(() => [CategoryType])
