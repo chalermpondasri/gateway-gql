@@ -22,18 +22,20 @@ import {
     ICmsRepository,
     MediaContentResponse,
     MediaEpisodeResponse,
+    MediaSeasonResponse,
     TagResponse,
 } from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
     AvatarType,
-    TermType,
     CmsPromotionalContentType,
     CmsRoleType,
     CmsUserType,
-    SectionType,
+    MediaContentDetailType,
     SectionItemType,
+    SectionType,
+    TermType,
 } from '@/types/objects'
 import {
     instanceToPlain,
@@ -42,10 +44,13 @@ import {
 import { capitalize } from 'lodash/fp'
 import {
     get,
+    reduce,
+    size,
+    some,
 } from 'lodash'
-import { 
-    SubFaqType, 
-    SubjectType, 
+import {
+    SubFaqType,
+    SubjectType,
 } from '@/types/objects/subject.type'
 import { RequestContext } from '@/providers/request-context.provider'
 import { LocalizedLabelType } from '@/types/objects/label.type'
@@ -204,6 +209,7 @@ export class CmsService {
                     let tags: LocalizedLabelType[] = []
                     if(!!i.attributes.mediaTags.data) {
                         tags = (<BaseResponse<TagResponse>[]>i.attributes.mediaTags.data).map( t => {
+
                             const label = new LocalizedLabelType()
                             label.id = t.attributes.slug
                             label.label = t.attributes.name[lang]
@@ -214,7 +220,7 @@ export class CmsService {
 
                     item.shortVideos = []
 
-                    item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> i.attributes.media_episodes.data).map( v => {
+                    item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> i.attributes.mediaEpisodes.data).map( v => {
                         return {
                             id: v.id,
                             coverImage: (<BaseResponse<CmsImageContent>> v.attributes.coverImage.data).attributes,
@@ -225,6 +231,12 @@ export class CmsService {
                         }
                     })
 
+                    item.isSeries = this.isSeries(tags)
+                    item.totalSeason = size(i.attributes.mediaSeasons.data)
+                    item.totalEpisode = reduce(<BaseResponse<MediaSeasonResponse>[]> i.attributes.mediaSeasons.data, (acc, each) => {
+                        return acc + size(each.attributes.mediaEpisodes.data)
+                    }, 0)
+
                     return item
                 })
 
@@ -233,6 +245,88 @@ export class CmsService {
             }),
             toArray(),
         )
+    }
+
+    public isSeries(tags: LocalizedLabelType[]) {
+        return some(tags, {id:'series'})
+    }
+
+    public getMediaDetailBySlug(mediaSlug: string): Observable<MediaContentDetailType> {
+        const lang = this._requestContext.languages[0].code
+        return this._cmsRepository.getMediaContentBySlug(mediaSlug).pipe(
+            map(resp => {
+
+                const {attributes} = resp
+                const result = new MediaContentDetailType()
+
+                result.id = resp.id
+                result.title = attributes.title[lang]
+                result.subtitle = attributes.subtitle[lang]
+                result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes.rating.data).attributes.value
+                result.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
+                result.trailers = attributes.trailers
+                result.link = attributes.link
+
+                let tags: LocalizedLabelType[] = []
+                if(!!attributes.mediaTags.data) {
+                    tags = (<BaseResponse<TagResponse>[]>attributes.mediaTags.data).map( t => {
+
+                        const label = new LocalizedLabelType()
+                        label.id = t.attributes.slug
+                        label.label = t.attributes.name[lang]
+                        return label
+                    })
+                }
+                result.tags = tags
+
+                const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
+                    return {
+                        id: v.id,
+                        coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
+                        order: v.attributes.ordering,
+                        duration: String(v.attributes.duration),
+                        episodeName: v.attributes.name[lang],
+                        continueWatchingAt: 0,
+                    }
+                }
+                result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes.mediaEpisodes.data).map(episodeMapper)
+                result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes.mediaSeasons.data).map( v => {
+                    return {
+                        id: String(v.id),
+                        slug: v.attributes.slug,
+                        name: v.attributes.name[lang],
+                        ordering: v.attributes.ordering,
+                        mediaEpisodes: (<BaseResponse<MediaEpisodeResponse>[]> v.attributes.mediaEpisodes.data).map(v => {
+                            return {
+                                id: v.id,
+                                audio: v.attributes.audio.map( a => a.key),
+                                captions: v.attributes.subtitle.map(a=> a.key),
+                                coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
+                                order: v.attributes.ordering,
+                                duration: String(v.attributes.duration),
+                                episodeName: v.attributes.name[lang],
+                                continueWatchingAt: 0,
+                            }
+                        })
+                    }
+                })
+
+
+
+                return result
+
+            })
+        )
+    }
+
+    public totalSeason(media: MediaContentDetailType): number {
+        return  size(media.seasons)
+    }
+
+    public totalEpisode(media: MediaContentDetailType): number {
+        return  reduce(media.seasons, (acc, each) => {
+            return acc + size(each.mediaEpisodes)
+        }, 0)
     }
 
 }

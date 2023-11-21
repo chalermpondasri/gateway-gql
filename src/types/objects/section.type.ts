@@ -7,9 +7,8 @@ import {
     CmsImageType,
     IdType,
 } from '@/types/objects/cms.type'
-import {
-    LocalizedLabelType,
-} from '@/types/objects/label.type'
+import { LocalizedLabelType } from '@/types/objects/label.type'
+import { MediaSeasonType } from '@/types/objects/media-season.type'
 
 @ObjectType()
 export class ExternalContentType {
@@ -18,9 +17,8 @@ export class ExternalContentType {
     @Field({nullable: true})
     public mimeType?: string
 }
-
 @ObjectType()
-export class EpisodeItemType extends IdType {
+export class BaseEpisodeType extends IdType {
     @Field()
     public order: number
     @Field({nullable: true})
@@ -34,7 +32,20 @@ export class EpisodeItemType extends IdType {
 
 }
 @ObjectType()
-export class SectionItemType extends IdType{
+export class EpisodeItemType extends BaseEpisodeType {
+
+}
+
+@ObjectType()
+export class MediaEpisodeType extends BaseEpisodeType {
+    @Field(() => [String])
+    public audio: string[]
+    @Field(() => [String])
+    public captions: string[]
+}
+
+@ObjectType()
+export class MediaContentType extends IdType{
     @Field({nullable: true})
     public title: string
     @Field()
@@ -49,10 +60,32 @@ export class SectionItemType extends IdType{
     public link: ExternalContentType
     @Field(() => [LocalizedLabelType])
     public tags: LocalizedLabelType[]
-    @Field(() => [EpisodeItemType], { nullable: true})
+    @Field(() => [EpisodeItemType], { nullable: true, deprecationReason: 'move to season'})
     public episodes: EpisodeItemType[]
     @Field()
+    public isSeries: boolean
+    @Field()
+    public totalEpisode: number
+    @Field()
+    public totalSeason: number
+}
+@ObjectType()
+export class SectionItemType extends MediaContentType {
+    @Field()
     public recentlyPublished: boolean
+}
+
+@ObjectType()
+export class MediaContentDetailType extends MediaContentType {
+    @Field()
+    public subtitle: string
+    @Field(() => [String])
+    public captions: string[]
+    @Field(() => [String])
+    public audios: string[]
+
+    @Field(() => [MediaSeasonType])
+    public seasons: MediaSeasonType[]
 }
 
 @ObjectType()
@@ -75,7 +108,4 @@ export class SectionType extends IdType {
     public sectionItems: SectionItemType[]
     @Field(() => CmsImageType, { nullable: true})
     public coverImage: CmsImageType
-
-
-
 }

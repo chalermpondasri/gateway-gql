@@ -1,10 +1,13 @@
 import {
     AvatarResponse,
+    BaseRequest,
     BaseResponse,
     FaqResponse,
     ICmsRepository,
     ListResponse,
     LoginResponse,
+    MediaContentDetailResponse,
+    PromotionalResponse,
     SectionResponse,
     TermResponse,
     UserRoleResponse,
@@ -14,11 +17,12 @@ import {
     map,
     Observable,
 } from 'rxjs'
-import { BaseRequest } from '@/repositories/cms/base.request'
 import { AxiosInstance } from 'axios'
 import * as querystring from 'querystring'
-import { PromotionalResponse } from '@/repositories/cms/promotional.response'
-import { isNil } from 'lodash'
+import {
+    get,
+    isNil,
+} from 'lodash'
 
 export class CmsRepository implements ICmsRepository {
     public constructor(
@@ -37,12 +41,15 @@ export class CmsRepository implements ICmsRepository {
             'title',
             'subtitle',
             'coverImage',
-            'items.media_episodes',
-            'items.media_episodes.name',
+            'items.mediaEpisodes',
+            'items.mediaEpisodes.name',
             'items.mediaTags',
             'items.mediaTags.name',
             'items.rating',
-            'items.media_episodes.coverImage',
+            'items.mediaEpisodes.coverImage',
+            'items.mediaSeasons',
+            'items.mediaSeasons.name',
+            'items.mediaSeasons.mediaEpisodes'
         ]
         const queryString = querystring.encode({populate})
         const promise = this._axiosInstance.get(`/page-sections?${queryString}`)
@@ -120,6 +127,38 @@ export class CmsRepository implements ICmsRepository {
                 }
                 return preMap
             }),
+        )
+    }
+
+    public getMediaContentBySlug(slug: string): Observable<BaseResponse<MediaContentDetailResponse>> {
+        const populate: string[] = [
+            'title',
+            'subtitle',
+            'trailers',
+            'coverImage',
+            'link',
+            'casts',
+            'directors',
+            'mediaTags',
+            'mediaTags.name',
+            'mediaEpisodes',
+            'mediaEpisodes.name',
+            'rating',
+            'mediaSeasons',
+            'mediaSeasons.name',
+            'mediaSeasons.mediaEpisodes',
+            'mediaSeasons.mediaEpisodes.name',
+            'mediaSeasons.mediaEpisodes.coverImage',
+            'mediaSeasons.mediaEpisodes.audio',
+            'mediaSeasons.mediaEpisodes.subtitle',
+            'mediaSeasons.mediaEpisodes.subtitle',
+        ]
+
+        const queryString = querystring.encode({populate})
+
+        const promise = this._axiosInstance.get(`/media-contents?slug=${slug}&${queryString}`)
+        return from(promise).pipe(
+            map(result => get(result,'data.data[0]', null))
         )
     }
 

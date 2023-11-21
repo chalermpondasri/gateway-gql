@@ -10,5 +10,5 @@ export * from './profile.type'
 export * from './device-session.type'
 export * from './cms.type'
 export * from './notification.type'
-
+export * from './media-season.type'
 export * from './section.type'

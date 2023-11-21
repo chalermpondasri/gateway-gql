@@ -189,6 +189,11 @@ type UserRequestEmailType {
   token: String!
 }
 
+type TokenType {
+  accessToken: String!
+  refreshToken: String!
+}
+
 type RequestOtpType {
   referenceNumber: String!
   remaining: Int!
@@ -198,6 +203,7 @@ type RequestOtpType {
 type VerifyOtpType {
   userId: ID!
   status: String!
+  tokens: TokenType!
 }
 
 type CategoryType {
@@ -229,11 +235,6 @@ type LocalizedKeyLabelType {
   label: String!
 }
 
-type TokenType {
-  accessToken: String!
-  refreshToken: String!
-}
-
 type NotificationType {
   notificationId: String!
   profileId: String!
@@ -258,6 +259,14 @@ type ReadAllNotificationType {
   status: Boolean!
 }
 
+type MediaSeasonType {
+  id: ID!
+  slug: String!
+  name: String!
+  ordering: Float!
+  mediaEpisodes: [MediaEpisodeType!]!
+}
+
 type LocalizedLabelType {
   label: String!
   id: String!
@@ -277,6 +286,17 @@ type EpisodeItemType {
   continueWatchingAt: Float!
 }
 
+type MediaEpisodeType {
+  id: ID!
+  order: Float!
+  duration: String
+  episodeName: String
+  coverImage: CmsImageType!
+  continueWatchingAt: Float!
+  audio: [String!]!
+  captions: [String!]!
+}
+
 type SectionItemType {
   id: ID!
   title: String
@@ -286,8 +306,30 @@ type SectionItemType {
   coverImage: CmsImageType
   link: ExternalContentType
   tags: [LocalizedLabelType!]!
-  episodes: [EpisodeItemType!]
+  episodes: [EpisodeItemType!] @deprecated(reason: "move to season")
+  isSeries: Boolean!
+  totalEpisode: Float!
+  totalSeason: Float!
   recentlyPublished: Boolean!
+}
+
+type MediaContentDetailType {
+  id: ID!
+  title: String
+  contentRating: String!
+  shortVideos: [ExternalContentType!]!
+  trailers: [ExternalContentType!]!
+  coverImage: CmsImageType
+  link: ExternalContentType
+  tags: [LocalizedLabelType!]!
+  episodes: [EpisodeItemType!] @deprecated(reason: "move to season")
+  isSeries: Boolean!
+  totalEpisode: Float!
+  totalSeason: Float!
+  subtitle: String!
+  captions: [String!]!
+  audios: [String!]!
+  seasons: [MediaSeasonType!]!
 }
 
 type SectionType {
@@ -321,6 +363,7 @@ type Query {
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
   getMainPage: [SectionType!]!
+  getMediaContent(slug: String!): MediaContentDetailType!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
