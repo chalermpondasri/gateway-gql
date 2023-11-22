@@ -1,8 +1,10 @@
 import {
     AvatarType,
+    CategoryType,
     MyListType,
     ProfileRequestResetPinType,
     ProfileType,
+    SectionItemType,
     UserType,
     ValidateProfilePinType,
 } from '@/types/objects'
@@ -141,5 +143,22 @@ export class ProfileResolver {
     ){
         return this._authService.requestTokenToResetPinByAdmin(profileId, adminPin)
     }
+
+    @ResolveField('categories',() => [CategoryType])
+    public categories(@Parent() parent: ProfileType) {
+       return this._authService.mapCategoryIdWithLabel((parent.categories as unknown as string[]))
+    }
     
+}
+
+@Resolver(() =>  MyListType)
+export class MyListResolver {
+    public constructor(
+        @Inject(CmsService) 
+        private readonly _cmsService: CmsService,
+    ) {}
+    @ResolveField('mediaContent',() => [SectionItemType])
+    public mediaContent(@Parent() parent: MyListType) {   
+       return this._cmsService.getMediaContentById(parent.programId)
+    }
 }

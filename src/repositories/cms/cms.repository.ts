@@ -2,10 +2,12 @@ import {
     AvatarResponse,
     BaseRequest,
     BaseResponse,
+    CmsDataResponse,
     FaqResponse,
     ICmsRepository,
     ListResponse,
     LoginResponse,
+    MediaContentResponse,
     MediaContentDetailResponse,
     PromotionalResponse,
     SectionResponse,
@@ -19,6 +21,7 @@ import {
 } from 'rxjs'
 import { AxiosInstance } from 'axios'
 import * as querystring from 'querystring'
+import { plainToClass } from 'class-transformer'
 import {
     get,
     isNil,
@@ -127,6 +130,28 @@ export class CmsRepository implements ICmsRepository {
                 }
                 return preMap
             }),
+        )
+    }
+
+    public getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentResponse>> {
+        const populate = [
+            'title',
+            'subtitle',
+            'trailers',
+            'coverImage',
+            'link',
+            'title',
+            'subtitle',
+            'media_episodes',
+            'media_episodes.name',
+            'mediaTags',
+            'mediaTags.name',
+            'rating',
+            'media_episodes.coverImage',
+        ]
+        const queryString = querystring.encode({populate})
+        return from(this._axiosInstance.get(`/media-contents/${id}/?${queryString}`)).pipe(
+            map(res=> plainToClass(CmsDataResponse<MediaContentResponse>, res.data))
         )
     }
 
