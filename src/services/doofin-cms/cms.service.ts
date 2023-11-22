@@ -36,6 +36,7 @@ import {
     SectionItemType,
     SectionType,
     EpisodeItemType,
+    TermType,
 } from '@/types/objects'
 import {
     instanceToPlain,
@@ -253,7 +254,8 @@ export class CmsService {
             map((res)=>{
                 const lang = this._requestContext.languages[0].code ?? 'en'
                 const mediaTags = (res.attributes.mediaTags.data as Array<BaseResponse<TagResponse>>) ?? []
-                const episodes = (res.attributes.media_episodes.data as Array<BaseResponse<MediaEpisodeResponse>>) ?? []
+                const episodes = (res.attributes.mediaEpisodes.data as Array<BaseResponse<MediaEpisodeResponse>>) ?? []
+                const tags =  mediaTags.map<LocalizedLabelType>(e => ({ id: e.attributes.slug, label: e.attributes.name[lang] }))
                 const data: Omit<SectionItemType,"recentlyPublished"> = {
                     id: res.id,
                     title: res.attributes.title[lang],
@@ -261,8 +263,8 @@ export class CmsService {
                     shortVideos: [],
                     trailers: res.attributes.trailers,
                     coverImage: (res.attributes.coverImage.data as BaseResponse<CmsImageContent>).attributes,
+                    tags,
                     link: res.attributes.link,
-                    tags: mediaTags.map<LocalizedLabelType>(e => ({ id: e.attributes.slug, label: e.attributes.name.en })),
                     episodes: episodes.map<EpisodeItemType>(v => {
                         return {
                             id: v.id,
@@ -273,6 +275,9 @@ export class CmsService {
                             continueWatchingAt: 0
                         }
                     }),
+                    isSeries: false,
+                    totalEpisode: 0,
+                    totalSeason: 0,
                 }
                 return plainToInstance(SectionItemType, data)
             })
