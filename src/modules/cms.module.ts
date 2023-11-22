@@ -9,6 +9,7 @@ import {
     SectionItemResolver,
     SectionResolver,
 } from '@/services/doofin-cms/section.resolver'
+import { MediaContentDetailResolver } from '@/services/doofin-cms/content.resolver'
 
 @Module({
     providers: [
@@ -20,6 +21,7 @@ import {
         FaqResolver,
         SectionResolver,
         SectionItemResolver,
+        MediaContentDetailResolver,
     ],
     exports: [ CmsService ]
 })

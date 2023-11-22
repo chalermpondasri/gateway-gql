@@ -13,3 +13,9 @@ export class BaseResponse<T> {
 export class CmsDataResponse<T> {
     public data: BaseResponse<T> | BaseResponse<T>[]
 }
+
+export class KeyValueResponse {
+    public id: string
+    public key: string
+    public value: string
+}

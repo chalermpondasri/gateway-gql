@@ -17,17 +17,6 @@ export class ExternalContent {
     public mimeType?: string
 
 }
-export class SectionItemResponse {
-    public id: number
-    public title: string
-    public contentRating: string
-    public episodes: EpisodeResponse[]
-    public link?: ExternalContent
-    public trailer?: ExternalContent
-    public shortVideo?: ExternalContent
-    public tags: string
-    public coverImage: CmsDataResponse<CmsImageContent>
-}
 
 export class SectionResponse {
     public title: LocaleTextResponse

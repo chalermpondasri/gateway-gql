@@ -55,13 +55,109 @@ type AvatarType {
   color: String!
 }
 
+type LocalizedLabelType {
+  label: String!
+  id: String!
+}
+
+type MediaSeasonType {
+  id: ID!
+  slug: String!
+  name: String!
+  ordering: Float!
+  mediaEpisodes: [MediaEpisodeType!]!
+}
+
+type ExternalContentType {
+  url: String!
+  mimeType: String
+}
+
+type EpisodeItemType {
+  id: ID!
+  order: Float!
+  duration: String
+  episodeName: String
+  coverImage: CmsImageType!
+  continueWatchingAt: Float!
+}
+
+type MediaEpisodeType {
+  id: ID!
+  order: Float!
+  duration: String
+  episodeName: String
+  coverImage: CmsImageType!
+  continueWatchingAt: Float!
+  audio: [String!]!
+  captions: [String!]!
+}
+
+type SectionItemType {
+  id: ID!
+  title: String
+  contentRating: String!
+  shortVideos: [ExternalContentType!]!
+  trailers: [ExternalContentType!]!
+  coverImage: CmsImageType
+  link: ExternalContentType
+  tags: [LocalizedLabelType!]!
+  episodes: [EpisodeItemType!] @deprecated(reason: "move to season")
+  isSeries: Boolean!
+  totalEpisode: Float!
+  totalSeason: Float!
+  recentlyPublished: Boolean!
+}
+
+type MediaContentDetailType {
+  id: ID!
+  title: String
+  contentRating: String!
+  shortVideos: [ExternalContentType!]!
+  trailers: [ExternalContentType!]!
+  coverImage: CmsImageType
+  link: ExternalContentType
+  tags: [LocalizedLabelType!]!
+  episodes: [EpisodeItemType!] @deprecated(reason: "move to season")
+  isSeries: Boolean!
+  totalEpisode: Float!
+  totalSeason: Float!
+  subtitle: String!
+  captions: [String!]!
+  audios: [String!]!
+  seasons: [MediaSeasonType!]!
+}
+
+type SectionType {
+  id: ID!
+  sectionTitle: String!
+  sectionSubtitle: String
+  sectionType: String!
+  sectionLink: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  order: Float!
+  sectionItems: [SectionItemType!]!
+  coverImage: CmsImageType
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type CategoryType {
+  id: String!
+  label: String!
+}
+
 type ProfileType {
   id: ID!
   name: String!
   avatar: AvatarType!
   audienceLevel: String!
   dob: String!
-  categories: [String!]!
+  categories: [CategoryType!]!
   contentRating: String!
   pinSettingStatus: String!
   userAccount: UserType!
@@ -77,14 +173,10 @@ type ProfileRequestResetPinType {
   expiredAt: DateTime!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type MyListType {
   programId: String!
   addDate: DateTime!
+  mediaContent: SectionItemType!
 }
 
 type DeviceSessionType {
@@ -189,6 +281,11 @@ type UserRequestEmailType {
   token: String!
 }
 
+type TokenType {
+  accessToken: String!
+  refreshToken: String!
+}
+
 type RequestOtpType {
   referenceNumber: String!
   remaining: Int!
@@ -198,11 +295,7 @@ type RequestOtpType {
 type VerifyOtpType {
   userId: ID!
   status: String!
-}
-
-type CategoryType {
-  id: String!
-  label: String!
+  tokens: TokenType!
 }
 
 type LabelType {
@@ -229,11 +322,6 @@ type LocalizedKeyLabelType {
   label: String!
 }
 
-type TokenType {
-  accessToken: String!
-  refreshToken: String!
-}
-
 type NotificationType {
   notificationId: String!
   profileId: String!
@@ -258,51 +346,6 @@ type ReadAllNotificationType {
   status: Boolean!
 }
 
-type LocalizedLabelType {
-  label: String!
-  id: String!
-}
-
-type ExternalContentType {
-  url: String!
-  mimeType: String
-}
-
-type EpisodeItemType {
-  id: ID!
-  order: Float!
-  duration: String
-  episodeName: String
-  coverImage: CmsImageType!
-  continueWatchingAt: Float!
-}
-
-type SectionItemType {
-  id: ID!
-  title: String
-  contentRating: String!
-  shortVideos: [ExternalContentType!]!
-  trailers: [ExternalContentType!]!
-  coverImage: CmsImageType
-  link: ExternalContentType
-  tags: [LocalizedLabelType!]!
-  episodes: [EpisodeItemType!]
-  recentlyPublished: Boolean!
-}
-
-type SectionType {
-  id: ID!
-  sectionTitle: String!
-  sectionSubtitle: String
-  sectionType: String!
-  sectionLink: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  order: Float!
-  sectionItems: [SectionItemType!]!
-  coverImage: CmsImageType
-}
-
 type SubjectType {
   id: ID!
   subject: String!
@@ -321,6 +364,7 @@ type Query {
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
   getMainPage: [SectionType!]!
+  getMediaContent(slug: String!): MediaContentDetailType!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
@@ -360,7 +404,7 @@ type Mutation {
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   verifyEmail(VerifyEmailInput: VerifyEmailInput!): UserType!
-  updateUserPreferences(categoryIds: [String!]!): [CategoryType!]!
+  updateProfilePreferences(categoryIds: [String!]!, profileId: String!): [CategoryType!]!
   createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
   deleteLocale(id: String!): LocaleType!
   patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
