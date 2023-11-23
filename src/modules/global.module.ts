@@ -10,6 +10,9 @@ import {
     requestContextProvider,
 } from '@/providers/request-context.provider'
 import { httpClientProvider } from '@/providers/http-client.provider'
+import { CacheModule } from '@nestjs/cache-manager'
+import type { RedisClientOptions } from 'redis'
+import * as redisStore from 'cache-manager-redis-store'
 
 @Global()
 @Module({
@@ -22,6 +25,16 @@ import { httpClientProvider } from '@/providers/http-client.provider'
         envConfigProvider,
         requestContextProvider,
         httpClientProvider,
+    ],
+    imports: [
+        CacheModule.register<RedisClientOptions>({
+            isGlobal: true,
+            store: redisStore,
+            // redis[s]://[[username][:password]@][host][:port][/db-number]
+            url: `redis://@localhost:6379`,
+            ttl: 3600
+        }),
+
     ]
 })
 export class GlobalModule implements NestModule{

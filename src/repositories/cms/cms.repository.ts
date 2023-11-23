@@ -7,8 +7,8 @@ import {
     ICmsRepository,
     ListResponse,
     LoginResponse,
-    MediaContentResponse,
     MediaContentDetailResponse,
+    MediaContentResponse,
     PromotionalResponse,
     SectionResponse,
     TermResponse,
@@ -17,19 +17,26 @@ import {
 import {
     from,
     map,
+    mergeMap,
     Observable,
+    of,
 } from 'rxjs'
 import { AxiosInstance } from 'axios'
 import * as querystring from 'querystring'
-import { plainToClass } from 'class-transformer'
+import {
+    plainToClass,
+    plainToInstance,
+} from 'class-transformer'
 import {
     get,
     isNil,
 } from 'lodash'
+import { Cache } from 'cache-manager'
 
 export class CmsRepository implements ICmsRepository {
     public constructor(
         private readonly _axiosInstance: AxiosInstance,
+        private readonly _cacheManager: Cache
     ) {
     }
 
@@ -106,11 +113,28 @@ export class CmsRepository implements ICmsRepository {
     }
 
     public getFaqs(request: BaseRequest): Observable<ListResponse<BaseResponse<FaqResponse>>> {
-        const queryString = querystring.encode({...request.build(),populate:"*"})      
+        const queryString = querystring.encode({...request.build(),populate:"*"})
         const path = `/faqs?${queryString}`
-        const promise = this._axiosInstance.get(path)
-        return from(promise).pipe(
-            map(result => result.data),
+        const findCache = this._cacheManager.get(path)
+        return from(findCache).pipe(
+            mergeMap((cacheData) => {
+                if(!isNil(cacheData)) {
+                    const dataParse = plainToInstance(ListResponse, JSON.parse(cacheData as string))
+                    return of(dataParse)
+                }
+                const promise = this._axiosInstance.get(path)
+                return from(promise).pipe(
+                    map((result) => {
+                        const respData = result.data
+                        if(respData.meta.pagination.total > 0) {
+                            this._cacheManager.set(path, JSON.stringify(respData), {
+                                ttl: 3600
+                            })
+                        }
+                        return respData
+                    }),
+                )
+            })
         )
     }
 
