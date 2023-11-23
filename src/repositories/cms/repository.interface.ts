@@ -28,4 +28,5 @@ export interface ICmsRepository {
     getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>>
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentResponse>>
     getMediaContentBySlug(slug: string): Observable<BaseResponse<MediaContentDetailResponse>>
+    getMediaContentByTag(tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
 }

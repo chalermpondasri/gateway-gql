@@ -187,4 +187,36 @@ export class CmsRepository implements ICmsRepository {
         )
     }
 
+    public getMediaContentByTag(tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
+        const populate: string[] = [
+            'title',
+            'subtitle',
+            'trailers',
+            'coverImage',
+            'link',
+            'casts',
+            'directors',
+            'mediaTags',
+            'mediaTags.name',
+            'mediaEpisodes',
+            'mediaEpisodes.name',
+            'rating',
+            'mediaSeasons',
+            'mediaSeasons.name',
+            'mediaSeasons.mediaEpisodes',
+            'mediaSeasons.mediaEpisodes.name',
+            'mediaSeasons.mediaEpisodes.coverImage',
+            'mediaSeasons.mediaEpisodes.audio',
+            'mediaSeasons.mediaEpisodes.subtitle',
+            'mediaSeasons.mediaEpisodes.subtitle',
+        ]
+
+        const queryString = querystring.encode({populate})
+
+        const promise = this._axiosInstance.get(`/media-contents?filters[mediaTags][slug][$eq]=${tag}&${queryString}`)
+        return from(promise).pipe(
+            map(result => result.data)
+        )
+    }
+
 }
