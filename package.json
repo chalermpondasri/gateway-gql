@@ -33,6 +33,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "graphql": "^16.6.0",
+    "infisical-node": "^1.5.0",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
