@@ -20,11 +20,16 @@ export const envConfigProvider: Provider<EnvironmentConfig> = {
             token: process.env.INFISICAL_TOKEN,
             siteURL: process.env.INFISICAL_URL,
         })
-        const secretEnv = await client.getAllSecrets()
+        const secretEnv = await client.getAllSecrets({
+            environment: process.env.INFISICAL_ENV || 'dev',
+            path: '/',
+            attachToProcessEnv: false,
+            includeImports: false
+        })
         let env
         let checkEnvFalse = true
         if (secretEnv.length === 1) {
-            checkEnvFalse = secretEnv[0].isFallback
+            checkEnvFalse = !secretEnv[0].isFallback
             logger.debug('Infisical Load Fail')
         }
         if (checkEnvFalse) {
@@ -38,8 +43,9 @@ export const envConfigProvider: Provider<EnvironmentConfig> = {
             // for env override
             env = plainToInstance(EnvironmentConfig, {
                 ...mapToEnv,
-                ...process.env
+                ...process.env,
             })
+            console.log('ENV', mapToEnv)
         } else {
             env = plainToInstance(EnvironmentConfig, process.env)
         }
