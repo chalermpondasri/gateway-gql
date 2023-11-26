@@ -45,7 +45,6 @@ export const envConfigProvider: Provider<EnvironmentConfig> = {
                 ...mapToEnv,
                 ...process.env,
             })
-            console.log('ENV', mapToEnv)
         } else {
             env = plainToInstance(EnvironmentConfig, process.env)
         }
