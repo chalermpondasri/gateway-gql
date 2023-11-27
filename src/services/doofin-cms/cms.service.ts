@@ -20,6 +20,7 @@ import {
     CmsImageContent,
     ContentRatingResponse,
     ICmsRepository,
+    MediaContentDetailResponse,
     MediaContentResponse,
     MediaEpisodeResponse,
     MediaSeasonResponse,
@@ -291,68 +292,7 @@ export class CmsService {
     public getMediaDetailBySlug(mediaSlug: string): Observable<MediaContentDetailType> {
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMediaContentBySlug(mediaSlug).pipe(
-            map(resp => {
-
-                const {attributes} = resp
-                const result = new MediaContentDetailType()
-
-                result.id = resp.id
-                result.title = attributes.title[lang]
-                result.subtitle = attributes.subtitle[lang]
-                result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes.rating.data).attributes.value
-                result.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
-                result.trailers = attributes.trailers
-                result.link = attributes.link
-
-                let tags: LocalizedLabelType[] = []
-                if(!!attributes.mediaTags.data) {
-                    tags = (<BaseResponse<TagResponse>[]>attributes.mediaTags.data).map( t => {
-
-                        const label = new LocalizedLabelType()
-                        label.id = t.attributes.slug
-                        label.label = t.attributes.name[lang]
-                        return label
-                    })
-                }
-                result.tags = tags
-
-                const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
-                    return {
-                        id: v.id,
-                        coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
-                        order: v.attributes.ordering,
-                        duration: String(v.attributes.duration),
-                        episodeName: v.attributes.name[lang],
-                        continueWatchingAt: 0,
-                    }
-                }
-                result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes.mediaEpisodes.data).map(episodeMapper)
-                result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes.mediaSeasons.data).map( v => {
-                    return {
-                        id: String(v.id),
-                        slug: v.attributes.slug,
-                        name: v.attributes.name[lang],
-                        ordering: v.attributes.ordering,
-                        mediaEpisodes: (<BaseResponse<MediaEpisodeResponse>[]> v.attributes.mediaEpisodes.data).map(v => {
-                            return {
-                                id: v.id,
-                                audio: v.attributes.audio.map( a => a.key),
-                                captions: v.attributes.subtitle.map(a=> a.key),
-                                coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
-                                order: v.attributes.ordering,
-                                duration: String(v.attributes.duration),
-                                episodeName: v.attributes.name[lang],
-                                continueWatchingAt: 0,
-                            }
-                        })
-                    }
-                })
-
-
-
-                return result
-
-            })
+            map(resp => this._toMediaContentType(resp, lang))
         )
     }
 
@@ -366,68 +306,69 @@ export class CmsService {
         }, 0)
     }
 
-    public getKidFin(): Observable<MediaContentDetailType[]> {
-        const lang = this._requestContext.languages[0].code
-        return this._cmsRepository.getMediaContentByTag("kids").pipe(
-            map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
-            concatMap((datas)=> from(datas)),
-            map(mediaContent => { 
-                const {attributes} = mediaContent
-                const result = new MediaContentDetailType()
+    private _toMediaContentType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType{
+        const {attributes} = resp
+        const result = new MediaContentDetailType()
+        result.id = resp.id
+        result.title = attributes.title[lang]
+        result.subtitle = attributes.subtitle[lang]
+        result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes.rating.data).attributes.value
+        result.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
+        result.trailers = attributes.trailers
+        result.link = attributes.link
 
-                result.id = mediaContent.id
-                result.title = attributes.title[lang]
-                result.subtitle = attributes.subtitle[lang]
-                result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes.rating.data).attributes.value
-                result.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
-                result.trailers = attributes.trailers
-                result.link = attributes.link
+        let tags: LocalizedLabelType[] = []
+        if(!!attributes.mediaTags.data) {
+            tags = (<BaseResponse<TagResponse>[]>attributes.mediaTags.data).map( t => {
 
-                let tags: LocalizedLabelType[] = []
-                if(!!attributes.mediaTags.data) {
-                    tags = (<BaseResponse<TagResponse>[]>attributes.mediaTags.data).map( t => {
+                const label = new LocalizedLabelType()
+                label.id = t.attributes.slug
+                label.label = t.attributes.name[lang]
+                return label
+            })
+        }
+        result.tags = tags
 
-                        const label = new LocalizedLabelType()
-                        label.id = t.attributes.slug
-                        label.label = t.attributes.name[lang]
-                        return label
-                    })
-                }
-                result.tags = tags
-
-                const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
+        const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
+            return {
+                id: v.id,
+                coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
+                order: v.attributes.ordering,
+                duration: String(v.attributes.duration),
+                episodeName: v.attributes.name[lang],
+                continueWatchingAt: 0,
+            }
+        }
+        result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes.mediaEpisodes.data).map(episodeMapper)
+        result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes.mediaSeasons.data).map( v => {
+            return {
+                id: String(v.id),
+                slug: v.attributes.slug,
+                name: v.attributes.name[lang],
+                ordering: v.attributes.ordering,
+                mediaEpisodes: (<BaseResponse<MediaEpisodeResponse>[]> v.attributes.mediaEpisodes.data).map(v => {
                     return {
                         id: v.id,
+                        audio: v.attributes.audio.map( a => a.key),
+                        captions: v.attributes.subtitle.map(a=> a.key),
                         coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
                         order: v.attributes.ordering,
                         duration: String(v.attributes.duration),
                         episodeName: v.attributes.name[lang],
                         continueWatchingAt: 0,
                     }
-                }
-                result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes.mediaEpisodes?.data ?? []).map(episodeMapper)
-                result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes.mediaSeasons?.data ?? []).map( v => {
-                    return {
-                        id: String(v.id),
-                        slug: v.attributes.slug,
-                        name: v.attributes.name[lang],
-                        ordering: v.attributes.ordering,
-                        mediaEpisodes: (<BaseResponse<MediaEpisodeResponse>[]> v.attributes.mediaEpisodes.data).map(v => {
-                            return {
-                                id: v.id,
-                                audio: v.attributes.audio.map( a => a.key),
-                                captions: v.attributes.subtitle.map(a=> a.key),
-                                coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
-                                order: v.attributes.ordering,
-                                duration: String(v.attributes.duration),
-                                episodeName: v.attributes.name[lang],
-                                continueWatchingAt: 0,
-                            }
-                        })
-                    }
                 })
-                return result               
-            }),
+            }
+        })
+        return result
+    }
+
+    public getKidFin(): Observable<MediaContentDetailType[]> {
+        const lang = this._requestContext.languages[0].code
+        return this._cmsRepository.getMediaContentByTag("kids").pipe(
+            map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
+            concatMap((datas)=> from(datas)),
+            map(mediaContent => this._toMediaContentType(mediaContent, lang)),
             toArray()
         )
         
