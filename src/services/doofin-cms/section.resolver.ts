@@ -7,6 +7,7 @@ import {
 import { Inject } from '@nestjs/common'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import {
+    MediaContentDetailType,
     SectionItemType,
     SectionType,
 } from '@/types/objects'
@@ -22,6 +23,11 @@ export class SectionResolver {
     @Query(() => [SectionType])
     public getMainPage() {
         return this._cmsService.getMainPageSections()
+    }
+
+    @Query(() => [MediaContentDetailType])
+    public getKidFin() {
+        return this._cmsService.getKidFin()
     }
 }
 
