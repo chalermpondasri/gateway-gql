@@ -26,13 +26,6 @@ export class CacheRedisModule{
                 cacheProvider
             ],
             imports: [
-                // CacheModule.register<RedisClientOptions>({
-                //     isGlobal: true,
-                //     store: redisStore,
-                //     // redis[s]://[[username][:password]@][host][:port][/db-number]
-                //     url: `redis://@localhost:6379`,
-                //     ttl: 3600
-                // }),
                 CacheModule.registerAsync({
                     isGlobal: true,
                     inject: [ProviderName.ENV_CONFIG],
