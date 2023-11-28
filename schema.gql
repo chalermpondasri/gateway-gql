@@ -364,6 +364,7 @@ type Query {
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
   getMainPage: [SectionType!]!
+  getKidFin: [MediaContentDetailType!]!
   getMediaContent(slug: String!): MediaContentDetailType!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!

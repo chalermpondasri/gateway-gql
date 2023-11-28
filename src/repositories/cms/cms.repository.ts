@@ -145,7 +145,7 @@ export class CmsRepository implements ICmsRepository {
         }      
         const promise = this._axiosInstance.get<ListResponse<BaseResponse<AvatarResponse>>>(path)
         return from(promise).pipe(
-            map(result =>  {
+            map((result) =>  {
                 const preMap = new ListResponse<BaseResponse<AvatarResponse>>()
                 preMap.data = result.data?.data
                 preMap.meta = result.data?.meta
