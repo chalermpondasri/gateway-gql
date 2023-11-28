@@ -200,46 +200,7 @@ export class CmsService {
                 section.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
 
                 section.sectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? []).map( i=>{
-                    const item = new SectionItemType()
-                    item.id = i.id
-                    item.contentRating = (<BaseResponse<ContentRatingResponse>> i.attributes.rating.data).attributes.value
-                    item.coverImage = (<BaseResponse<CmsImageContent>> i.attributes.coverImage.data).attributes
-                    item.trailers = i.attributes.trailers
-                    item.title = i.attributes.title[lang]
-                    item.link = i.attributes.link
-
-                    let tags: LocalizedLabelType[] = []
-                    if(!!i.attributes.mediaTags.data) {
-                        tags = (<BaseResponse<TagResponse>[]>i.attributes.mediaTags.data).map( t => {
-
-                            const label = new LocalizedLabelType()
-                            label.id = t.attributes.slug
-                            label.label = t.attributes.name[lang]
-                            return label
-                        })
-                    }
-                    item.tags = tags
-
-                    item.shortVideos = []
-
-                    item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> i.attributes.mediaEpisodes?.data ?? []).map( v => {
-                        return {
-                            id: v.id,
-                            coverImage: (<BaseResponse<CmsImageContent>> v.attributes.coverImage.data).attributes,
-                            order: v.attributes.ordering,
-                            duration: String(v.attributes.duration),
-                            episodeName: v.attributes.name[lang],
-                            continueWatchingAt: 0
-                        }
-                    })
-
-                    item.isSeries = this.isSeries(tags)
-                    item.totalSeason = size(i.attributes.mediaSeasons?.data ?? [])
-                    item.totalEpisode = reduce(<BaseResponse<MediaSeasonResponse>[]> i.attributes.mediaSeasons?.data ?? [], (acc, each) => {
-                        return acc + size(each.attributes.mediaEpisodes.data)
-                    }, 0)
-
-                    return item
+                   return this._toSectionItemType(i, lang)
                 })
                 return section
             }),
@@ -362,12 +323,53 @@ export class CmsService {
         return result
     }
 
-    public getKidFin(): Observable<MediaContentDetailType[]> {
+    private _toSectionItemType(mediaContent: BaseResponse<MediaContentResponse>, lang: string): SectionItemType {
+        const item = new SectionItemType()
+                item.id = mediaContent.id
+                item.contentRating = (<BaseResponse<ContentRatingResponse>> mediaContent.attributes.rating.data).attributes.value
+                item.coverImage = (<BaseResponse<CmsImageContent>> mediaContent.attributes.coverImage.data).attributes
+                item.trailers = mediaContent.attributes.trailers
+                item.title = mediaContent.attributes.title[lang]
+                item.link = mediaContent.attributes.link
+
+                let tags: LocalizedLabelType[] = []
+                if(!!mediaContent.attributes.mediaTags.data) {
+                    tags = (<BaseResponse<TagResponse>[]>mediaContent.attributes.mediaTags.data).map( t => {
+
+                        const label = new LocalizedLabelType()
+                        label.id = t.attributes.slug
+                        label.label = t.attributes.name[lang]
+                        return label
+                    })
+                }
+                item.tags = tags
+                item.shortVideos = []
+                item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> mediaContent.attributes.mediaEpisodes?.data ?? []).map( v => {  
+                    return {
+                        id: v.id,
+                        coverImage: (<BaseResponse<CmsImageContent>> v.attributes.coverImage?.data)?.attributes,
+                        order: v.attributes.ordering,
+                        duration: String(v.attributes.duration),
+                        episodeName: v.attributes.name[lang],
+                        continueWatchingAt: 0
+                    }
+                })
+
+                item.isSeries = this.isSeries(tags)
+                item.totalSeason = size(mediaContent.attributes.mediaSeasons?.data ?? [])
+                item.totalEpisode = reduce(<BaseResponse<MediaSeasonResponse>[]> mediaContent.attributes.mediaSeasons?.data ?? [], (acc, each) => {
+                    return acc + size(each.attributes.mediaEpisodes.data)
+                }, 0)
+
+                return item
+    }
+
+    public getKidFin(): Observable<SectionItemType[]> {
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMediaContentByTag("kids").pipe(
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
-            map(mediaContent => this._toMediaContentDetailType(mediaContent, lang)),
+            map(mediaContent => this._toSectionItemType(mediaContent, lang)),
             toArray()
         )
         
