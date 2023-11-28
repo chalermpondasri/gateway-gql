@@ -168,6 +168,7 @@ export class CmsRepository implements ICmsRepository {
             'mediaTags.name',
             'mediaEpisodes',
             'mediaEpisodes.name',
+            'mediaEpisodes.coverImage',
             'rating',
             'mediaSeasons',
             'mediaSeasons.name',

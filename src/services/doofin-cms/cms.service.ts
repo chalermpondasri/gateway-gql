@@ -199,7 +199,7 @@ export class CmsService {
                 section.updatedAt = new Date(attributes.updatedAt)
                 section.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
 
-                section.sectionItems = (attributes.items.data as BaseResponse<MediaContentResponse>[]).map( i=>{
+                section.sectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? []).map( i=>{
                     const item = new SectionItemType()
                     item.id = i.id
                     item.contentRating = (<BaseResponse<ContentRatingResponse>> i.attributes.rating.data).attributes.value
@@ -222,7 +222,7 @@ export class CmsService {
 
                     item.shortVideos = []
 
-                    item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> i.attributes.mediaEpisodes.data).map( v => {
+                    item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> i.attributes.mediaEpisodes?.data ?? []).map( v => {
                         return {
                             id: v.id,
                             coverImage: (<BaseResponse<CmsImageContent>> v.attributes.coverImage.data).attributes,
@@ -234,15 +234,13 @@ export class CmsService {
                     })
 
                     item.isSeries = this.isSeries(tags)
-                    item.totalSeason = size(i.attributes.mediaSeasons.data)
-                    item.totalEpisode = reduce(<BaseResponse<MediaSeasonResponse>[]> i.attributes.mediaSeasons.data, (acc, each) => {
+                    item.totalSeason = size(i.attributes.mediaSeasons?.data ?? [])
+                    item.totalEpisode = reduce(<BaseResponse<MediaSeasonResponse>[]> i.attributes.mediaSeasons?.data ?? [], (acc, each) => {
                         return acc + size(each.attributes.mediaEpisodes.data)
                     }, 0)
 
                     return item
                 })
-
-
                 return section
             }),
             toArray(),
@@ -332,15 +330,15 @@ export class CmsService {
         const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
             return {
                 id: v.id,
-                coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
+                coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage?.data)?.attributes,
                 order: v.attributes.ordering,
                 duration: String(v.attributes.duration),
                 episodeName: v.attributes.name[lang],
                 continueWatchingAt: 0,
             }
         }
-        result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes.mediaEpisodes.data).map(episodeMapper)
-        result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes.mediaSeasons.data).map( v => {
+        result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes.mediaEpisodes?.data ?? []).map(episodeMapper)
+        result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes.mediaSeasons?.data ?? []).map( v => {
             return {
                 id: String(v.id),
                 slug: v.attributes.slug,
@@ -359,7 +357,7 @@ export class CmsService {
                     }
                 })
             }
-        })
+        })  
         return result
     }
 
