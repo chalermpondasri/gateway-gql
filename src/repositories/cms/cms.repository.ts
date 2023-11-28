@@ -181,8 +181,7 @@ export class CmsRepository implements ICmsRepository {
         ]
 
         const queryString = querystring.encode({populate})
-
-        const promise = this._axiosInstance.get(`/media-contents?slug=${slug}&${queryString}`)
+        const promise = this._axiosInstance.get(`/media-contents?filters[slug][$containsi]=${slug}&${queryString}`)
         return from(promise).pipe(
             map(result => get(result,'data.data[0]', null))
         )
@@ -213,7 +212,6 @@ export class CmsRepository implements ICmsRepository {
         ]
 
         const queryString = querystring.encode({populate})
-
         const promise = this._axiosInstance.get(`/media-contents?filters[mediaTags][slug][$eq]=${tag}&${queryString}`)
         return from(promise).pipe(
             map(result => result.data)

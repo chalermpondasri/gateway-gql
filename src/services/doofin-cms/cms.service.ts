@@ -290,7 +290,7 @@ export class CmsService {
     public getMediaDetailBySlug(mediaSlug: string): Observable<MediaContentDetailType> {
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMediaContentBySlug(mediaSlug).pipe(
-            map(resp => this._toMediaContentType(resp, lang))
+            map(resp => this._toMediaContentDetailType(resp, lang))
         )
     }
 
@@ -304,7 +304,7 @@ export class CmsService {
         }, 0)
     }
 
-    private _toMediaContentType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType{
+    private _toMediaContentDetailType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType{
         const {attributes} = resp
         const result = new MediaContentDetailType()
         result.id = resp.id
@@ -314,6 +314,7 @@ export class CmsService {
         result.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
         result.trailers = attributes.trailers
         result.link = attributes.link
+        result.shortVideos = []
 
         let tags: LocalizedLabelType[] = []
         if(!!attributes.mediaTags.data) {
@@ -366,7 +367,7 @@ export class CmsService {
         return this._cmsRepository.getMediaContentByTag("kids").pipe(
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
-            map(mediaContent => this._toMediaContentType(mediaContent, lang)),
+            map(mediaContent => this._toMediaContentDetailType(mediaContent, lang)),
             toArray()
         )
         
