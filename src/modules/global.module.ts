@@ -10,6 +10,7 @@ import {
     requestContextProvider,
 } from '@/providers/request-context.provider'
 import { httpClientProvider } from '@/providers/http-client.provider'
+import { CacheRedisModule } from '@/modules/cache-redis.module'
 
 @Global()
 @Module({
@@ -22,6 +23,9 @@ import { httpClientProvider } from '@/providers/http-client.provider'
         envConfigProvider,
         requestContextProvider,
         httpClientProvider,
+    ],
+    imports: [
+        CacheRedisModule.register()
     ]
 })
 export class GlobalModule implements NestModule{
