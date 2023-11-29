@@ -15,18 +15,20 @@ import {
     SectionType,
 } from '@/types/objects'
 import {
-    from,
     mergeMap,
     of,
     tap,
+    map,
 } from 'rxjs'
 import {
     isEmpty,
     isNil,
+   
 } from 'lodash'
 import { ProviderName } from '@/constants/provider-name.const'
 import { CacheService } from '@/services/cache/cache.service'
 import { CacheName } from '@/services/cache/interface/service.interface'
+import { plainToInstance } from 'class-transformer'
 
 @Resolver(() => SectionType)
 export class SectionResolver {
@@ -50,13 +52,17 @@ export class SectionResolver {
                         tap(resp => {
                             if(!isEmpty(resp)) {
                                 this._logger.debug(`NEW CACHE`)
-                                this._cacheService.setCache(CacheName.MAIN_PAGE, JSON.stringify(resp))
+                                this._cacheService.setCache(CacheName.MAIN_PAGE, JSON.stringify(resp), 3600)
                             }
                         })
                     )
                 }
-                this._logger.debug(`CACHE DATA`)
-                return of(JSON.parse(resultCache as string))
+                this._logger.debug(`CACHE DATA`) 
+                return of(JSON.parse(resultCache as string)).pipe(
+                    map(datas=>{  
+                       return  plainToInstance(SectionType, datas as Array<object>)
+                    })
+                )
             })
         )
 

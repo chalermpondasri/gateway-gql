@@ -9,6 +9,7 @@ import {
 } from '@/types/objects/cms.type'
 import { LocalizedLabelType } from '@/types/objects/label.type'
 import { MediaSeasonType } from '@/types/objects/media-season.type'
+import { Transform } from 'class-transformer'
 
 @ObjectType()
 export class ExternalContentType {
@@ -99,8 +100,10 @@ export class SectionType extends IdType {
     @Field({nullable: true})
     public sectionLink: string
     @Field(() => GraphQLISODateTime)
+    @Transform(v => v.value ? new Date(v.value) : null)
     public createdAt: Date
     @Field(() => GraphQLISODateTime)
+    @Transform(v => v.value ? new Date(v.value) : null)
     public updatedAt: Date
     @Field()
     public order: number

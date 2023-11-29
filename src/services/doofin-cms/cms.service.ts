@@ -36,7 +36,6 @@ import {
     MediaContentDetailType,
     SectionItemType,
     SectionType,
-    EpisodeItemType,
     TermType,
 } from '@/types/objects'
 import {

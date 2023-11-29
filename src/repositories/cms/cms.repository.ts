@@ -8,7 +8,6 @@ import {
     ListResponse,
     LoginResponse,
     MediaContentDetailResponse,
-    MediaContentResponse,
     PromotionalResponse,
     SectionResponse,
     TermResponse,
