@@ -20,9 +20,9 @@ export class MediaContentDetailResolver {
 
     @Query( () => MediaContentDetailType)
     public getMediaContent(
-        @Args({name: 'slug', type: () => String!}) slug: string,
+        @Args({name: 'id', type: () => String!}) id: string,
     ) {
-        return this._cmsService.getMediaDetailBySlug(slug)
+        return this._cmsService.getMediaContentById(id)
     }
     @ResolveField('isSeries')
     public isSeries(

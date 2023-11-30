@@ -36,7 +36,6 @@ import {
     MediaContentDetailType,
     SectionItemType,
     SectionType,
-    EpisodeItemType,
     TermType,
 } from '@/types/objects'
 import {
@@ -208,39 +207,11 @@ export class CmsService {
         )
     }
 
-    public getMediaContentById(id: string): Observable<SectionItemType> {
+    public getMediaContentById(id: string): Observable<MediaContentDetailType> {
+        const lang = this._requestContext.languages[0].code ?? 'en'
         return this._cmsRepository.getMediaContentById(id).pipe(
-            map(res=> (res.data) as BaseResponse<MediaContentResponse>),
-            map((res)=>{
-                const lang = this._requestContext.languages[0].code ?? 'en'
-                const mediaTags = (res.attributes.mediaTags.data as Array<BaseResponse<TagResponse>>) ?? []
-                const episodes = (res.attributes.mediaEpisodes.data as Array<BaseResponse<MediaEpisodeResponse>>) ?? []
-                const tags =  mediaTags.map<LocalizedLabelType>(e => ({ id: e.attributes.slug, label: e.attributes.name[lang] }))
-                const data: Omit<SectionItemType,"recentlyPublished"> = {
-                    id: res.id,
-                    title: res.attributes.title[lang],
-                    contentRating: (res.attributes.rating.data as BaseResponse<ContentRatingResponse>).attributes.value,
-                    shortVideos: [],
-                    trailers: res.attributes.trailers,
-                    coverImage: (res.attributes.coverImage.data as BaseResponse<CmsImageContent>).attributes,
-                    tags,
-                    link: res.attributes.link,
-                    episodes: episodes.map<EpisodeItemType>(v => {
-                        return {
-                            id: v.id,
-                            coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
-                            order: v.attributes.ordering,
-                            duration: String(v.attributes.duration),
-                            episodeName: v.attributes.name[lang],
-                            continueWatchingAt: 0
-                        }
-                    }),
-                    isSeries: false,
-                    totalEpisode: 0,
-                    totalSeason: 0,
-                }
-                return plainToInstance(SectionItemType, data)
-            })
+            map(res=> (res.data) as BaseResponse<MediaContentDetailResponse>),
+            map((res)=>this._toMediaContentDetailType(res, lang))
         )
     }
 
@@ -272,6 +243,7 @@ export class CmsService {
         result.title = attributes.title[lang]
         result.subtitle = attributes.subtitle[lang]
         result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes.rating.data).attributes.value
+       
         result.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
         result.trailers = attributes.trailers
         result.link = attributes.link
@@ -298,7 +270,7 @@ export class CmsService {
                 episodeName: v.attributes.name[lang],
                 continueWatchingAt: 0,
             }
-        }
+        }     
         result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes.mediaEpisodes?.data ?? []).map(episodeMapper)
         result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes.mediaSeasons?.data ?? []).map( v => {
             return {

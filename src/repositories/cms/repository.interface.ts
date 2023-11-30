@@ -6,7 +6,6 @@ import {
     ListResponse,
     LoginResponse,
     MediaContentDetailResponse,
-    MediaContentResponse,
     SectionResponse,
     TermResponse,
     UserRoleResponse,
@@ -26,7 +25,7 @@ export interface ICmsRepository {
     getFaqs(request: BaseRequest): Observable<ListResponse<BaseResponse<FaqResponse>>>
     getAvatars(id: number): Observable<ListResponse<BaseResponse<AvatarResponse>>>
     getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>>
-    getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentResponse>>
+    getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentBySlug(slug: string): Observable<BaseResponse<MediaContentDetailResponse>>
     getMediaContentByTag(tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
 }
