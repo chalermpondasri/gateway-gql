@@ -13,11 +13,12 @@ import {
     Parent,
     Query,
     ResolveField,
-    Resolver,
+    Resolver,   
 } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
 import { Inject } from '@nestjs/common'
 import {
+    ContactSupportInput,
     UserChangePasswordInput,
     UserSettingInput,
     UserVerifyOtpInput,
@@ -111,6 +112,50 @@ export class UserResolver {
         @Args(UserSettingInput.name) input: UserSettingInput,
     ) {
         return this._authService.updateUserSetting(input)
+    }
+
+    @Mutation(() => UserVerifyOtpType)
+    public async sendTicketToSupport(
+        @Args(ContactSupportInput.name) input: ContactSupportInput,
+    ){
+        const d = await input.image1
+        console.log(d);
+        
+        // console.log(input.image2);
+        const  readStream = d.createReadStream()
+        const chunks = [];
+        let ff
+       
+       const file = new Promise((resolve)=>{
+
+            readStream.on('data', (chunk) => {
+              chunks.push(chunk);
+            });
+            
+            readStream.on('end', () => {
+              ff = Buffer.concat(chunks);
+              resolve(ff)
+              console.log('Buffer:', ff);
+            })
+            
+            readStream.on('error', (err) => {
+                console.error('Error reading stream:', err);
+              });
+        })
+    
+
+      
+    
+       
+        
+      
+      console.log(await file);
+      
+  
+    //   return results;
+        console.log({status: true});
+        
+        return {status: true}
     }
 
 }

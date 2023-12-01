@@ -6,6 +6,10 @@ import {
     Locale,
     SubtitleSelection,
 } from '@/types/enums/locales.enum'
+import { 
+    FileUpload, 
+    GraphQLUpload, 
+} from 'graphql-upload-ts'
 
 @InputType()
 export class UserVerifyOtpInput {
@@ -52,4 +56,25 @@ export class UserSettingInput {
     public pbAutoplayNext: boolean
     @Field(() => SubtitleSelection,{nullable: true})
     public videoSubtitle: typeof SubtitleSelection
+}
+
+@InputType()
+export class ContactSupportInput {
+    @Field()
+    public faqTitleId: string
+    @Field()
+    public faqSubTitle: string
+    @Field()
+    public email: string
+    @Field()
+    public phoneNumber: string
+    @Field()
+    public detail: string
+    @Field(()=> GraphQLUpload)
+    public image1: FileUpload
+    //! i have been trying to use [GraphQLUpload] all day but it doesn't work and i don't know
+    @Field(()=> GraphQLUpload, {nullable: true})
+    public image2: FileUpload
+    @Field(()=> GraphQLUpload, {nullable: true})
+    public image3: FileUpload
 }
