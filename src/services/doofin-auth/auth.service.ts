@@ -367,11 +367,11 @@ export class AuthService {
                         fileName: f.filename,
                         mimetype: f.mimetype
                    } 
-                })
-                
-                return this._authRepository.sendTicketToSupport(requestBody)
-            }),
-            map(()=> ({ status: true }))
+                })         
+                return this._authRepository.sendTicketToSupport(requestBody).pipe(
+                    map(({ status }) => ({ status }))
+                )
+            })
         )
     }
     
