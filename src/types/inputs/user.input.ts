@@ -70,11 +70,11 @@ export class ContactSupportInput {
     public phoneNumber: string
     @Field()
     public detail: string
-    @Field(()=> GraphQLUpload)
-    public image1: FileUpload
+    @Field(()=> GraphQLUpload, {nullable: true})
+    public image1: Promise<FileUpload>
     //! i have been trying to use [GraphQLUpload] all day but it doesn't work and i don't know
     @Field(()=> GraphQLUpload, {nullable: true})
-    public image2: FileUpload
+    public image2: Promise<FileUpload>
     @Field(()=> GraphQLUpload, {nullable: true})
-    public image3: FileUpload
+    public image3: Promise<FileUpload>
 }

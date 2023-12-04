@@ -115,47 +115,10 @@ export class UserResolver {
     }
 
     @Mutation(() => UserVerifyOtpType)
-    public async sendTicketToSupport(
+    public sendTicketToSupport(
         @Args(ContactSupportInput.name) input: ContactSupportInput,
-    ){
-        const d = await input.image1
-        console.log(d);
-        
-        // console.log(input.image2);
-        const  readStream = d.createReadStream()
-        const chunks = [];
-        let ff
-       
-       const file = new Promise((resolve)=>{
-
-            readStream.on('data', (chunk) => {
-              chunks.push(chunk);
-            });
-            
-            readStream.on('end', () => {
-              ff = Buffer.concat(chunks);
-              resolve(ff)
-              console.log('Buffer:', ff);
-            })
-            
-            readStream.on('error', (err) => {
-                console.error('Error reading stream:', err);
-              });
-        })
-    
-
-      
-    
-       
-        
-      
-      console.log(await file);
-      
-  
-    //   return results;
-        console.log({status: true});
-        
-        return {status: true}
+    ){ 
+        return this._authService.sendTicketToSupport(input)
     }
 
 }

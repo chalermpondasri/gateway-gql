@@ -364,8 +364,8 @@ type Query {
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
   getMainPage: [SectionType!]!
-  getKidFin: [MediaContentDetailType!]!
-  getMediaContent(slug: String!): MediaContentDetailType!
+  getKidFin: [SectionItemType!]!
+  getMediaContent(id: String!): MediaContentDetailType!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
@@ -423,6 +423,7 @@ type Mutation {
   requestToChangeEmail(newEmail: String!): UserRequestEmailType!
   verifyToChangeEmail(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
   updateUserSetting(UserSettingInput: UserSettingInput!): UserType!
+  sendTicketToSupport(ContactSupportInput: ContactSupportInput!): UserVerifyOtpType!
   revokeUserSessions: [String!]!
   revokeSession(sessionId: String!): DeviceSessionType!
   markAllNotiAsRead(profileId: String): ReadAllNotificationType!
@@ -537,3 +538,17 @@ input UserSettingInput {
   pbAutoplayNext: Boolean
   videoSubtitle: SubtitleSelection
 }
+
+input ContactSupportInput {
+  faqTitleId: String!
+  faqSubTitle: String!
+  email: String!
+  phoneNumber: String!
+  detail: String!
+  image1: Upload
+  image2: Upload
+  image3: Upload
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload

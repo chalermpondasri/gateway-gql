@@ -3,6 +3,7 @@ import {
     Injectable,
 } from '@nestjs/common'
 import {
+    ContactSupportRequest,
     CreateUserRequest,
     IAuthRepository,
     NotificationQueryRequest,
@@ -11,6 +12,7 @@ import {
 import { ProviderName } from '@/constants/provider-name.const'
 import {
     concatMap,
+    forkJoin,
     from,
     map,
     mergeMap,
@@ -35,6 +37,7 @@ import {
     VerifyOtpType,
 } from '@/types/objects'
 import {
+    ContactSupportInput,
     CreateProfileInput,
     CreateProfilePinInput,
     CreateUserInput,
@@ -344,6 +347,31 @@ export class AuthService {
                     toArray()
                 )
             })
+        )
+    }
+
+    public sendTicketToSupport(input: ContactSupportInput):Observable<UserVerifyOtpType>{
+        const promises = [input.image1]
+        if(input.image2){
+            promises.push(input.image2)
+        }
+        if(input.image3){
+            promises.push(input.image3)
+        }
+        return forkJoin(promises.map(p=>from(p))).pipe(
+            mergeMap((files)=>{
+                const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true}) 
+                requestBody.images = files.map(f=> {     
+                   return {
+                        readStream: f.createReadStream(),
+                        fileName: f.filename,
+                        mimetype: f.mimetype
+                   } 
+                })
+                
+                return this._authRepository.sendTicketToSupport(requestBody)
+            }),
+            map(()=> ({ status: true }))
         )
     }
     

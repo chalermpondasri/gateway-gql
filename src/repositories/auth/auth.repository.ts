@@ -21,6 +21,7 @@ import {
     VerifyEmailUserResponse,
     VerifyOtpRequest,
     VerifyOtpResponse,
+    ContactSupportRequest,
 } from '@/repositories/auth'
 import {
     from,
@@ -42,6 +43,7 @@ import {
     VerifyResetProfilePin,
 } from '@/types/inputs'
 import { omit } from 'lodash'
+import FormData from 'form-data'
 
 export class AuthRepository implements IAuthRepository {
     public constructor(
@@ -352,8 +354,17 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map(res=> plainToInstance(ProfileRequestResetPinResponse, res.data)))
     }
 
-    public sendTicketToSupport(): Observable<OtpVerifyPhoneResponse> {
-        return from(this._axiosInstance.post('/user/contact-support')).pipe(
+    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<OtpVerifyPhoneResponse> { 
+        const form = new FormData();
+        requestBody.images.forEach(i=>{
+            form.append('images', i.readStream, {filename: i.fileName, contentType: i.mimetype})
+        })
+
+        Object.keys(requestBody).filter(k => k !== 'images').forEach((key) =>{
+            form.append(key, requestBody[key])
+        })
+        
+        return from(this._axiosInstance.post('/user/contact-support',form)).pipe(
             map(res=> res.data)
         )
     }
