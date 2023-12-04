@@ -13,11 +13,12 @@ import {
     Parent,
     Query,
     ResolveField,
-    Resolver,
+    Resolver,   
 } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
 import { Inject } from '@nestjs/common'
 import {
+    ContactSupportInput,
     UserChangePasswordInput,
     UserSettingInput,
     UserVerifyOtpInput,
@@ -111,6 +112,13 @@ export class UserResolver {
         @Args(UserSettingInput.name) input: UserSettingInput,
     ) {
         return this._authService.updateUserSetting(input)
+    }
+
+    @Mutation(() => UserVerifyOtpType)
+    public sendTicketToSupport(
+        @Args(ContactSupportInput.name) input: ContactSupportInput,
+    ){ 
+        return this._authService.sendTicketToSupport(input)
     }
 
 }

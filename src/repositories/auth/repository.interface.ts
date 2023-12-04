@@ -24,6 +24,7 @@ import {
     NotificationResponse,
     NotificationQueryRequest,
     MyListResponse,
+    ContactSupportRequest,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
@@ -74,6 +75,7 @@ export interface IAuthRepository {
     removeFromMyList(profileId: string, programId: string): Observable<MyListResponse[]>
     updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileResponse>
     requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>
+    sendTicketToSupport(requestBody: ContactSupportRequest):Observable<OtpVerifyPhoneResponse>
 }
 
 export interface ILocaleRepository {
