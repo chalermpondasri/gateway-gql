@@ -35,6 +35,7 @@ import {
     UserVerifyOtpType,
     ValidateProfilePinType,
     VerifyOtpType,
+    UserWhoForgotPasswordType,
 } from '@/types/objects'
 import {
     ContactSupportInput,
@@ -371,6 +372,14 @@ export class AuthService {
                 return this._authRepository.sendTicketToSupport(requestBody).pipe(
                     map(({ status }) => ({ status }))
                 )
+            })
+        )
+    }
+
+    public findUserWhoForgotPassword(emailOrPhone: string):Observable<UserWhoForgotPasswordType>{
+        return this._authRepository.findUserWhoForgotPassword(emailOrPhone).pipe(
+            map(res=>{
+                return plainToInstance(UserWhoForgotPasswordType, res)
             })
         )
     }

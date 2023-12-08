@@ -5,6 +5,7 @@ import {
     UserRequestOtpType,
     UserType,
     UserVerifyOtpType,
+    UserWhoForgotPasswordType,
 } from '@/types/objects'
 import {
     Args,
@@ -119,6 +120,20 @@ export class UserResolver {
         @Args(ContactSupportInput.name) input: ContactSupportInput,
     ){ 
         return this._authService.sendTicketToSupport(input)
+    }
+
+    @Query(()=> UserWhoForgotPasswordType)
+    public findUserWhoForgotPassword(
+        @Args({name:'emailOrPhone', type: ()=> String}) emailOrPhone: string
+    ){
+        return this._authService.findUserWhoForgotPassword(emailOrPhone)
+    }
+
+    @Query(()=> UserWhoForgotPasswordType)
+    public requestOtpToResetPassword(
+        @Args({name:'emailOrPhone', type: ()=> String}) emailOrPhone: string
+    ){
+        return this._authService.findUserWhoForgotPassword(emailOrPhone)
     }
 
 }

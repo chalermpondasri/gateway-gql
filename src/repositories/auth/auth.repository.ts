@@ -22,6 +22,7 @@ import {
     VerifyOtpRequest,
     VerifyOtpResponse,
     ContactSupportRequest,
+    UserWhoForgotPasswordResponse,
 } from '@/repositories/auth'
 import {
     from,
@@ -366,6 +367,12 @@ export class AuthRepository implements IAuthRepository {
         
         return from(this._axiosInstance.post('/user/contact-support',form)).pipe(
             map(res=> res.data)
+        )
+    }
+
+    public findUserWhoForgotPassword(emailOrPhone: string): Observable<UserWhoForgotPasswordResponse> {
+        return from(this._axiosInstance.get(`/user/forgot/password?emailOrPhoneNumber=${emailOrPhone}`)).pipe(
+            map(res=> plainToInstance(UserWhoForgotPasswordResponse,res.data))
         )
     }
 

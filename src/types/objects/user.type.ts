@@ -4,6 +4,7 @@ import {
     ID,
     Int,
     ObjectType,
+    PickType,
 } from '@nestjs/graphql'
 import {
     ProfileType,
@@ -140,3 +141,6 @@ export class UserRequestEmailType {
     @Field()
     public token: string
 }
+
+@ObjectType()
+export class UserWhoForgotPasswordType extends PickType(UserType,['id','email','emailVerificationStatus','verifiedPhoneNumber']){}

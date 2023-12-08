@@ -1,4 +1,5 @@
 import {
+    Expose,
     Transform,
     Type,
 } from 'class-transformer'
@@ -54,4 +55,12 @@ export class UserResponse {
 
     @Type(()=>DeviceSettingResponse)
     public setting: DeviceSettingResponse
+}
+
+export class UserWhoForgotPasswordResponse {
+    @Expose({name:"_id"})
+    public id: string
+    public email: string
+    public emailVerificationStatus: string
+    public verifiedPhoneNumber: string
 }
