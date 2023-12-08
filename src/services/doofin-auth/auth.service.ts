@@ -36,6 +36,7 @@ import {
     ValidateProfilePinType,
     VerifyOtpType,
     UserWhoForgotPasswordType,
+    VerifyOtpToResetPasswordType,
 } from '@/types/objects'
 import {
     ContactSupportInput,
@@ -382,6 +383,20 @@ export class AuthService {
                 return plainToInstance(UserWhoForgotPasswordType, res)
             })
         )
+    }
+
+    public requestOtpToResetPassword(userId: string, sendVia: string): Observable<UserRequestOtpType>{
+        return this._authRepository.requestOtpToResetPassword(userId, sendVia).pipe(
+            map(data => plainToInstance(UserRequestOtpType, data))
+        )
+    }
+
+    public verifyOtpToResetPassword( input: VerifyOtpInput ): Observable<VerifyOtpToResetPasswordType>{
+        return this._authRepository.verifyOtpToResetPassword(input)
+    }
+
+    public resetPassword(resetPasswordToken: string, newPassword: string): Observable<UserVerifyOtpType>{
+        return this._authRepository.resetPassword(resetPasswordToken, newPassword)
     }
     
 }

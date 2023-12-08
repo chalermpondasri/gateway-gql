@@ -37,6 +37,7 @@ import {
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
+    VerifyOtpInput,
     VerifyResetProfilePin,
 } from '@/types/inputs'
 
@@ -78,6 +79,9 @@ export interface IAuthRepository {
     requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>
     sendTicketToSupport(requestBody: ContactSupportRequest):Observable<OtpVerifyPhoneResponse>
     findUserWhoForgotPassword(emailOrPhone: string): Observable<UserWhoForgotPasswordResponse>
+    requestOtpToResetPassword(userId: string, sendVia: string): Observable<OtpChangePhoneResponse>
+    verifyOtpToResetPassword( input: VerifyOtpInput ): Observable<{resetPasswordToken: string}>
+    resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}>
 }
 
 export interface ILocaleRepository {

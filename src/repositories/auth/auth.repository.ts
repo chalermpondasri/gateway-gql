@@ -41,6 +41,7 @@ import {
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
+    VerifyOtpInput,
     VerifyResetProfilePin,
 } from '@/types/inputs'
 import { omit } from 'lodash'
@@ -373,6 +374,24 @@ export class AuthRepository implements IAuthRepository {
     public findUserWhoForgotPassword(emailOrPhone: string): Observable<UserWhoForgotPasswordResponse> {
         return from(this._axiosInstance.get(`/user/forgot/password?emailOrPhoneNumber=${emailOrPhone}`)).pipe(
             map(res=> plainToInstance(UserWhoForgotPasswordResponse,res.data))
+        )
+    }
+
+    public requestOtpToResetPassword(userId: string, sendVia: string): Observable<OtpChangePhoneResponse> {
+      return from(this._axiosInstance.post('/user/request/otp/reset-password', {userId, sendVia})).pipe(
+        map(res=> plainToInstance(OtpChangePhoneResponse, res.data))
+      )  
+    }
+    
+    public verifyOtpToResetPassword(input: VerifyOtpInput): Observable<{ resetPasswordToken: string; }> {
+        return from(this._axiosInstance.post('/user/verify/otp/reset-password', input)).pipe(
+            map(res=> res.data)
+        )
+    }
+
+    public resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}> {
+        return from(this._axiosInstance.patch('/user/reset-password', {resetPasswordToken, newPassword})).pipe(
+            map(res=> res.data)
         )
     }
 

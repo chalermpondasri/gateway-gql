@@ -144,3 +144,9 @@ export class UserRequestEmailType {
 
 @ObjectType()
 export class UserWhoForgotPasswordType extends PickType(UserType,['id','email','emailVerificationStatus','verifiedPhoneNumber']){}
+
+@ObjectType()
+export class VerifyOtpToResetPasswordType {
+    @Field()
+    public resetPasswordToken: string
+}
