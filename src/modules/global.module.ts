@@ -11,6 +11,7 @@ import {
 } from '@/providers/request-context.provider'
 import { httpClientProvider } from '@/providers/http-client.provider'
 import { CacheRedisModule } from '@/modules/cache-redis.module'
+import { ConfigModule } from '@nestjs/config'
 
 @Global()
 @Module({
@@ -25,6 +26,7 @@ import { CacheRedisModule } from '@/modules/cache-redis.module'
         httpClientProvider,
     ],
     imports: [
+        ConfigModule.forRoot(),
         CacheRedisModule.register()
     ]
 })

@@ -7,14 +7,12 @@ import { plainToInstance } from 'class-transformer'
 import { validateSync } from 'class-validator'
 import { EnvironmentConfig } from '@/models/common'
 import { ProviderName } from '@/constants/provider-name.const'
-import { config } from 'dotenv'
 import InfisicalClient from 'infisical-node'
 import { reduce } from 'lodash'
 
 export const envConfigProvider: Provider<EnvironmentConfig> = {
     provide: ProviderName.ENV_CONFIG,
     useFactory: async () => {
-        config()
         const logger = new Logger('EnvConfig')
         const client = new InfisicalClient({
             token: process.env.INFISICAL_TOKEN,
