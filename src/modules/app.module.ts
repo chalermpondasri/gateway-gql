@@ -7,9 +7,11 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { GlobalModule } from '@/modules/global.module'
 import { CmsModule } from '@/modules/cms.module'
 import { AuthModule } from '@/modules/auth.module'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
     imports: [
+        ConfigModule.forRoot(),
         GlobalModule,
         CmsModule,
         AuthModule,

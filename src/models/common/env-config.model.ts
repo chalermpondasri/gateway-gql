@@ -22,12 +22,6 @@ export class EnvironmentConfig {
     public declare readonly LOCALE_ENDPOINT: string
 
     @IsNotEmpty()
-    public declare readonly INFISICAL_TOKEN: string
-
-    @IsNotEmpty()
-    public declare readonly INFISICAL_URL: string
-
-    @IsNotEmpty()
     public declare readonly REDIS_HOST: string
 
     @IsNumberString()
