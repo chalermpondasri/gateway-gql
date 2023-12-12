@@ -5,6 +5,8 @@ import {
     UserRequestOtpType,
     UserType,
     UserVerifyOtpType,
+    UserWhoForgotPasswordType,
+    VerifyOtpToResetPasswordType,
 } from '@/types/objects'
 import {
     Args,
@@ -22,6 +24,7 @@ import {
     UserChangePasswordInput,
     UserSettingInput,
     UserVerifyOtpInput,
+    VerifyOtpInput,
 } from '@/types/inputs'
 
 @Resolver( () => UserType)
@@ -119,6 +122,36 @@ export class UserResolver {
         @Args(ContactSupportInput.name) input: ContactSupportInput,
     ){ 
         return this._authService.sendTicketToSupport(input)
+    }
+
+    @Query(()=> UserWhoForgotPasswordType)
+    public findUserWhoForgotPassword(
+        @Args({name:'emailOrPhone', type: ()=> String}) emailOrPhone: string
+    ){
+        return this._authService.findUserWhoForgotPassword(emailOrPhone)
+    }
+
+    @Mutation(()=> UserRequestOtpType)
+    public requestOtpToResetPassword(
+        @Args({name:'userId', type: ()=> String}) userId: string,
+        @Args({name:'sendVia', type: ()=> String , description: 'email | phone-number'}) sendVia: string,
+    ){
+        return this._authService.requestOtpToResetPassword(userId, sendVia)
+    }
+
+    @Mutation(()=> VerifyOtpToResetPasswordType)
+    public verifyOtpToResetPassword(
+        @Args(VerifyOtpInput.name) input: VerifyOtpInput,
+    ){
+        return this._authService.verifyOtpToResetPassword(input)
+    }
+
+    @Mutation(()=> UserVerifyOtpType)
+    public resetPassword(
+        @Args({name: 'resetPasswordToken', type:()=> String}) resetPasswordToken: string,
+        @Args({name: 'newPassword', type:()=> String}) newPassword: string,
+    ){
+        return this._authService.resetPassword(resetPasswordToken, newPassword)
     }
 
 }

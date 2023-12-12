@@ -25,6 +25,7 @@ import {
     NotificationQueryRequest,
     MyListResponse,
     ContactSupportRequest,
+    UserWhoForgotPasswordResponse,
 } from '@/repositories/auth'
 import { Observable } from 'rxjs'
 import { VerifyOtpRequest } from '@/repositories/auth/verify-otp.request'
@@ -36,6 +37,7 @@ import {
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
+    VerifyOtpInput,
     VerifyResetProfilePin,
 } from '@/types/inputs'
 
@@ -76,6 +78,10 @@ export interface IAuthRepository {
     updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileResponse>
     requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>
     sendTicketToSupport(requestBody: ContactSupportRequest):Observable<OtpVerifyPhoneResponse>
+    findUserWhoForgotPassword(emailOrPhone: string): Observable<UserWhoForgotPasswordResponse>
+    requestOtpToResetPassword(userId: string, sendVia: string): Observable<OtpChangePhoneResponse>
+    verifyOtpToResetPassword( input: VerifyOtpInput ): Observable<{resetPasswordToken: string}>
+    resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}>
 }
 
 export interface ILocaleRepository {
