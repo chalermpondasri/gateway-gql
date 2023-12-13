@@ -58,4 +58,13 @@ export class MediaContentDetailResolver {
     ){
         return parent.seasons.flatMap( s=> s.mediaEpisodes.flatMap( ep => ep.audio))
     }
+
+    @Query(()=> [MediaContentDetailType])
+    public searchContent(
+        @Args('profileId') profileId: string,
+        @Args({name: 'keyword', nullable: true}) keyword: string,
+        @Args({name: 'tag', nullable: true}) tag: string,    
+    ){
+        return this._cmsService.searchContent(profileId, keyword, tag)
+    }
 }

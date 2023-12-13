@@ -16,6 +16,7 @@ import {
     IBaseRequest, 
 } from '@/repositories/cms/base.request'
 import { PromotionalResponse } from '@/repositories/cms/promotional.response'
+import { ContentRating } from '@/types/enums'
 
 export interface ICmsRepository {
     getTermsAndConditions(request: IBaseRequest): Observable<ListResponse<TermResponse>>
@@ -28,4 +29,5 @@ export interface ICmsRepository {
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentBySlug(slug: string): Observable<BaseResponse<MediaContentDetailResponse>>
     getMediaContentByTag(tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
+    searchContent(contentRatings: ContentRating[], keyword: string, tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
 }
