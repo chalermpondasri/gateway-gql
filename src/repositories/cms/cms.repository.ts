@@ -31,6 +31,7 @@ import {
     isNil,
 } from 'lodash'
 import { Cache } from 'cache-manager'
+import { ContentRating } from '@/types/enums'
 
 export class CmsRepository implements ICmsRepository {
     public constructor(
@@ -202,5 +203,18 @@ export class CmsRepository implements ICmsRepository {
             map(result => result.data)
         )
     }
-
+    
+    public searchContent(contentRatings: ContentRating[], keyword: string, tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
+        let filters = contentRatings.reduce((a, c, i)=>{
+            return a += `filters[rating][value][$in][${i}]=${c}&`
+        },'')
+        if(keyword){
+            filters += `filters[$or][0][title][en][$containsi]=${keyword}&filters[$or][1][title][th][$containsi]=${keyword}`
+        }
+        const queryString = querystring.encode({populate: this._mediaContentPupulate})
+        const promise = this._axiosInstance.get(`/media-contents?${filters}${filters.endsWith('&')?'':'&'}${queryString}`)
+        return from(promise).pipe(
+            map(result => result.data)
+        )
+    }
 }

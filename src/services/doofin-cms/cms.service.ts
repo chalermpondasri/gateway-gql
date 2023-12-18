@@ -55,6 +55,8 @@ import {
 } from '@/types/objects/subject.type'
 import { RequestContext } from '@/providers/request-context.provider'
 import { LocalizedLabelType } from '@/types/objects/label.type'
+import { IAuthRepository } from '@/repositories/auth'
+import { ContentRating } from '@/types/enums'
 
 @Injectable()
 export class CmsService {
@@ -66,6 +68,8 @@ export class CmsService {
         private readonly _cmsRepository: ICmsRepository,
         @Inject(ProviderName.REQUEST_CONTEXT)
         private readonly _requestContext: RequestContext,
+        @Inject(ProviderName.AUTH_REPOSITORY)
+        private readonly _authRepository: IAuthRepository,
     ) {
         this._logger = new Logger(this.constructor.name)
     }
@@ -345,6 +349,21 @@ export class CmsService {
             toArray()
         )
         
+    }
+
+    public searchContent(profileId: string, keyword: string, tag: string) {
+        const lang = this._requestContext.languages[0].code ?? 'en'
+        return this._authRepository.getProfileById(profileId).pipe(
+            mergeMap((profile)=>{            
+                const indexR = Object.values(ContentRating).findIndex(i => i === profile.contentRating)
+                const rating = Object.values(ContentRating).slice(0, indexR+1)           
+                return this._cmsRepository.searchContent(rating, keyword, tag)
+            }),
+            map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
+            concatMap((datas)=> from(datas)),
+            map((res)=>this._toMediaContentDetailType(res, lang)),
+            toArray()
+        )
     }
 
 }

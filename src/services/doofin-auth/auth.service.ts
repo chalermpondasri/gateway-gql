@@ -197,7 +197,7 @@ export class AuthService {
 
     public getProfileInformation(token: string, profileId: string): Observable<ProfileType>{
         return this._authRepository
-          .getProfileById(this._extractJwt(token), profileId)
+          .getProfileById(profileId)
           .pipe(
             map(data => plainToInstance(ProfileType, data))
           )

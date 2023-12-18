@@ -56,7 +56,7 @@ export interface IAuthRepository {
     requestToChangePhoneNumber(token: string,phoneNumber: string): Observable<OtpChangePhoneResponse>
     verifyToChangePhoneNumber(token: string, input: UserVerifyOtpInput ): Observable<OtpVerifyPhoneResponse>
     changePassword(token: string, input: UserChangePasswordInput): Observable<OtpVerifyPhoneResponse>
-    getProfileById(token: string, profileId: string): Observable<ProfileResponse>
+    getProfileById(profileId: string): Observable<ProfileResponse>
     getCurrentUser(token: string): Observable<UserResponse>
     listUserSessions(): Observable<DeviceSessionResponse[]>
     revokeSingleSession(sessionId: string): Observable<DeviceSessionResponse>

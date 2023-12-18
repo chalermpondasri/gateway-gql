@@ -187,13 +187,9 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map((res) => plainToInstance(OtpVerifyPhoneResponse, res.data)))
     }
 
-    public getProfileById(token: string, profileId: string): Observable<ProfileResponse> {
+    public getProfileById(profileId: string): Observable<ProfileResponse> {
         return from(
-            this._axiosInstance.get(`/user/me/profile/${profileId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }),
+            this._axiosInstance.get(`/user/me/profile/${profileId}`),
         ).pipe(
             map(res => plainToInstance(ProfileResponse, res.data)),
         )
