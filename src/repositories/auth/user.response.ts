@@ -1,5 +1,4 @@
 import {
-    Expose,
     Transform,
     Type,
 } from 'class-transformer'
@@ -58,9 +57,7 @@ export class UserResponse {
 }
 
 export class UserWhoForgotPasswordResponse {
-    @Expose({name:"_id"})
-    public id: string
-    public email: string
-    public emailVerificationStatus: string
-    public verifiedPhoneNumber: string
+    public userId: string
+    public verifiedPhone: boolean
+    public verifiedEmail: boolean
 }
