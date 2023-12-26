@@ -1,5 +1,5 @@
 import {
-    BadRequestException,
+    Logger,
     Provider,
     Scope,
 } from '@nestjs/common'
@@ -21,11 +21,12 @@ export const httpClientProvider: Provider = {
             headers: {
                 ...requestContext.getHeaders(),
                 'x-did': requestContext.deviceId,
-            }
+            },
         })
 
         axiosInstance.interceptors.response.use(null, error => {
-            throw new BadRequestException(error?.response?.data)
+            // throw new BadRequestException(error?.response?.data)
+            Logger.error(error?.response?.data, "HttpClientProvider")
         })
         axiosInstance.interceptors.request.use( (conf) => {
             return conf

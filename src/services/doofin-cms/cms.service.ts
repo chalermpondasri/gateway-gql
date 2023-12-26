@@ -8,6 +8,7 @@ import {
 import {
     concatMap,
     from,
+    iif,
     map,
     mergeMap,
     Observable,
@@ -213,7 +214,12 @@ export class CmsService {
 
     public getMediaContentById(id: string): Observable<MediaContentDetailType> {
         const lang = this._requestContext.languages[0].code ?? 'en'
-        return this._cmsRepository.getMediaContentById(id).pipe(
+        return iif(
+            ()=> Number.isInteger(Number(id)),
+            this._cmsRepository.getMediaContentById(id),
+            this._cmsRepository.getMediaContentBySlug(id)
+        )
+        .pipe(
             map(res=> (res.data) as BaseResponse<MediaContentDetailResponse>),
             map((res)=>this._toMediaContentDetailType(res, lang))
         )
@@ -221,13 +227,6 @@ export class CmsService {
 
     public isSeries(tags: LocalizedLabelType[]) {
         return some(tags, {id:'series'})
-    }
-
-    public getMediaDetailBySlug(mediaSlug: string): Observable<MediaContentDetailType> {
-        const lang = this._requestContext.languages[0].code
-        return this._cmsRepository.getMediaContentBySlug(mediaSlug).pipe(
-            map(resp => this._toMediaContentDetailType(resp, lang))
-        )
     }
 
     public totalSeason(media: MediaContentDetailType): number {
@@ -252,6 +251,7 @@ export class CmsService {
         result.trailers = attributes.trailers
         result.link = attributes.link
         result.shortVideos = []
+        result.slug = attributes?.slug ?? ''
 
         let tags: LocalizedLabelType[] = []
         if(!!attributes.mediaTags.data) {
@@ -307,6 +307,7 @@ export class CmsService {
                 item.trailers = mediaContent.attributes.trailers
                 item.title = mediaContent.attributes.title[lang]
                 item.link = mediaContent.attributes.link
+                item.slug = mediaContent.attributes.slug
 
                 let tags: LocalizedLabelType[] = []
                 if(!!mediaContent.attributes.mediaTags.data) {
