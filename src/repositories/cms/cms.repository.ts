@@ -212,7 +212,7 @@ export class CmsRepository implements ICmsRepository {
         return from(promise).pipe(map((result) => result.data));
     }
     
-    public searchContent(contentRatings: ContentRating[], keyword: string, tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
+    public searchContentByKeyword(contentRatings: ContentRating[], keyword: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
         let filters = contentRatings.reduce((a, c, i)=>{
             return a += `filters[rating][value][$in][${i}]=${c}&`
         },'')
