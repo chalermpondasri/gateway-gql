@@ -28,6 +28,7 @@ export interface ICmsRepository {
     getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>>
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentBySlug(slug: string): Observable<BaseResponse<MediaContentDetailResponse>>
-    getMediaContentByTag(tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
+    // ts require at least 1 string
+    getMediaContentByTags(tag: [string,...string[]]): Observable<CmsDataResponse<MediaContentDetailResponse>>
     searchContent(contentRatings: ContentRating[], keyword: string, tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
 }

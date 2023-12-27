@@ -342,7 +342,7 @@ export class CmsService {
 
     public getKidFin(): Observable<SectionItemType[]> {
         const lang = this._requestContext.languages[0].code
-        return this._cmsRepository.getMediaContentByTag("kids").pipe(
+        return this._cmsRepository.getMediaContentByTags(["kids"]).pipe(
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
             map(mediaContent => this._toSectionItemType(mediaContent, lang)),
