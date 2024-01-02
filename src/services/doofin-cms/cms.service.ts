@@ -343,7 +343,7 @@ export class CmsService {
 
     public getKidFin(): Observable<SectionItemType[]> {
         const lang = this._requestContext.languages[0].code
-        return this._cmsRepository.getMediaContentByTag("kids").pipe(
+        return this._cmsRepository.getMediaContentByTags(["kids"]).pipe(
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
             map(mediaContent => this._toSectionItemType(mediaContent, lang)),
@@ -352,13 +352,16 @@ export class CmsService {
         
     }
 
-    public searchContent(profileId: string, keyword: string, tag: string) {
+    public searchContent(profileId: string, keyword?: string, tags?: string[]) {
         const lang = this._requestContext.languages[0].code ?? 'en'
         return this._authRepository.getProfileById(profileId).pipe(
             mergeMap((profile)=>{            
+                if(tags && tags.length > 0){
+                    return this._cmsRepository.getMediaContentByTags(tags)
+                }         
                 const indexR = Object.values(ContentRating).findIndex(i => i === profile.contentRating)
-                const rating = Object.values(ContentRating).slice(0, indexR+1)           
-                return this._cmsRepository.searchContent(rating, keyword, tag)
+                const rating = Object.values(ContentRating).slice(0, indexR+1)  
+                return this._cmsRepository.searchContentByKeyword(rating, keyword)
             }),
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),

@@ -203,15 +203,23 @@ export class CmsRepository implements ICmsRepository {
         )
     }
 
-    public getMediaContentByTag(tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
-        const queryString = querystring.encode({populate: this._mediaContentPupulate})
-        const promise = this._axiosInstance.get(`/media-contents?filters[$or][0][mediaTags][slug][$eq]=${tag}&filters[$or][1][mediaTags][slug][$containsi]=${tag}&${queryString}`)
-        return from(promise).pipe(
-            map(result => result.data)
-        )
+    public getMediaContentByTags(tags: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>> {
+        const { filter } = tags.reduce(
+            (a, c) => {
+                a.filter += `filters[$or][${a.count}][mediaTags][slug][$eq]=${c}&filters[$or][${
+                    a.count + 1
+                }][mediaTags][slug][$containsi]=${c}&`;
+                a.count += 2;
+                return a;
+            },
+            { count: 0, filter: "" }
+        );
+        const queryString = querystring.encode({ populate: this._mediaContentPupulate });
+        const promise = this._axiosInstance.get(`/media-contents?${filter}${queryString}`);
+        return from(promise).pipe(map((result) => result.data));
     }
     
-    public searchContent(contentRatings: ContentRating[], keyword: string, tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
+    public searchContentByKeyword(contentRatings: ContentRating[], keyword: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
         let filters = contentRatings.reduce((a, c, i)=>{
             return a += `filters[rating][value][$in][${i}]=${c}&`
         },'')

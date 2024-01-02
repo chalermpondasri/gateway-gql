@@ -28,6 +28,6 @@ export interface ICmsRepository {
     getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>>
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
-    getMediaContentByTag(tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
-    searchContent(contentRatings: ContentRating[], keyword: string, tag: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
+    getMediaContentByTags(tag: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
+    searchContentByKeyword(contentRatings: ContentRating[], keyword: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
 }

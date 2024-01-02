@@ -60,11 +60,18 @@ export class MediaContentDetailResolver {
     }
 
     @Query(()=> [MediaContentDetailType])
-    public searchContent(
+    public searchContentByKeyword(
         @Args('profileId') profileId: string,
-        @Args({name: 'keyword', nullable: true}) keyword: string,
-        @Args({name: 'tag', nullable: true}) tag: string,    
+        @Args({name: 'keyword', nullable: true}) keyword: string, 
     ){
-        return this._cmsService.searchContent(profileId, keyword, tag)
+        return this._cmsService.searchContent(profileId, keyword)
+    }
+
+    @Query(()=> [MediaContentDetailType])
+    public searchContentByTags(
+        @Args('profileId') profileId: string,
+        @Args({name: 'tags', type: ()=> [String]}) tags: string[],
+    ){
+        return this._cmsService.searchContent(profileId, null, tags)
     }
 }
