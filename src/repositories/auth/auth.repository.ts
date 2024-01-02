@@ -46,10 +46,12 @@ import {
 } from '@/types/inputs'
 import { omit } from 'lodash'
 import FormData from 'form-data'
+import { ICacheService } from '@/services/cache/interface/service.interface'
 
 export class AuthRepository implements IAuthRepository {
     public constructor(
-        private readonly _axiosInstance: AxiosInstance
+        private readonly _axiosInstance: AxiosInstance,
+        private readonly _cacheService: ICacheService,
     ) {}
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
         return from(this._axiosInstance.post<CreateUserResponse>(`/user`, request)).pipe(
@@ -354,11 +356,11 @@ export class AuthRepository implements IAuthRepository {
 
     public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<OtpVerifyPhoneResponse> { 
         const form = new FormData();
-        requestBody.images.forEach(i=>{
-            form.append('images', i.readStream, {filename: i.fileName, contentType: i.mimetype})
+        requestBody.imgCache.forEach(i=>{
+            form.append('images', Buffer.from(i.imgBaseSixtyFour,"base64"), {filename: i.fileName, contentType: i.mimeType})
         })
-
-        Object.keys(requestBody).filter(k => k !== 'images').forEach((key) =>{
+        delete requestBody.imgCache
+        Object.keys(requestBody).forEach((key) =>{
             form.append(key, requestBody[key])
         })
         

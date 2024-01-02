@@ -26,8 +26,6 @@ import {
     UserVerifyOtpInput,
     VerifyOtpInput,
 } from '@/types/inputs'
-import { FileUpload, GraphQLUpload } from 'graphql-upload-ts'
-import { LocalizedLabelType } from '@/types/objects/label.type'
 
 @Resolver( () => UserType)
 export class UserResolver {
@@ -154,16 +152,6 @@ export class UserResolver {
         @Args({name: 'newPassword', type:()=> String}) newPassword: string,
     ){
         return this._authService.resetPassword(resetPasswordToken, newPassword)
-    }
-
-    @Mutation(() => LocalizedLabelType)
-    public sendTicketToSupportTest(
-        @Args({name:'file', type:()=> GraphQLUpload}) file: FileUpload,
-    ){ 
-        const label = new LocalizedLabelType()
-        label.id = file.mimetype
-        label.label = file.fieldName
-        return label
     }
 
 }

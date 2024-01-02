@@ -1,4 +1,4 @@
-import { Provider } from '@nestjs/common'
+import { Logger, Provider } from '@nestjs/common'
 import { ProviderName } from '@/constants/provider-name.const'
 import { EnvironmentConfig } from '@/models/common'
 import { CmsRepository } from '@/repositories/cms'
@@ -17,6 +17,9 @@ export const cmsRepositoryProvider: Provider = {
 
         client.defaults.baseURL = `${config.CMS_ENDPOINT}/api`
         client.defaults.headers.authorization = `Bearer ${config.CMS_API_KEY}`
+        client.interceptors.response.use(null, error => {
+            Logger.error(error?.response?.data, "CmsHttpClientProvider")
+        })
         return new CmsRepository(client, cache)
     },
 }

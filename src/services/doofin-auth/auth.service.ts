@@ -11,10 +11,8 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
-    concatMap,
-    forkJoin,
+    concatMap, 
     from,
-    iif,
     map,
     mergeMap,
     Observable,
@@ -61,6 +59,9 @@ import {
 } from 'class-transformer'
 import { TokenType } from '@/types/objects/token.type'
 import { FileUpload } from 'graphql-upload-ts'
+import { streamToBuffer } from '@/utilities/stream-to-buffer.util'
+import { ImgCache } from '../cache/interface/service.interface'
+import { CacheService } from '../cache/cache.service'
 
 @Injectable()
 export class AuthService {
@@ -68,6 +69,8 @@ export class AuthService {
     public constructor(
         @Inject(ProviderName.AUTH_REPOSITORY)
         private readonly _authRepository: IAuthRepository,
+        @Inject(ProviderName.CACHE_SERVICE)
+        private readonly _cacheService: CacheService
     ) {
     }
 
@@ -355,32 +358,42 @@ export class AuthService {
         )
     }
 
-    public sendTicketToSupport(input: ContactSupportInput):Observable<UserVerifyOtpType>{
-        const promises:Array<Promise<FileUpload>> = []
-        if(input.image1){
-            promises.push(input.image1)
-        }
-        if(input.image2){
-            promises.push(input.image2)
-        }
-        if(input.image3){
-            promises.push(input.image3)
-        }
-        return iif(()=> promises.length !== 0, forkJoin(promises.map(p=>from(p))), of(<Array<FileUpload>>[])).pipe(
+    private _toBaseSixtyFour(files: Array<Promise<FileUpload>>): Observable<ImgCache[]>{
+        return from(files).pipe(
+            mergeMap(p=> from(p)),
+            mergeMap(f=> {
+              return from(from(streamToBuffer(f.createReadStream()))).pipe(
+                map(b=>{
+                  const img: ImgCache = {
+                    imgBaseSixtyFour: b.toString("base64"),
+                    fileName: f.filename,
+                    mimeType: f.mimetype
+                  }
+                  return img
+                })
+              )
+            }),
+            toArray(),
+            map((ls)=> ls)
+          )
+    }
+    
+    public sendTicketToSupport(input: ContactSupportInput):Observable<UserVerifyOtpType>{   
+        return of(input.images).pipe(
+            mergeMap(imgs=>{
+                if(!!imgs && imgs.length !== 0){
+                    return this._toBaseSixtyFour(input.images)
+                }
+                return of([])
+            }),
             mergeMap((files)=>{
                 const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true}) 
-                requestBody.images = files.map(f=> {     
-                   return {
-                        readStream: f.createReadStream(),
-                        fileName: f.filename,
-                        mimetype: f.mimetype
-                   } 
-                })         
+                requestBody.imgCache = files      
                 return this._authRepository.sendTicketToSupport(requestBody).pipe(
                     map(({ status }) => ({ status }))
                 )
             })
-        )
+        )         
     }
 
     public findUserWhoForgotPassword(emailOrPhone: string):Observable<UserWhoForgotPasswordType>{

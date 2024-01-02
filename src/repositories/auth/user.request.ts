@@ -1,11 +1,6 @@
+import { ImgCache } from '@/services/cache/interface/service.interface'
 import { Expose } from 'class-transformer'
-import { ReadStream } from 'fs'
 
-interface IContactImages {
-    readStream: ReadStream
-    fileName: string
-    mimetype: string
-}
 export class ContactSupportRequest {
     @Expose()
     public faqTitleId: string
@@ -17,5 +12,5 @@ export class ContactSupportRequest {
     public phoneNumber: string
     @Expose()
     public detail: string
-    public images: Array<IContactImages>
+    public imgCache: ImgCache[]
 }
