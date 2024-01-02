@@ -23,7 +23,7 @@ export class CacheService implements ICacheService{
         this._logger = new Logger(CacheService.name)
     }
 
-    public setCache(name: CacheName, value: string, ttl: null|number = null): void {
+    public setCache(name: CacheName | string, value: string, ttl: null|number = null): void {
         if(ttl) {
             this._cacheMng.set(name, value, {
                 ttl
@@ -33,7 +33,7 @@ export class CacheService implements ICacheService{
         }
     }
 
-    public getCache(name: CacheName): Observable<string> {
+    public getCache(name: CacheName | string): Observable<string> {
         return from(this._cacheMng.store.get(name)).pipe(
             map(result => {
                 return result as string

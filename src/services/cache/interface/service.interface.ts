@@ -1,11 +1,17 @@
 import { Observable } from 'rxjs'
 
 export enum CacheName {
-    MAIN_PAGE = 'main-page'
+    MAIN_PAGE = 'main-page',
 }
+
+export interface ImgCache {
+    imgBaseSixtyFour:string
+    fileName: string,
+    mimeType: string
+  }
 
 export interface ICacheService {
     getCache(name: CacheName): Observable<string>
 
-    setCache(name: CacheName, value: string, ttl: null | number): void
+    setCache(name: CacheName | string, value: string, ttl: null | number): void
 }
