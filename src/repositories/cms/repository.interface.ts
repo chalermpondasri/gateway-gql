@@ -27,7 +27,7 @@ export interface ICmsRepository {
     getAvatars(id: number): Observable<ListResponse<BaseResponse<AvatarResponse>>>
     getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>>
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
-    getMediaContentBySlug(slug: string): Observable<BaseResponse<MediaContentDetailResponse>>
+    getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentByTags(tag: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
     searchContentByKeyword(contentRatings: ContentRating[], keyword: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
 }

@@ -24,6 +24,7 @@ export class BaseMediaContentResponse {
     public mediaEpisodes: CmsDataResponse<MediaEpisodeResponse>
     public mediaSeasons: CmsDataResponse<MediaSeasonResponse>
     public rating: CmsDataResponse<ContentRatingResponse>
+    public slug: string
 }
 export class MediaContentResponse extends BaseMediaContentResponse {
 

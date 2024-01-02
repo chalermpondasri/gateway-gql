@@ -32,6 +32,7 @@ import {
 } from 'lodash'
 import { Cache } from 'cache-manager'
 import { ContentRating } from '@/types/enums'
+import { NotFoundException } from '@nestjs/common'
 
 export class CmsRepository implements ICmsRepository {
     public constructor(
@@ -188,11 +189,17 @@ export class CmsRepository implements ICmsRepository {
         'mediaSeasons.mediaEpisodes.subtitle',
     ]
 
-    public getMediaContentBySlug(slug: string): Observable<BaseResponse<MediaContentDetailResponse>> {
+    public getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
         const queryString = querystring.encode({populate: this._mediaContentPupulate})
-        const promise = this._axiosInstance.get(`/media-contents?filters[slug][$containsi]=${slug}&${queryString}`)
+        const promise = this._axiosInstance.get(`/media-contents?filters[slug][$eq]=${slug}&${queryString}`)
         return from(promise).pipe(
-            map(result => get(result,'data.data[0]', null))
+            map(res => {   
+                if(res.data.data.length === 0){
+                    throw new NotFoundException(`${slug} Not Found`)
+                }
+                return res
+            }),
+            map(result => ({ data:get(result,'data.data[0]', null) })),
         )
     }
 
