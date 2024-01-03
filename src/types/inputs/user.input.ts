@@ -6,10 +6,6 @@ import {
     Locale,
     SubtitleSelection,
 } from '@/types/enums/locales.enum'
-import { 
-    FileUpload, 
-    GraphQLUpload, 
-} from 'graphql-upload-ts'
 
 @InputType()
 export class UserVerifyOtpInput {
@@ -70,11 +66,6 @@ export class ContactSupportInput {
     public phoneNumber: string
     @Field()
     public detail: string
-    @Field(()=> GraphQLUpload, {nullable: true})
-    public image1: Promise<FileUpload>
-    //! i have been trying to use [GraphQLUpload] all day but it doesn't work and i don't know
-    @Field(()=> GraphQLUpload, {nullable: true})
-    public image2: Promise<FileUpload>
-    @Field(()=> GraphQLUpload, {nullable: true})
-    public image3: Promise<FileUpload>
+    @Field(()=> [String], {nullable: true})
+    public images: Array<string>
 }

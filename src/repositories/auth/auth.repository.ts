@@ -45,11 +45,10 @@ import {
     VerifyResetProfilePin,
 } from '@/types/inputs'
 import { omit } from 'lodash'
-import FormData from 'form-data'
 
 export class AuthRepository implements IAuthRepository {
     public constructor(
-        private readonly _axiosInstance: AxiosInstance
+        private readonly _axiosInstance: AxiosInstance,
     ) {}
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
         return from(this._axiosInstance.post<CreateUserResponse>(`/user`, request)).pipe(
@@ -352,17 +351,8 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map(res=> plainToInstance(ProfileRequestResetPinResponse, res.data)))
     }
 
-    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<OtpVerifyPhoneResponse> { 
-        const form = new FormData();
-        requestBody.images.forEach(i=>{
-            form.append('images', i.readStream, {filename: i.fileName, contentType: i.mimetype})
-        })
-
-        Object.keys(requestBody).filter(k => k !== 'images').forEach((key) =>{
-            form.append(key, requestBody[key])
-        })
-        
-        return from(this._axiosInstance.post('/user/contact-support',form)).pipe(
+    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<OtpVerifyPhoneResponse> {       
+        return from(this._axiosInstance.post('/user/contact-support',requestBody)).pipe(
             map(res=> res.data)
         )
     }

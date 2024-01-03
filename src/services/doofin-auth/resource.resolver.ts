@@ -2,6 +2,7 @@ import { Inject } from "@nestjs/common";
 import { 
   Args,
   Int,
+  Mutation,
   Query, 
   Resolver, 
 } from "@nestjs/graphql";
@@ -10,6 +11,11 @@ import {
   AvatarType, 
 } from "@/types/objects";
 import { CmsService } from "../doofin-cms/cms.service";
+import { extname } from "path"
+import { GraphQLUpload, FileUpload } from "graphql-upload-ts";
+import { from, map, mergeMap, toArray } from "rxjs";
+import { randomUUID } from 'crypto'
+import { streamToBuffer } from "@/utilities/stream-to-buffer.util";
 
 @Resolver()
 export class ResourceResolver {
@@ -27,5 +33,24 @@ export class ResourceResolver {
     public getAvatars(@Args('id', { type: () => Int, nullable: true }) id: number){
       return this._cmsService.getAvatars(id)
     }
+
+    @Mutation(() => [String])
+    public async uploadFiles(
+        @Args({name:'files', type:()=> [GraphQLUpload]}) files: Promise<FileUpload>[],
+    ){  
+        return from(files).pipe(
+          mergeMap(p=> from(p)),
+          mergeMap(f=> {
+            return from(from(streamToBuffer(f.createReadStream()))).pipe(
+              map(()=>{
+                //TODO upload to a storage 
+                return `cloud-storage/images/${randomUUID()}${extname(f.filename)}`
+              })
+            )
+          }),
+          toArray(),
+        )
+    }
+ 
 
 }
