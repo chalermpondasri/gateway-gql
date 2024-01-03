@@ -45,12 +45,10 @@ import {
     VerifyResetProfilePin,
 } from '@/types/inputs'
 import { omit } from 'lodash'
-import { ICacheService } from '@/services/cache/interface/service.interface'
 
 export class AuthRepository implements IAuthRepository {
     public constructor(
         private readonly _axiosInstance: AxiosInstance,
-        private readonly _cacheService: ICacheService,
     ) {}
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
         return from(this._axiosInstance.post<CreateUserResponse>(`/user`, request)).pipe(
