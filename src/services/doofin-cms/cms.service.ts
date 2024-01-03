@@ -202,7 +202,7 @@ export class CmsService {
                 section.createdAt = new Date(attributes.createdAt)
                 section.updatedAt = new Date(attributes.updatedAt)
                 section.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
-
+            
                 section.sectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? []).map( i=>{
                    return this._toSectionItemType(i, lang)
                 })
@@ -243,13 +243,13 @@ export class CmsService {
         const {attributes} = resp
         const result = new MediaContentDetailType()
         result.id = resp.id
-        result.title = attributes.title[lang]
-        result.subtitle = attributes.subtitle[lang]
-        result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes.rating.data).attributes.value
+        result.title = attributes?.title[lang] ?? ''
+        result.subtitle = attributes?.subtitle[lang] ?? ''
+        result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes?.rating?.data).attributes?.value ?? ''
        
-        result.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
-        result.trailers = attributes.trailers
-        result.link = attributes.link
+        result.coverImage = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.attributes
+        result.trailers = attributes?.trailers ?? []
+        result.link = attributes?.link
         result.shortVideos = []
         result.slug = attributes?.slug ?? ''
 
@@ -268,29 +268,29 @@ export class CmsService {
         const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
             return {
                 id: v.id,
-                coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage?.data)?.attributes,
-                order: v.attributes.ordering,
-                duration: String(v.attributes.duration),
-                episodeName: v.attributes.name[lang],
+                coverImage: (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes,
+                order: v?.attributes?.ordering ?? 0,
+                duration: String(v?.attributes?.duration ?? 0),
+                episodeName: v?.attributes?.name[lang] ?? '',
                 continueWatchingAt: 0,
             }
         }     
-        result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes.mediaEpisodes?.data ?? []).map(episodeMapper)
-        result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes.mediaSeasons?.data ?? []).map( v => {
+        result.episodes = (<BaseResponse<MediaEpisodeResponse>[]> attributes?.mediaEpisodes?.data ?? []).map(episodeMapper)
+        result.seasons = (<BaseResponse<MediaSeasonResponse>[]> attributes?.mediaSeasons?.data ?? []).map( v => {
             return {
                 id: String(v.id),
-                slug: v.attributes.slug,
-                name: v.attributes.name[lang],
-                ordering: v.attributes.ordering,
-                mediaEpisodes: (<BaseResponse<MediaEpisodeResponse>[]> v.attributes.mediaEpisodes.data).map(v => {
+                slug: v?.attributes?.slug ?? '',
+                name: v?.attributes?.name[lang] ?? '',
+                ordering: v?.attributes?.ordering ?? 0,
+                mediaEpisodes: (<BaseResponse<MediaEpisodeResponse>[]> v?.attributes?.mediaEpisodes?.data ?? []).map(v => {
                     return {
                         id: v.id,
-                        audio: v.attributes.audio.map( a => a.key),
-                        captions: v.attributes.subtitle.map(a=> a.key),
-                        coverImage: (<BaseResponse<CmsImageContent>>v.attributes.coverImage.data).attributes,
-                        order: v.attributes.ordering,
-                        duration: String(v.attributes.duration),
-                        episodeName: v.attributes.name[lang],
+                        audio: (v?.attributes?.audio ?? []).map( a => a.key),
+                        captions: (v?.attributes?.subtitle ?? []).map(a=> a.key),
+                        coverImage: (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes,
+                        order: v?.attributes?.ordering ?? 0,
+                        duration: String(v?.attributes?.duration ?? 0),
+                        episodeName: v?.attributes?.name[lang] ?? '',
                         continueWatchingAt: 0,
                     }
                 })
@@ -300,45 +300,46 @@ export class CmsService {
     }
 
     private _toSectionItemType(mediaContent: BaseResponse<MediaContentResponse>, lang: string): SectionItemType {
-        const item = new SectionItemType()
-                item.id = mediaContent.id
-                item.contentRating = (<BaseResponse<ContentRatingResponse>> mediaContent.attributes.rating.data).attributes.value
-                item.coverImage = (<BaseResponse<CmsImageContent>> mediaContent.attributes.coverImage.data).attributes
-                item.trailers = mediaContent.attributes.trailers
-                item.title = mediaContent.attributes.title[lang]
-                item.link = mediaContent.attributes.link
-                item.slug = mediaContent.attributes.slug
+            const item = new SectionItemType()
+    
+            item.id = mediaContent.id
+            item.contentRating = (<BaseResponse<ContentRatingResponse>> mediaContent?.attributes?.rating?.data)?.attributes?.value ?? ""
+            item.coverImage = (<BaseResponse<CmsImageContent>> mediaContent?.attributes?.coverImage?.data)?.attributes 
+            item.trailers = mediaContent?.attributes?.trailers ?? []
+            item.title = mediaContent?.attributes?.title[lang] ?? ''
+            item.link = mediaContent?.attributes?.link 
+            item.slug = mediaContent?.attributes?.slug ?? ''
 
-                let tags: LocalizedLabelType[] = []
-                if(!!mediaContent.attributes.mediaTags.data) {
-                    tags = (<BaseResponse<TagResponse>[]>mediaContent.attributes.mediaTags.data).map( t => {
+            let tags: LocalizedLabelType[] = []
+            if(!!mediaContent.attributes.mediaTags.data) {
+                tags = (<BaseResponse<TagResponse>[]>mediaContent.attributes.mediaTags.data).map( t => {
 
-                        const label = new LocalizedLabelType()
-                        label.id = t.attributes.slug
-                        label.label = t.attributes.name[lang]
-                        return label
-                    })
-                }
-                item.tags = tags
-                item.shortVideos = []
-                item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> mediaContent.attributes.mediaEpisodes?.data ?? []).map( v => {  
-                    return {
-                        id: v.id,
-                        coverImage: (<BaseResponse<CmsImageContent>> v.attributes.coverImage?.data)?.attributes,
-                        order: v.attributes.ordering,
-                        duration: String(v.attributes.duration),
-                        episodeName: v.attributes.name[lang],
-                        continueWatchingAt: 0
-                    }
+                    const label = new LocalizedLabelType()
+                    label.id = t.attributes.slug
+                    label.label = t.attributes.name[lang]
+                    return label
                 })
+            }
+            item.tags = tags
+            item.shortVideos = []
+            item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> mediaContent.attributes.mediaEpisodes?.data ?? []).map( v => {  
+                return {
+                    id: v.id,
+                    coverImage: (<BaseResponse<CmsImageContent>> v?.attributes?.coverImage?.data)?.attributes,
+                    order: v?.attributes?.ordering ?? 0,
+                    duration: String(v?.attributes?.duration ?? 0),
+                    episodeName: v?.attributes?.name[lang] ?? '',
+                    continueWatchingAt: 0
+                }
+            })
 
-                item.isSeries = this.isSeries(tags)
-                item.totalSeason = size(mediaContent.attributes.mediaSeasons?.data ?? [])
-                item.totalEpisode = reduce(<BaseResponse<MediaSeasonResponse>[]> mediaContent.attributes.mediaSeasons?.data ?? [], (acc, each) => {
-                    return acc + size(each.attributes.mediaEpisodes.data)
-                }, 0)
+            item.isSeries = this.isSeries(tags)
+            item.totalSeason = size(mediaContent.attributes.mediaSeasons?.data ?? [])
+            item.totalEpisode = reduce(<BaseResponse<MediaSeasonResponse>[]> mediaContent.attributes.mediaSeasons?.data ?? [], (acc, each) => {
+                return acc + size(each.attributes.mediaEpisodes.data)
+            }, 0)
 
-                return item
+            return item
     }
 
     public getKidFin(): Observable<SectionItemType[]> {
