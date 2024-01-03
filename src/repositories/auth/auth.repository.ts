@@ -45,7 +45,6 @@ import {
     VerifyResetProfilePin,
 } from '@/types/inputs'
 import { omit } from 'lodash'
-import FormData from 'form-data'
 import { ICacheService } from '@/services/cache/interface/service.interface'
 
 export class AuthRepository implements IAuthRepository {
@@ -354,17 +353,8 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map(res=> plainToInstance(ProfileRequestResetPinResponse, res.data)))
     }
 
-    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<OtpVerifyPhoneResponse> { 
-        const form = new FormData();
-        requestBody.imgCache.forEach(i=>{
-            form.append('images', Buffer.from(i.imgBaseSixtyFour,"base64"), {filename: i.fileName, contentType: i.mimeType})
-        })
-        delete requestBody.imgCache
-        Object.keys(requestBody).forEach((key) =>{
-            form.append(key, requestBody[key])
-        })
-        
-        return from(this._axiosInstance.post('/user/contact-support',form)).pipe(
+    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<OtpVerifyPhoneResponse> {       
+        return from(this._axiosInstance.post('/user/contact-support',requestBody)).pipe(
             map(res=> res.data)
         )
     }

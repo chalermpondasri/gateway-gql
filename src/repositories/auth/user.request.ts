@@ -1,4 +1,3 @@
-import { ImgCache } from '@/services/cache/interface/service.interface'
 import { Expose } from 'class-transformer'
 
 export class ContactSupportRequest {
@@ -12,5 +11,6 @@ export class ContactSupportRequest {
     public phoneNumber: string
     @Expose()
     public detail: string
-    public imgCache: ImgCache[]
+    @Expose()
+    public images: string[]
 }

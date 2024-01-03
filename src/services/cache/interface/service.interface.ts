@@ -4,12 +4,6 @@ export enum CacheName {
     MAIN_PAGE = 'main-page',
 }
 
-export interface ImgCache {
-    imgBaseSixtyFour:string
-    fileName: string,
-    mimeType: string
-  }
-
 export interface ICacheService {
     getCache(name: CacheName): Observable<string>
 
