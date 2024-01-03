@@ -11,14 +11,11 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
-    concatMap,
-    forkJoin,
+    concatMap, 
     from,
-    iif,
     map,
     mergeMap,
     Observable,
-    of,
     toArray,
 } from 'rxjs'
 import {
@@ -60,7 +57,6 @@ import {
     plainToInstance,
 } from 'class-transformer'
 import { TokenType } from '@/types/objects/token.type'
-import { FileUpload } from 'graphql-upload-ts'
 
 @Injectable()
 export class AuthService {
@@ -354,33 +350,12 @@ export class AuthService {
             })
         )
     }
-
-    public sendTicketToSupport(input: ContactSupportInput):Observable<UserVerifyOtpType>{
-        const promises:Array<Promise<FileUpload>> = []
-        if(input.image1){
-            promises.push(input.image1)
-        }
-        if(input.image2){
-            promises.push(input.image2)
-        }
-        if(input.image3){
-            promises.push(input.image3)
-        }
-        return iif(()=> promises.length !== 0, forkJoin(promises.map(p=>from(p))), of(<Array<FileUpload>>[])).pipe(
-            mergeMap((files)=>{
-                const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true}) 
-                requestBody.images = files.map(f=> {     
-                   return {
-                        readStream: f.createReadStream(),
-                        fileName: f.filename,
-                        mimetype: f.mimetype
-                   } 
-                })         
-                return this._authRepository.sendTicketToSupport(requestBody).pipe(
-                    map(({ status }) => ({ status }))
-                )
-            })
-        )
+    
+    public sendTicketToSupport(input: ContactSupportInput):Observable<UserVerifyOtpType>{   
+        const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true})          
+        return this._authRepository.sendTicketToSupport(requestBody).pipe(
+            map(({ status }) => ({ status }))
+        )    
     }
 
     public findUserWhoForgotPassword(emailOrPhone: string):Observable<UserWhoForgotPasswordType>{
