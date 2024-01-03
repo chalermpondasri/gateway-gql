@@ -355,22 +355,7 @@ export class AuthService {
         const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true})          
         return this._authRepository.sendTicketToSupport(requestBody).pipe(
             map(({ status }) => ({ status }))
-        )
-        // return of(input.images).pipe(
-        //     mergeMap(imgs=>{
-        //         if(!!imgs && imgs.length !== 0){
-        //             return this._toBaseSixtyFour(input.images)
-        //         }
-        //         return of([])
-        //     }),
-        //     mergeMap((files)=>{
-        //         const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true}) 
-        //         requestBody.imgCache = files      
-        //         return this._authRepository.sendTicketToSupport(requestBody).pipe(
-        //             map(({ status }) => ({ status }))
-        //         )
-        //     })
-        // )         
+        )    
     }
 
     public findUserWhoForgotPassword(emailOrPhone: string):Observable<UserWhoForgotPasswordType>{
