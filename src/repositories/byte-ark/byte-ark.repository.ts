@@ -7,14 +7,26 @@ import {
 } from '@aws-sdk/client-s3';
 import { IByteArkRepository } from './repository.interface';
 import { EnvironmentConfig } from '@/models/common';
-import { Observable, catchError, from, map, mergeMap, throwError } from 'rxjs';
+import { Observable, 
+    catchError, 
+    from, 
+    map, 
+    mergeMap, 
+    throwError, 
+} from 'rxjs';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import axios from 'axios';
-import { BadRequestException, Logger } from '@nestjs/common';
+import { 
+    BadRequestException, 
+    Logger, 
+} from '@nestjs/common';
 
 export class ByteArkRepository implements IByteArkRepository {
     private readonly _logger = new Logger(ByteArkRepository.name);
-    public constructor(private readonly _s3: S3, private readonly _config: EnvironmentConfig) {}
+    public constructor(
+        private readonly _s3: S3, 
+        private readonly _config: EnvironmentConfig,
+    ) {}
 
     private _generateSignedUrlForPut(params: PutObjectCommandInput) {
         return from(getSignedUrl(this._s3, new PutObjectCommand(params), { expiresIn: 60 }));
