@@ -193,15 +193,15 @@ export class CmsService {
 
                 const { attributes } = sectionResponse
                 const section = new SectionType()
-                section.id = sectionResponse.id
-                section.sectionTitle = attributes.title[lang]
-                section.sectionType =attributes.sectionType
-                section.sectionLink = attributes.sectionLink
-                section.sectionSubtitle = attributes.subtitle? attributes.subtitle[lang] : null
-                section.order = attributes.order
+                section.id = sectionResponse?.id ?? 0
+                section.sectionTitle = attributes?.title[lang] ?? ''
+                section.sectionType =attributes?.sectionType ?? ''
+                section.sectionLink = attributes?.sectionLink ?? ''
+                section.sectionSubtitle = attributes?.subtitle ? attributes.subtitle[lang] : ''
+                section.order = attributes?.order ?? 0
                 section.createdAt = new Date(attributes.createdAt)
                 section.updatedAt = new Date(attributes.updatedAt)
-                section.coverImage = (<BaseResponse<CmsImageContent>> attributes.coverImage?.data)?.attributes
+                section.coverImage = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.attributes
             
                 section.sectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? []).map( i=>{
                    return this._toSectionItemType(i, lang)
