@@ -12,6 +12,7 @@ import {
 import { httpClientProvider } from '@/providers/http-client.provider'
 import { CacheRedisModule } from '@/modules/cache-redis.module'
 import { ConfigModule } from '@nestjs/config'
+import { byteArkRepositoryProvider } from '@/providers/byte-ark.provider'
 
 @Global()
 @Module({
@@ -19,11 +20,13 @@ import { ConfigModule } from '@nestjs/config'
         envConfigProvider,
         requestContextProvider,
         httpClientProvider,
+        byteArkRepositoryProvider,
     ],
     exports: [
         envConfigProvider,
         requestContextProvider,
         httpClientProvider,
+        byteArkRepositoryProvider,
     ],
     imports: [
         ConfigModule.forRoot(),

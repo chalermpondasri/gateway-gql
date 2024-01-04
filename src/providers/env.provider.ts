@@ -1,6 +1,5 @@
 import {
     InternalServerErrorException,
-    Logger,
     Provider,
 } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
