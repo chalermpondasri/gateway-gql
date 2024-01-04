@@ -3,5 +3,5 @@ import { Observable } from "rxjs";
 
 export interface IByteArkRepository {
     uploadFile(imgName: string, file: Buffer): Observable<string>
-    generateSignedUrlForGet(params: GetObjectCommandInput): Observable<string>
+    generateSignedUrlForGet(params: GetObjectCommandInput, expiresIn: number): Observable<string>
 }

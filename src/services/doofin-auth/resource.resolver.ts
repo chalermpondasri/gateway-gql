@@ -65,16 +65,19 @@ export class ResourceResolver {
     ){  
       return from(filePaths).pipe(
           mergeMap((f) => {
-              if(!f.startsWith(process.env.BYTE_ARK_END_POINT)){
-                  throw new NotFoundException(`${f} NOT FOUND`)
+              if (!f.startsWith(process.env.BYTE_ARK_END_POINT)) {
+                  throw new NotFoundException(`${f} NOT FOUND`);
               }
               const imgName = f.split("/").pop();
               console.log(mime.getType(imgName));
-              return this._byteArkRepo.generateSignedUrlForGet({
-                  Bucket: process.env.IMAGE_BUCKET_NAME,
-                  Key: imgName,
-                  ResponseContentType: mime.getType(imgName),
-              });
+              return this._byteArkRepo.generateSignedUrlForGet(
+                  {
+                      Bucket: process.env.IMAGE_BUCKET_NAME,
+                      Key: imgName,
+                      ResponseContentType: mime.getType(imgName),
+                  },
+                  120
+              );
           }),
           toArray()
       );
