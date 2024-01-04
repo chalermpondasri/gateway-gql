@@ -32,8 +32,8 @@ export class ByteArkRepository implements IByteArkRepository {
         return from(getSignedUrl(this._s3, new PutObjectCommand(params), { expiresIn: 60 }));
     }
 
-    private _generateSignedUrlForGet(params: GetObjectCommandInput) {
-        return from(getSignedUrl(this._s3, new GetObjectCommand(params), { expiresIn: 60 }));
+    public generateSignedUrlForGet(params: GetObjectCommandInput): Observable<string> {
+        return from(getSignedUrl(this._s3, new GetObjectCommand(params), { expiresIn: 120 }));
     }
 
     public uploadFile(imgName: string, file: Buffer): Observable<string> {
