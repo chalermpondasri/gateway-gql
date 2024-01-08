@@ -63,7 +63,7 @@ export class CmsRepository implements ICmsRepository {
             'items.mediaSeasons.mediaEpisodes'
         ]
         const queryString = querystring.encode({populate})
-        const promise = this._axiosInstance.get(`/page-sections?${queryString}`)
+        const promise = this._axiosInstance.get(`/page-sections?${queryString}&sort=order:asc`)
         return from(promise).pipe(
             map(result => result.data)
         )
