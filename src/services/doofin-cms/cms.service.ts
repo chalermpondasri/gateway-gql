@@ -201,7 +201,8 @@ export class CmsService {
                 section.order = attributes?.order ?? 0
                 section.createdAt = new Date(attributes.createdAt)
                 section.updatedAt = new Date(attributes.updatedAt)
-                section.coverImage = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.attributes
+                section.coverImage = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.attributes   
+                section.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
             
                 section.sectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? []).map( i=>{
                    return this._toSectionItemType(i, lang)
@@ -245,9 +246,10 @@ export class CmsService {
         result.id = resp.id
         result.title = attributes?.title[lang] ?? ''
         result.subtitle = attributes?.subtitle[lang] ?? ''
-        result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes?.rating?.data).attributes?.value ?? ''
+        result.contentRating = (<BaseResponse<ContentRatingResponse>>attributes?.rating?.data)?.attributes?.value ?? ''
        
         result.coverImage = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.attributes
+        result.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
         result.trailers = attributes?.trailers ?? []
         result.link = attributes?.link
         result.shortVideos = []
@@ -266,9 +268,13 @@ export class CmsService {
         result.tags = tags
 
         const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
+            const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
+            if(img){
+                img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
+            }
             return {
                 id: v.id,
-                coverImage: (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes,
+                coverImage: img,
                 order: v?.attributes?.ordering ?? 0,
                 duration: String(v?.attributes?.duration ?? 0),
                 episodeName: v?.attributes?.name[lang] ?? '',
@@ -283,11 +289,15 @@ export class CmsService {
                 name: v?.attributes?.name[lang] ?? '',
                 ordering: v?.attributes?.ordering ?? 0,
                 mediaEpisodes: (<BaseResponse<MediaEpisodeResponse>[]> v?.attributes?.mediaEpisodes?.data ?? []).map(v => {
+                    const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
+                    if(img){
+                        img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
+                    }
                     return {
                         id: v.id,
                         audio: (v?.attributes?.audio ?? []).map( a => a.key),
                         captions: (v?.attributes?.subtitle ?? []).map(a=> a.key),
-                        coverImage: (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes,
+                        coverImage: img,
                         order: v?.attributes?.ordering ?? 0,
                         duration: String(v?.attributes?.duration ?? 0),
                         episodeName: v?.attributes?.name[lang] ?? '',
@@ -303,8 +313,9 @@ export class CmsService {
             const item = new SectionItemType()
     
             item.id = mediaContent.id
-            item.contentRating = (<BaseResponse<ContentRatingResponse>> mediaContent?.attributes?.rating?.data)?.attributes?.value ?? ""
+            item.contentRating = (<BaseResponse<ContentRatingResponse>> mediaContent?.attributes?.rating?.data)?.attributes?.value ?? ''
             item.coverImage = (<BaseResponse<CmsImageContent>> mediaContent?.attributes?.coverImage?.data)?.attributes 
+            item.coverImage.id = (<BaseResponse<CmsImageContent>> mediaContent?.attributes?.coverImage?.data)?.id
             item.trailers = mediaContent?.attributes?.trailers ?? []
             item.title = mediaContent?.attributes?.title[lang] ?? ''
             item.link = mediaContent?.attributes?.link 
@@ -322,10 +333,14 @@ export class CmsService {
             }
             item.tags = tags
             item.shortVideos = []
-            item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> mediaContent.attributes.mediaEpisodes?.data ?? []).map( v => {  
+            item.episodes  = (<BaseResponse<MediaEpisodeResponse>[]> mediaContent.attributes.mediaEpisodes?.data ?? []).map( v => {
+                const img = (<BaseResponse<CmsImageContent>> v?.attributes?.coverImage?.data)?.attributes
+                if(img){
+                    img.id = (<BaseResponse<CmsImageContent>> v?.attributes?.coverImage?.data)?.id
+                }
                 return {
                     id: v.id,
-                    coverImage: (<BaseResponse<CmsImageContent>> v?.attributes?.coverImage?.data)?.attributes,
+                    coverImage:img,
                     order: v?.attributes?.ordering ?? 0,
                     duration: String(v?.attributes?.duration ?? 0),
                     episodeName: v?.attributes?.name[lang] ?? '',
