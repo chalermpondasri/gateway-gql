@@ -1,6 +1,5 @@
 import {
     IsNotEmpty,
-    IsNumber,
     IsNumberString,
     IsString,
 } from 'class-validator'
@@ -32,4 +31,19 @@ export class EnvironmentConfig {
 
     @IsString()
     public declare readonly REDIS_PASS: string
+
+    @IsString()
+    public declare readonly BYTE_ARK_AK: string
+
+    @IsString()
+    public declare readonly BYTE_ARK_SK: string
+
+    @IsString()
+    public declare readonly BYTE_ARK_END_POINT: string
+
+    @IsString()
+    public declare readonly BYTE_ARK_REGION: string
+
+    @IsString()
+    public declare readonly IMAGE_BUCKET_NAME: string
 }

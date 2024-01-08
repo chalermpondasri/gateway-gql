@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, NotFoundException } from "@nestjs/common";
 import { 
   Args,
   Int,
@@ -16,12 +16,16 @@ import { GraphQLUpload, FileUpload } from "graphql-upload-ts";
 import { from, map, mergeMap, toArray } from "rxjs";
 import { randomUUID } from 'crypto'
 import { streamToBuffer } from "@/utilities/stream-to-buffer.util";
+import { ProviderName } from "@/constants/provider-name.const";
+import { IByteArkRepository } from "@/repositories/byte-ark/repository.interface";
+import  mime from "mime";
 
 @Resolver()
 export class ResourceResolver {
     public constructor(
       @Inject(AuthService) private readonly _authService: AuthService,
       @Inject(CmsService) private readonly _cmsService: CmsService,
+      @Inject(ProviderName.BYTE_ARK_REPOSITORY) private readonly _byteArkRepo: IByteArkRepository,
     ) {}
 
     @Query(() => [String])
@@ -42,14 +46,41 @@ export class ResourceResolver {
           mergeMap(p=> from(p)),
           mergeMap(f=> {
             return from(from(streamToBuffer(f.createReadStream()))).pipe(
-              map(()=>{
-                //TODO upload to a storage 
-                return `cloud-storage/images/${randomUUID()}${extname(f.filename)}`
+              mergeMap(file=>{
+                const imgName = `${randomUUID()}${extname(f.filename)}`
+                return this._byteArkRepo.uploadFile(imgName, file)
+              }),
+              map((url)=>{ 
+                return url
               })
             )
           }),
           toArray(),
         )
+    }
+
+    @Mutation(() => [String])
+    public async getFiles(
+        @Args({name:'filePaths', type:()=> [String]}) filePaths: string[],
+    ){  
+      return from(filePaths).pipe(
+          mergeMap((f) => {
+              if (!f.startsWith(process.env.BYTE_ARK_END_POINT)) {
+                  throw new NotFoundException(`${f} NOT FOUND`);
+              }
+              const imgName = f.split("/").pop();
+              console.log(mime.getType(imgName));
+              return this._byteArkRepo.generateSignedUrlForGet(
+                  {
+                      Bucket: process.env.IMAGE_BUCKET_NAME,
+                      Key: imgName,
+                      ResponseContentType: mime.getType(imgName),
+                  },
+                  120
+              );
+          }),
+          toArray()
+      );
     }
  
 

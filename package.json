@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@apollo/server": "^4.7.4",
+    "@aws-sdk/client-s3": "^3.485.0",
+    "@aws-sdk/s3-request-presigner": "^3.485.0",
     "@nestjs/apollo": "^11.0.6",
     "@nestjs/cache-manager": "^2.1.1",
     "@nestjs/common": "^9.0.0",
@@ -40,6 +42,7 @@
     "graphql-upload-ts": "^2.1.0",
     "infisical-node": "^1.5.0",
     "lodash": "^4.17.21",
+    "mime": "3.0.0",
     "redis": "^4.6.11",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
@@ -55,6 +58,7 @@
     "@types/express": "^4.17.13",
     "@types/jest": "29.5.1",
     "@types/lodash": "^4.14.196",
+    "@types/mime": "3.0.4",
     "@types/node": "18.16.12",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
