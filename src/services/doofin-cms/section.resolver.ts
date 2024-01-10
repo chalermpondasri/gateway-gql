@@ -45,7 +45,7 @@ export class SectionResolver {
     }
 
     @Query(() => [SectionType])
-    public getMainPage(@Args('profileId') profileId: string) {
+    public getMainPage(@Args({name: 'profileId', nullable: true}) profileId: string) {
         return this._cacheService.getCache(CacheName.MAIN_PAGE).pipe(
             mergeMap(resultCache => {
                 if(isNil(resultCache)) {
@@ -70,7 +70,7 @@ export class SectionResolver {
     }
 
     @Query(() => [SectionItemType])
-    public getKidFin(@Args('profileId') profileId: string) {
+    public getKidFin(@Args({name: 'profileId', nullable: true}) profileId: string) {
         return this._cmsService.getKidFin(profileId)
     }
 }

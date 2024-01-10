@@ -21,7 +21,7 @@ export class MediaContentDetailResolver {
     @Query( () => MediaContentDetailType)
     public getMediaContent(
         @Args({name: 'id'}) id: string,
-        @Args({name: 'profileId'}) profileId: string,
+        @Args({name: 'profileId', nullable: true}) profileId: string
     ) {
         return this._cmsService.getMediaContentById(id, profileId)
     }
