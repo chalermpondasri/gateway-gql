@@ -1,4 +1,5 @@
 import {
+    Args,
     Parent,
     Query,
     ResolveField,
@@ -44,11 +45,11 @@ export class SectionResolver {
     }
 
     @Query(() => [SectionType])
-    public getMainPage() {
+    public getMainPage(@Args('profileId') profileId: string) {
         return this._cacheService.getCache(CacheName.MAIN_PAGE).pipe(
             mergeMap(resultCache => {
                 if(isNil(resultCache)) {
-                    return this._cmsService.getMainPageSections().pipe(
+                    return this._cmsService.getMainPageSections(profileId).pipe(
                         tap(resp => {
                             if(!isEmpty(resp)) {
                                 this._logger.debug(`NEW CACHE`)
@@ -69,8 +70,8 @@ export class SectionResolver {
     }
 
     @Query(() => [SectionItemType])
-    public getKidFin() {
-        return this._cmsService.getKidFin()
+    public getKidFin(@Args('profileId') profileId: string) {
+        return this._cmsService.getKidFin(profileId)
     }
 }
 
