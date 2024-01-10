@@ -82,6 +82,7 @@ export interface IAuthRepository {
     requestOtpToResetPassword(userId: string, sendVia: string): Observable<OtpChangePhoneResponse>
     verifyOtpToResetPassword( input: VerifyOtpInput ): Observable<{resetPasswordToken: string}>
     resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}>
+    getContinueWatching(profileId: string, mediaContentId: string): Observable<{ [episodeId: string]: number }>
 }
 
 export interface ILocaleRepository {

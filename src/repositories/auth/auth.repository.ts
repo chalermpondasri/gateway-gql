@@ -381,4 +381,12 @@ export class AuthRepository implements IAuthRepository {
         )
     }
 
+    public getContinueWatching(profileId: string, mediaContentId: string): Observable<{ [episodeId: string]: number; }> {
+        return from(
+            this._axiosInstance.get(`/user/me/profile/${profileId}/continue-watching?mediaContentId=${mediaContentId}`)
+        ).pipe(
+            map(res => res.data)
+        )
+    }
+
 }

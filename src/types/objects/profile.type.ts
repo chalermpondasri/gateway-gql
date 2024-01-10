@@ -6,7 +6,7 @@ import {
 import { IdStringType } from './id-string.type';
 import { AvatarType } from './cms.type';
 import { UserType } from './user.type';
-import { SectionItemType } from './section.type';
+import { MediaContentDetailType } from './section.type';
 import { CategoryType } from './category.type';
 
 
@@ -32,8 +32,8 @@ export class ProfileType extends BaseProfileType  {
     public pinSettingStatus: string
     @Field(()=> UserType)
     public userAccount: UserType
-    @Field(()=> [MyListType])
-    public myList: MyListType[]
+    // @Field(()=> [MyListType])
+    // public myList: MyListType[]
 }
 
 @ObjectType()
@@ -58,7 +58,7 @@ export class MyListType{
     @Field(()=> GraphQLISODateTime)
     public addDate:Date
 
-    @Field(()=> SectionItemType)
-    public mediaContent: SectionItemType
+    @Field(()=> MediaContentDetailType)
+    public mediaContent: MediaContentDetailType
 }
 

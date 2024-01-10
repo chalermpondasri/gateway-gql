@@ -1,10 +1,10 @@
 import {
     AvatarType,
     CategoryType,
+    MediaContentDetailType,
     MyListType,
     ProfileRequestResetPinType,
     ProfileType,
-    SectionItemType,
     UserType,
     ValidateProfilePinType,
 } from '@/types/objects'
@@ -108,7 +108,8 @@ export class ProfileResolver {
     }
 
     @ResolveField('myList',() => [MyListType])
-    public myList(@Parent() parent: ProfileType) {
+    public myList(@Parent() parent: ProfileType, @Context() context: any) {
+       context.req.profileId = parent.id
        return this._authService.getMyList(parent.id)
     }
 
@@ -157,8 +158,8 @@ export class MyListResolver {
         @Inject(CmsService) 
         private readonly _cmsService: CmsService,
     ) {}
-    @ResolveField('mediaContent',() => [SectionItemType])
-    public mediaContent(@Parent() parent: MyListType) {
-       return this._cmsService.getMediaContentById(parent.programId)
+    @ResolveField('mediaContent',() => MediaContentDetailType)
+    public mediaContent(@Parent() parent: any,  @Context() context) {  
+       return this._cmsService.getMediaContentById(parent.programId, context.req.profileId)
     }
 }
