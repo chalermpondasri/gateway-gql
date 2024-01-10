@@ -159,7 +159,7 @@ export class MyListResolver {
         private readonly _cmsService: CmsService,
     ) {}
     @ResolveField('mediaContent',() => MediaContentDetailType)
-    public mediaContent(@Parent() parent: any,  @Context() context) {  
+    public mediaContent(@Parent() parent: any,  @Context() context: any) {  
        return this._cmsService.getMediaContentById(parent.programId, context.req.profileId)
     }
 }

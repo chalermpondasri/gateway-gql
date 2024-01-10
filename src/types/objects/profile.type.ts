@@ -32,8 +32,8 @@ export class ProfileType extends BaseProfileType  {
     public pinSettingStatus: string
     @Field(()=> UserType)
     public userAccount: UserType
-    // @Field(()=> [MyListType])
-    // public myList: MyListType[]
+    @Field(()=> [MyListType])
+    public myList: MyListType[]
 }
 
 @ObjectType()
