@@ -57,6 +57,7 @@ import {
     plainToInstance,
 } from 'class-transformer'
 import { TokenType } from '@/types/objects/token.type'
+import { IByteArkRepository } from '@/repositories/byte-ark/repository.interface'
 
 @Injectable()
 export class AuthService {
@@ -64,6 +65,8 @@ export class AuthService {
     public constructor(
         @Inject(ProviderName.AUTH_REPOSITORY)
         private readonly _authRepository: IAuthRepository,
+        @Inject(ProviderName.BYTE_ARK_REPOSITORY)
+        private readonly _byteArkRepository: IByteArkRepository,
     ) {
     }
 
@@ -352,10 +355,22 @@ export class AuthService {
     }
     
     public sendTicketToSupport(input: ContactSupportInput):Observable<UserVerifyOtpType>{   
-        const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true})          
-        return this._authRepository.sendTicketToSupport(requestBody).pipe(
-            map(({ status }) => ({ status }))
-        )    
+        const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true}) 
+        if(input.images.length === 0){
+            return this._authRepository.sendTicketToSupport(requestBody).pipe(
+                map(({ status }) => ({ status }))
+            )    
+        } 
+        return this._byteArkRepository.generateOriginalUrlToSignedUrl(input.images, 180).pipe(
+        mergeMap(imgWithSign=> {
+            requestBody.signedImageUrls = imgWithSign
+            return this._authRepository.sendTicketToSupport(requestBody).pipe(
+                map(({ status }) => ({ status }))
+            )   
+        })
+        )
+        
+        
     }
 
     public findUserWhoForgotPassword(emailOrPhone: string):Observable<UserWhoForgotPasswordType>{
