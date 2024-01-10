@@ -25,9 +25,11 @@ import {
     UserWhoForgotPasswordResponse,
 } from '@/repositories/auth'
 import {
+    catchError,
     from,
     map,
     Observable,
+    of,
 } from 'rxjs'
 import {
     AxiosInstance,
@@ -386,6 +388,10 @@ export class AuthRepository implements IAuthRepository {
         return from(
             this._axiosInstance.get(`/user/me/profile/${profileId}/continue-watching?mediaContentId=${mediaContentId}`)
         ).pipe(
+            catchError(()=>{
+                //? user can view media-content although they dont login
+               return of({data: {}}) 
+            }),
             map(res => res.data)
         )
     }
