@@ -255,7 +255,7 @@ export class CmsService {
                 result.title = attributes?.title[lang] ?? "";
                 result.subtitle = attributes?.subtitle[lang] ?? "";
                 result.contentRating =
-                    (<BaseResponse<ContentRatingResponse>>attributes?.rating?.data).attributes?.value ?? "";
+                    (<BaseResponse<ContentRatingResponse>>attributes?.rating?.data)?.attributes?.value ?? "";
 
                 result.coverImage = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.attributes;
                 result.trailers = attributes?.trailers ?? [];
@@ -399,7 +399,7 @@ export class CmsService {
             }),
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
-            map((res)=>this._toMediaContentDetailType(res, lang, profileId)),
+            mergeMap((res)=>this._toMediaContentDetailType(res, lang, profileId)),
             toArray()
         )
     }
