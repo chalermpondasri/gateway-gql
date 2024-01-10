@@ -22,6 +22,7 @@ import { AuthService } from './auth.service'
 import {
     CreateProfileInput,
     CreateProfilePinInput,
+    UpdateContinueWatchingInput,
     UpdateProfileInput,
     UpdateProfilePinInput,
     ValidateProfilePinInputType,
@@ -147,6 +148,13 @@ export class ProfileResolver {
     @ResolveField('categories',() => [CategoryType])
     public categories(@Parent() parent: ProfileType) {
        return this._authService.mapCategoryIdWithLabel((parent.categories as unknown as string[]))
+    }
+
+    @Mutation(()=>  String)
+    public updateContinueWatching(
+        @Args(UpdateContinueWatchingInput.name) input: UpdateContinueWatchingInput,
+    ){
+        return this._authService.updateContinueWatching(input)
     }
     
 }

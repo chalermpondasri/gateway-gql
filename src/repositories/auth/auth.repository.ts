@@ -37,6 +37,7 @@ import { plainToInstance } from 'class-transformer'
 import {
     CreateProfileInput,
     CreateProfilePinInput,
+    UpdateContinueWatchingInput,
     UpdateProfileInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
@@ -378,6 +379,15 @@ export class AuthRepository implements IAuthRepository {
     public resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}> {
         return from(this._axiosInstance.patch('/user/reset-password', {resetPasswordToken, newPassword})).pipe(
             map(res=> res.data)
+        )
+    }
+
+    public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string> {
+        const {profileId, ...body} = input
+        return from(
+            this._axiosInstance.patch(`/user/me/profile/${profileId}/continue-watching`, body)
+        ).pipe(
+            map((res) => res.data)
         )
     }
 

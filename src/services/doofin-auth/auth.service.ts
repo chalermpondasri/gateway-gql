@@ -43,6 +43,7 @@ import {
     CreateProfilePinInput,
     CreateUserInput,
     RequestOtpInput,
+    UpdateContinueWatchingInput,
     UpdateProfileInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
@@ -378,6 +379,10 @@ export class AuthService {
 
     public resetPassword(resetPasswordToken: string, newPassword: string): Observable<UserVerifyOtpType>{
         return this._authRepository.resetPassword(resetPasswordToken, newPassword)
+    }
+
+    public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>{
+        return this._authRepository.updateContinueWatching(input)
     }
     
 }
