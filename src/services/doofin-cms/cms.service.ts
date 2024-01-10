@@ -200,9 +200,17 @@ export class CmsService {
                 section.order = attributes?.order ?? 0
                 section.createdAt = new Date(attributes.createdAt)
                 section.updatedAt = new Date(attributes.updatedAt)
-                section.coverImage = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.attributes   
-                section.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
-                return from((attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? [])).pipe(
+                section.coverImage = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.attributes 
+                if(section.coverImage){
+                    section.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
+                } 
+                const rawSectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? [])
+                if(rawSectionItems.length === 0 ){
+                    section.sectionItems = []
+                    return of(section)
+                }
+                
+                return from(rawSectionItems).pipe(
                     mergeMap(i=> this._toSectionItemType(i, lang, profileId)),
                     toArray(),
                     map((sectionItems)=>{
@@ -252,7 +260,9 @@ export class CmsService {
                 result.subtitle = attributes?.subtitle[lang] ?? '';
                 result.contentRating =(<BaseResponse<ContentRatingResponse>>attributes?.rating?.data)?.attributes?.value ?? '';
                 result.coverImage = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.attributes;
-                result.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
+                if(result.coverImage){
+                    result.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
+                }
                 result.trailers = attributes?.trailers ?? [];
                 result.link = attributes?.link;
                 result.shortVideos = [];
@@ -327,7 +337,9 @@ export class CmsService {
                     item.id = mediaContent.id;
                     item.contentRating =(<BaseResponse<ContentRatingResponse>>mediaContent?.attributes?.rating?.data)?.attributes?.value ?? '';
                     item.coverImage = (<BaseResponse<CmsImageContent>>(mediaContent?.attributes?.coverImage?.data))?.attributes;
-                    item.coverImage.id = (<BaseResponse<CmsImageContent>>(mediaContent?.attributes?.coverImage?.data))?.id;
+                    if(item.coverImage){
+                        item.coverImage.id = (<BaseResponse<CmsImageContent>>(mediaContent?.attributes?.coverImage?.data))?.id;
+                    }
                     item.trailers = mediaContent?.attributes?.trailers ?? [];
                     item.title = mediaContent?.attributes?.title[lang] ?? '';
                     item.link = mediaContent?.attributes?.link;
