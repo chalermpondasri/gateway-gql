@@ -61,7 +61,7 @@ export class MediaContentType extends IdType{
     public link: ExternalContentType
     @Field(() => [LocalizedLabelType])
     public tags: LocalizedLabelType[]
-    @Field(() => [EpisodeItemType], { nullable: true, deprecationReason: 'move to season'})
+    @Field(() => [EpisodeItemType], { nullable: true, deprecationReason: 'move to season in mediaContentDetail'})
     public episodes: EpisodeItemType[]
     @Field()
     public isSeries: boolean
@@ -71,11 +71,6 @@ export class MediaContentType extends IdType{
     public totalSeason: number
     @Field()
     public slug: string
-}
-@ObjectType()
-export class SectionItemType extends MediaContentType {
-    @Field()
-    public recentlyPublished: boolean
 }
 
 @ObjectType()
@@ -90,6 +85,15 @@ export class MediaContentDetailType extends MediaContentType {
     @Field(() => [MediaSeasonType])
     public seasons: MediaSeasonType[]
 }
+@ObjectType()
+export class SectionItemType extends MediaContentType {
+    @Field()
+    public recentlyPublished: boolean
+    @Field()
+    public mediaContentDetail: MediaContentDetailType
+}
+
+
 
 @ObjectType()
 export class SectionType extends IdType {

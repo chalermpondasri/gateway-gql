@@ -185,7 +185,7 @@ export class CmsService {
         )
     }
 
-    public getMainPageSections(profileId: string): Observable<SectionType[]> {
+    public getMainPageSections(): Observable<SectionType[]> {
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMainPageSections().pipe(
             concatMap(result => from(result.data)),
@@ -209,15 +209,8 @@ export class CmsService {
                     section.sectionItems = []
                     return of(section)
                 }
-                
-                return from(rawSectionItems).pipe(
-                    mergeMap(i=> this._toSectionItemType(i, lang, profileId)),
-                    toArray(),
-                    map((sectionItems)=>{
-                        section.sectionItems =  sectionItems
-                        return section
-                    })
-                )
+                section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
+                return of(section)
             }),
             toArray(),
         )
@@ -330,71 +323,67 @@ export class CmsService {
         
     }
 
-    private _toSectionItemType(mediaContent: BaseResponse<MediaContentResponse>, lang: string, profileId: string): Observable<SectionItemType> {
-            return this._authRepository.getContinueWatching(profileId, mediaContent.id.toString()).pipe(
-                map((watchingDetail) => {
-                    const item = new SectionItemType();
-                    item.id = mediaContent.id;
-                    item.contentRating =(<BaseResponse<ContentRatingResponse>>mediaContent?.attributes?.rating?.data)?.attributes?.value ?? '';
-                    item.coverImage = (<BaseResponse<CmsImageContent>>(mediaContent?.attributes?.coverImage?.data))?.attributes;
-                    if(item.coverImage){
-                        item.coverImage.id = (<BaseResponse<CmsImageContent>>(mediaContent?.attributes?.coverImage?.data))?.id;
-                    }
-                    item.trailers = mediaContent?.attributes?.trailers ?? [];
-                    item.title = mediaContent?.attributes?.title[lang] ?? '';
-                    item.link = mediaContent?.attributes?.link;
-                    item.slug = mediaContent?.attributes?.slug ?? '';
+    private _toSectionItemType(mediaContent: BaseResponse<MediaContentResponse>, lang: string): SectionItemType {
+        const item = new SectionItemType();
+        item.id = mediaContent.id;
+        item.contentRating =(<BaseResponse<ContentRatingResponse>>mediaContent?.attributes?.rating?.data)?.attributes?.value ?? '';
+        item.coverImage = (<BaseResponse<CmsImageContent>>(mediaContent?.attributes?.coverImage?.data))?.attributes;
+        if(item.coverImage){
+            item.coverImage.id = (<BaseResponse<CmsImageContent>>(mediaContent?.attributes?.coverImage?.data))?.id;
+        }
+        item.trailers = mediaContent?.attributes?.trailers ?? [];
+        item.title = mediaContent?.attributes?.title[lang] ?? '';
+        item.link = mediaContent?.attributes?.link;
+        item.slug = mediaContent?.attributes?.slug ?? '';
 
-                    let tags: LocalizedLabelType[] = [];
-                    if (!!mediaContent.attributes.mediaTags.data) {
-                        tags = (<BaseResponse<TagResponse>[]>mediaContent.attributes.mediaTags.data).map((t) => {
-                            const label = new LocalizedLabelType();
-                            label.id = t.attributes.slug;
-                            label.label = t.attributes.name[lang];
-                            return label;
-                        });
-                    }
-                    item.tags = tags;
-                    item.shortVideos = [];
-                    item.episodes = (
-                        <BaseResponse<MediaEpisodeResponse>[]>mediaContent.attributes.mediaEpisodes?.data ?? []
-                    ).map((v) => {
-                        const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
-                        if(img){
-                            img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
-                        }
-                        return {
-                            id: v.id,
-                            coverImage: img,
-                            order: v?.attributes?.ordering ?? 0,
-                            duration: String(v?.attributes?.duration ?? 0),
-                            episodeName: v?.attributes?.name[lang] ?? '',
-                            continueWatchingAt: watchingDetail[v.id] ?? 0,
-                        };
-                    });
+        let tags: LocalizedLabelType[] = [];
+        if (!!mediaContent.attributes.mediaTags.data) {
+            tags = (<BaseResponse<TagResponse>[]>mediaContent.attributes.mediaTags.data).map((t) => {
+                const label = new LocalizedLabelType();
+                label.id = t.attributes.slug;
+                label.label = t.attributes.name[lang];
+                return label;
+            });
+        }
+        item.tags = tags;
+        item.shortVideos = [];
+        item.episodes = (
+            <BaseResponse<MediaEpisodeResponse>[]>mediaContent.attributes.mediaEpisodes?.data ?? []
+        ).map((v) => {
+            const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
+            if(img){
+                img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
+            }
+            return {
+                id: v.id,
+                coverImage: img,
+                order: v?.attributes?.ordering ?? 0,
+                duration: String(v?.attributes?.duration ?? 0),
+                episodeName: v?.attributes?.name[lang] ?? '',
+                continueWatchingAt: 0,
+            };
+        });
 
-                    item.isSeries = this.isSeries(tags);
-                    item.totalSeason = size(mediaContent.attributes.mediaSeasons?.data ?? []);
-                    item.totalEpisode = reduce(
-                        <BaseResponse<MediaSeasonResponse>[]>mediaContent.attributes.mediaSeasons?.data ?? [],
-                        (acc, each) => {
-                            return acc + size(each.attributes.mediaEpisodes.data);
-                        },
-                        0
-                    );
+        item.isSeries = this.isSeries(tags);
+        item.totalSeason = size(mediaContent.attributes.mediaSeasons?.data ?? []);
+        item.totalEpisode = reduce(
+            <BaseResponse<MediaSeasonResponse>[]>mediaContent.attributes.mediaSeasons?.data ?? [],
+            (acc, each) => {
+                return acc + size(each.attributes.mediaEpisodes.data);
+            },
+            0
+        );
 
-                    return item;
-                })
-            );
+        return item;
             
     }
 
-    public getKidFin(profileId: string): Observable<SectionItemType[]> {
+    public getKidFin(): Observable<SectionItemType[]> {
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMediaContentByTags(['kids']).pipe(
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
-            mergeMap(mediaContent => this._toSectionItemType(mediaContent, lang, profileId)),
+            map(mediaContent => this._toSectionItemType(mediaContent, lang)),
             toArray()
         )
         
