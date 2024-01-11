@@ -109,7 +109,7 @@ export class ProfileResolver {
 
     @ResolveField('myList',() => [MyListType])
     public myList(@Parent() parent: ProfileType, @Context() context: any) {
-       context.req.profileId = parent.id
+        context.req.profileId = parent.id
        return this._authService.getMyList(parent.id)
     }
 
@@ -159,7 +159,7 @@ export class MyListResolver {
         private readonly _cmsService: CmsService,
     ) {}
     @ResolveField('mediaContent',() => MediaContentDetailType)
-    public mediaContent(@Parent() parent: any,  @Context() context: any) {  
-       return this._cmsService.getMediaContentById(parent.programId, context.req.profileId)
+    public mediaContent(@Parent() parent: any) {  
+       return this._cmsService.getMediaContentById(parent.programId)
     }
 }

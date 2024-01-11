@@ -216,7 +216,7 @@ export class CmsService {
         )
     }
 
-    public getMediaContentById(id: string, profileId: string): Observable<MediaContentDetailType> {
+    public getMediaContentById(id: string): Observable<MediaContentDetailType> {
         const lang = this._requestContext.languages[0].code ?? 'en'
         return iif(
             ()=> Number.isInteger(Number(id)),
@@ -225,7 +225,7 @@ export class CmsService {
         )
         .pipe(
             map(res=> (res.data) as BaseResponse<MediaContentDetailResponse>),
-            mergeMap((res)=>this._toMediaContentDetailType(res, lang, profileId))
+            map((res)=>this._toMediaContentDetailType(res, lang))
         )
     }
 
@@ -243,83 +243,79 @@ export class CmsService {
         }, 0)
     }
 
-    private _toMediaContentDetailType(resp: BaseResponse<MediaContentDetailResponse>, lang: string, profileId: string): Observable<MediaContentDetailType>{
-        return this._authRepository.getContinueWatching(profileId, resp.id.toString()).pipe(
-            map((watchingDetail) => {     
-                const { attributes } = resp;
-                const result = new MediaContentDetailType();
-                result.id = resp.id;
-                result.title = attributes?.title[lang] ?? '';
-                result.subtitle = attributes?.subtitle[lang] ?? '';
-                result.contentRating =(<BaseResponse<ContentRatingResponse>>attributes?.rating?.data)?.attributes?.value ?? '';
-                result.coverImage = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.attributes;
-                if(result.coverImage){
-                    result.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
-                }
-                result.trailers = attributes?.trailers ?? [];
-                result.link = attributes?.link;
-                result.shortVideos = [];
-                result.slug = attributes?.slug ?? '';
+    private _toMediaContentDetailType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType{
+        const { attributes } = resp;
+        const result = new MediaContentDetailType();
+        result.id = resp.id;
+        result.title = attributes?.title[lang] ?? '';
+        result.subtitle = attributes?.subtitle[lang] ?? '';
+        result.contentRating =(<BaseResponse<ContentRatingResponse>>attributes?.rating?.data)?.attributes?.value ?? '';
+        result.coverImage = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.attributes;
+        if(result.coverImage){
+            result.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
+        }
+        result.trailers = attributes?.trailers ?? [];
+        result.link = attributes?.link;
+        result.shortVideos = [];
+        result.slug = attributes?.slug ?? '';
 
-                let tags: LocalizedLabelType[] = [];
-                if (!!attributes.mediaTags.data) {
-                    tags = (<BaseResponse<TagResponse>[]>attributes.mediaTags.data).map((t) => {
-                        const label = new LocalizedLabelType();
-                        label.id = t.attributes.slug;
-                        label.label = t.attributes.name[lang];
-                        return label;
-                    });
-                }
-                result.tags = tags;
+        let tags: LocalizedLabelType[] = [];
+        if (!!attributes.mediaTags.data) {
+            tags = (<BaseResponse<TagResponse>[]>attributes.mediaTags.data).map((t) => {
+                const label = new LocalizedLabelType();
+                label.id = t.attributes.slug;
+                label.label = t.attributes.name[lang];
+                return label;
+            });
+        }
+        result.tags = tags;
 
-                const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
-                    const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
-                    if(img){
-                        img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
-                    }
-                    return {
-                        id: v.id,
-                        coverImage: img,
-                        order: v?.attributes?.ordering ?? 0,
-                        duration: String(v?.attributes?.duration ?? 0),
-                        episodeName: v?.attributes?.name[lang] ?? '',
-                        continueWatchingAt: watchingDetail[v.id.toString()] ?? 0,
-                    };
-                };
-                result.episodes = (<BaseResponse<MediaEpisodeResponse>[]>attributes?.mediaEpisodes?.data ?? []).map(
-                    episodeMapper
-                );
-                result.seasons = (<BaseResponse<MediaSeasonResponse>[]>attributes?.mediaSeasons?.data ?? []).map(
-                    (v) => {
-                        return {
-                            id: String(v.id),
-                            slug: v?.attributes?.slug ?? '',
-                            name: v?.attributes?.name[lang] ?? '',
-                            ordering: v?.attributes?.ordering ?? 0,
-                            mediaEpisodes: (
-                                <BaseResponse<MediaEpisodeResponse>[]>v?.attributes?.mediaEpisodes?.data ?? []
-                            ).map((v) => {
-                                const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
-                                if(img){
-                                    img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
-                                }
-                                return {
-                                    id: v.id,
-                                    audio: (v?.attributes?.audio ?? []).map((a) => a.key),
-                                    captions: (v?.attributes?.subtitle ?? []).map((a) => a.key),
-                                    coverImage: img,
-                                    order: v?.attributes?.ordering ?? 0,
-                                    duration: String(v?.attributes?.duration ?? 0),
-                                    episodeName: v?.attributes?.name[lang] ?? '',
-                                    continueWatchingAt: watchingDetail[v.id.toString()] ?? 0,
-                                };
-                            }),
-                        };
-                    }
-                );
-                return result;
-            })
+        const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
+            const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
+            if(img){
+                img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
+            }
+            return {
+                id: v.id,
+                coverImage: img,
+                order: v?.attributes?.ordering ?? 0,
+                duration: String(v?.attributes?.duration ?? 0),
+                episodeName: v?.attributes?.name[lang] ?? '',
+                continueWatchingAt: null,
+            };
+        };
+        result.episodes = (<BaseResponse<MediaEpisodeResponse>[]>attributes?.mediaEpisodes?.data ?? []).map(
+            episodeMapper
         );
+        result.seasons = (<BaseResponse<MediaSeasonResponse>[]>attributes?.mediaSeasons?.data ?? []).map(
+            (v) => {
+                return {
+                    id: String(v.id),
+                    slug: v?.attributes?.slug ?? '',
+                    name: v?.attributes?.name[lang] ?? '',
+                    ordering: v?.attributes?.ordering ?? 0,
+                    mediaEpisodes: (
+                        <BaseResponse<MediaEpisodeResponse>[]>v?.attributes?.mediaEpisodes?.data ?? []
+                    ).map((v) => {
+                        const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
+                        if(img){
+                            img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
+                        }
+                        return {
+                            id: v.id,
+                            audio: (v?.attributes?.audio ?? []).map((a) => a.key),
+                            captions: (v?.attributes?.subtitle ?? []).map((a) => a.key),
+                            coverImage: img,
+                            order: v?.attributes?.ordering ?? 0,
+                            duration: String(v?.attributes?.duration ?? 0),
+                            episodeName: v?.attributes?.name[lang] ?? '',
+                            continueWatchingAt: null,
+                        };
+                    }),
+                };
+            }
+        );
+        return result;
         
     }
 
@@ -402,7 +398,7 @@ export class CmsService {
             }),
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
-            mergeMap((res)=>this._toMediaContentDetailType(res, lang, profileId)),
+            map((res)=>this._toMediaContentDetailType(res, lang)),
             toArray()
         )
     }

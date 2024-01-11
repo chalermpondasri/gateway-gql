@@ -90,14 +90,13 @@ export class SectionItemResolver {
     public recentlyPublished(
         @Parent() parent: SectionItemType
     ) {
-        return parent.recentlyPublished
+        return false
     }
 
     @ResolveField('mediaContentDetail', () => MediaContentDetailType)
     public mediaContentDetail(
         @Parent() parent: SectionItemType,
-        @Context() context: any
     ) {
-        return this._cmsService.getMediaContentById(parent.id.toString(), context.req.profileId)
+        return this._cmsService.getMediaContentById(parent.id.toString())
     }
 }

@@ -5,7 +5,6 @@ import {
     Query,
     ResolveField,
     Resolver,
-    Root
 } from '@nestjs/graphql'
 import {
     MediaContentDetailType,
@@ -27,9 +26,11 @@ export class MediaContentDetailResolver {
     @Query( () => MediaContentDetailType)
     public getMediaContent(
         @Args({name: 'id'}) id: string,
-        @Args({name: 'profileId', nullable: true}) profileId: string
+        @Args({name: 'profileId', nullable: true}) profileId: string,
+        @Context() context: any
     ) {
-        return this._cmsService.getMediaContentById(id, profileId)
+        context.req.profileId = profileId
+        return this._cmsService.getMediaContentById(id)
     }
     @ResolveField('isSeries')
     public isSeries(
