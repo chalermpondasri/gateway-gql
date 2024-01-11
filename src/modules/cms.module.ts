@@ -9,7 +9,7 @@ import {
     SectionItemResolver,
     SectionResolver,
 } from '@/services/doofin-cms/section.resolver'
-import { MediaContentDetailResolver } from '@/services/doofin-cms/content.resolver'
+import { MediaContentDetailResolver, MediaEpisodeResolver } from '@/services/doofin-cms/content.resolver'
 import { authRepositoryProvider } from '@/providers/auth.provider'
 
 @Module({
@@ -24,6 +24,7 @@ import { authRepositoryProvider } from '@/providers/auth.provider'
         SectionItemResolver,
         MediaContentDetailResolver,
         authRepositoryProvider,
+        MediaEpisodeResolver,
     ],
     exports: [ CmsService ]
 })
