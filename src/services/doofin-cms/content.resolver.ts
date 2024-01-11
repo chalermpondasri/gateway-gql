@@ -85,14 +85,13 @@ export class MediaContentDetailResolver {
 
     @ResolveField()
     public seasons(@Parent() parent:MediaContentDetailType) {
-        parent.seasons.map(s=>{
+        const newSeason = parent.seasons.map(s=>{
             return s.mediaEpisodes.map((e) => {
                 e.mediaContentId = parent.id;
                 return e;
             });
         })
-        
-        return parent.seasons
+        return newSeason
     }
 
 }
