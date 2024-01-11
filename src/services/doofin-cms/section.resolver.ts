@@ -1,5 +1,6 @@
 import {
     Args,
+    Context,
     Parent,
     Query,
     ResolveField,
@@ -12,6 +13,7 @@ import {
 } from '@nestjs/common'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import {
+    MediaContentDetailType,
     SectionItemType,
     SectionType,
 } from '@/types/objects'
@@ -45,11 +47,12 @@ export class SectionResolver {
     }
 
     @Query(() => [SectionType])
-    public getMainPage(@Args({name: 'profileId', nullable: true}) profileId: string) {
+    public getMainPage(@Args({name: 'profileId', nullable: true}) profileId: string, @Context() context: any) {
+        context.req.profileId = profileId
         return this._cacheService.getCache(CacheName.MAIN_PAGE).pipe(
             mergeMap(resultCache => {
                 if(isNil(resultCache)) {
-                    return this._cmsService.getMainPageSections(profileId).pipe(
+                    return this._cmsService.getMainPageSections().pipe(
                         tap(resp => {
                             if(!isEmpty(resp)) {
                                 this._logger.debug(`NEW CACHE`)
@@ -70,8 +73,9 @@ export class SectionResolver {
     }
 
     @Query(() => [SectionItemType])
-    public getKidFin(@Args({name: 'profileId', nullable: true}) profileId: string) {
-        return this._cmsService.getKidFin(profileId)
+    public getKidFin(@Args({name: 'profileId', nullable: true}) profileId: string, @Context() context: any) {
+        context.req.profileId = profileId
+        return this._cmsService.getKidFin()
     }
 }
 
@@ -87,5 +91,12 @@ export class SectionItemResolver {
         @Parent() parent: SectionItemType
     ) {
         return false
+    }
+
+    @ResolveField('mediaContentDetail', () => MediaContentDetailType)
+    public mediaContentDetail(
+        @Parent() parent: SectionItemType,
+    ) {
+        return this._cmsService.getMediaContentById(parent.id.toString())
     }
 }

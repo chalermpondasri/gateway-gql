@@ -1,5 +1,6 @@
 import {
     Args,
+    Context,
     Parent,
     Query,
     ResolveField,
@@ -7,9 +8,13 @@ import {
 } from '@nestjs/graphql'
 import {
     MediaContentDetailType,
+    MediaEpisodeType,
 } from '@/types/objects'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import { Inject } from '@nestjs/common'
+import { ProviderName } from '@/constants/provider-name.const'
+import { IAuthRepository } from '@/repositories/auth'
+import { map } from 'rxjs'
 @Resolver(() => MediaContentDetailType)
 export class MediaContentDetailResolver {
     public constructor(
@@ -21,9 +26,11 @@ export class MediaContentDetailResolver {
     @Query( () => MediaContentDetailType)
     public getMediaContent(
         @Args({name: 'id'}) id: string,
-        @Args({name: 'profileId', nullable: true}) profileId: string
+        @Args({name: 'profileId', nullable: true}) profileId: string,
+        @Context() context: any
     ) {
-        return this._cmsService.getMediaContentById(id, profileId)
+        context.req.profileId = profileId
+        return this._cmsService.getMediaContentById(id)
     }
     @ResolveField('isSeries')
     public isSeries(
@@ -74,5 +81,35 @@ export class MediaContentDetailResolver {
         @Args({name: 'tags', type: ()=> [String]}) tags: string[],
     ){
         return this._cmsService.searchContent(profileId, null, tags)
+    }
+
+    @ResolveField()
+    public seasons(@Parent() parent:MediaContentDetailType) {
+        const newSeason = parent.seasons.map(s=>{
+            return s.mediaEpisodes.map((e) => {
+                e.mediaContentId = parent.id;
+                return e;
+            });
+        })
+        return newSeason
+    }
+
+}
+
+@Resolver(() => MediaEpisodeType)
+export class MediaEpisodeResolver {
+    public constructor(
+        @Inject(ProviderName.AUTH_REPOSITORY)
+        private readonly _authRepository: IAuthRepository,
+    ){}
+    @ResolveField("continueWatchingAt", ()=> Number)
+    public continueWatchingAt(@Parent() parent: MediaEpisodeType, @Context() context: any){
+        console.log(context.req.profileId);
+        
+         return this._authRepository.getContinueWatching(context.req.profileId, parent.mediaContentId.toString()).pipe(
+            map(watchingDetail=>{
+                return watchingDetail[parent.id.toString()] ?? 0
+            })
+         )
     }
 }
