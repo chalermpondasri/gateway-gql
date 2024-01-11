@@ -1,5 +1,6 @@
 import {
     Args,
+    Context,
     Parent,
     Query,
     ResolveField,
@@ -46,7 +47,8 @@ export class SectionResolver {
     }
 
     @Query(() => [SectionType])
-    public getMainPage(@Args({name: 'profileId', nullable: true}) profileId: string) {
+    public getMainPage(@Args({name: 'profileId', nullable: true}) profileId: string, @Context() context: any) {
+        context.req.profileId = profileId
         return this._cacheService.getCache(CacheName.MAIN_PAGE).pipe(
             mergeMap(resultCache => {
                 if(isNil(resultCache)) {
@@ -71,7 +73,8 @@ export class SectionResolver {
     }
 
     @Query(() => [SectionItemType])
-    public getKidFin(@Args({name: 'profileId', nullable: true}) profileId: string) {
+    public getKidFin(@Args({name: 'profileId', nullable: true}) profileId: string, @Context() context: any) {
+        context.req.profileId = profileId
         return this._cmsService.getKidFin()
     }
 }
@@ -87,13 +90,14 @@ export class SectionItemResolver {
     public recentlyPublished(
         @Parent() parent: SectionItemType
     ) {
-        return false
+        return parent.recentlyPublished
     }
 
     @ResolveField('mediaContentDetail', () => MediaContentDetailType)
     public mediaContentDetail(
-        @Parent() parent: SectionItemType
+        @Parent() parent: SectionItemType,
+        @Context() context: any
     ) {
-        return this._cmsService.getMediaContentById(parent.id.toString(), "")
+        return this._cmsService.getMediaContentById(parent.id.toString(), context.req.profileId)
     }
 }

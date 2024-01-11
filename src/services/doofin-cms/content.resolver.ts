@@ -1,15 +1,21 @@
 import {
     Args,
+    Context,
     Parent,
     Query,
     ResolveField,
     Resolver,
+    Root
 } from '@nestjs/graphql'
 import {
     MediaContentDetailType,
+    MediaEpisodeType,
 } from '@/types/objects'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import { Inject } from '@nestjs/common'
+import { ProviderName } from '@/constants/provider-name.const'
+import { IAuthRepository } from '@/repositories/auth'
+import { map } from 'rxjs'
 @Resolver(() => MediaContentDetailType)
 export class MediaContentDetailResolver {
     public constructor(
@@ -74,5 +80,36 @@ export class MediaContentDetailResolver {
         @Args({name: 'tags', type: ()=> [String]}) tags: string[],
     ){
         return this._cmsService.searchContent(profileId, null, tags)
+    }
+
+    @ResolveField()
+    public seasons(@Parent() parent:MediaContentDetailType) {
+        parent.seasons.map(s=>{
+            return s.mediaEpisodes.map((e) => {
+                e.mediaContentId = parent.id;
+                return e;
+            });
+        })
+        
+        return parent.seasons
+    }
+
+}
+
+@Resolver(() => MediaEpisodeType)
+export class MediaEpisodeResolver {
+    public constructor(
+        @Inject(ProviderName.AUTH_REPOSITORY)
+        private readonly _authRepository: IAuthRepository,
+    ){}
+    @ResolveField("continueWatchingAt", ()=> Number)
+    public continueWatchingAt(@Parent() parent: MediaEpisodeType, @Context() context: any){
+        console.log(context.req.profileId);
+        
+         return this._authRepository.getContinueWatching(context.req.profileId, parent.mediaContentId.toString()).pipe(
+            map(watchingDetail=>{
+                return watchingDetail[parent.id.toString()] ?? 0
+            })
+         )
     }
 }

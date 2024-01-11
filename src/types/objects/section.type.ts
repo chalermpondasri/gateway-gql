@@ -43,6 +43,8 @@ export class MediaEpisodeType extends BaseEpisodeType {
     public audio: string[]
     @Field(() => [String])
     public captions: string[]
+
+    public mediaContentId?: number
 }
 
 @ObjectType()
