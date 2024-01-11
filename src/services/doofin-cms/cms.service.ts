@@ -281,7 +281,7 @@ export class CmsService {
                 order: v?.attributes?.ordering ?? 0,
                 duration: String(v?.attributes?.duration ?? 0),
                 episodeName: v?.attributes?.name[lang] ?? '',
-                continueWatchingAt: null,
+                continueWatchingAt: 0,
             };
         };
         result.episodes = (<BaseResponse<MediaEpisodeResponse>[]>attributes?.mediaEpisodes?.data ?? []).map(
@@ -309,7 +309,7 @@ export class CmsService {
                             order: v?.attributes?.ordering ?? 0,
                             duration: String(v?.attributes?.duration ?? 0),
                             episodeName: v?.attributes?.name[lang] ?? '',
-                            continueWatchingAt: null,
+                            continueWatchingAt: 0,
                         };
                     }),
                 };
