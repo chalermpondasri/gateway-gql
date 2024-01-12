@@ -60,8 +60,7 @@ export class ByteArkRepository implements IByteArkRepository {
     }
 
     public generateOriginalUrlToSignedUrl(urls: string[], expiresIn: number): Observable<string[]> {
-        if(urls.length) return of([])
-        
+        if(!urls || urls.length === 0) return of([])      
         return from(uniq(urls)).pipe(
             mergeMap((f) => {
                 if (!f.startsWith(process.env.BYTE_ARK_END_POINT)) {
