@@ -2,10 +2,13 @@ import { Observable } from 'rxjs'
 
 export enum CacheName {
     MAIN_PAGE = 'main-page',
+    LOCALE_TH = 'LOCALE-TH',
+    LOCALE_EN = 'LOCALE-EN',
+    LOCALE_CN = 'LOCALE-CN',
 }
 
 export interface ICacheService {
     getCache(name: CacheName): Observable<string>
 
-    setCache(name: CacheName | string, value: string, ttl: null | number): void
+    setCache(name: CacheName, value: string, ttl: null | number): void
 }
