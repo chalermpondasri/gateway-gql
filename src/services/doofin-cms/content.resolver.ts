@@ -86,10 +86,11 @@ export class MediaContentDetailResolver {
     @ResolveField()
     public seasons(@Parent() parent:MediaContentDetailType) {
         const newSeason = parent.seasons.map(s=>{
-            return s.mediaEpisodes.map((e) => {
+            s.mediaEpisodes = s.mediaEpisodes.map((e) => {
                 e.mediaContentId = parent.id;
                 return e;
             });
+            return s;
         })
         return newSeason
     }
@@ -104,8 +105,6 @@ export class MediaEpisodeResolver {
     ){}
     @ResolveField("continueWatchingAt", ()=> Number)
     public continueWatchingAt(@Parent() parent: MediaEpisodeType, @Context() context: any){
-        console.log(context.req.profileId);
-        
          return this._authRepository.getContinueWatching(context.req.profileId, parent.mediaContentId.toString()).pipe(
             map(watchingDetail=>{
                 return watchingDetail[parent.id.toString()] ?? 0
