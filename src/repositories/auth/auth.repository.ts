@@ -352,7 +352,7 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map(res=> plainToInstance(ProfileRequestResetPinResponse, res.data)))
     }
 
-    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<OtpVerifyPhoneResponse> {       
+    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<string> {       
         return from(this._axiosInstance.post('/user/contact-support',requestBody)).pipe(
             map(res=> res.data)
         )

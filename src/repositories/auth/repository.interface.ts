@@ -78,7 +78,7 @@ export interface IAuthRepository {
     removeFromMyList(profileId: string, programId: string): Observable<MyListResponse[]>
     updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileResponse>
     requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>
-    sendTicketToSupport(requestBody: ContactSupportRequest):Observable<OtpVerifyPhoneResponse>
+    sendTicketToSupport(requestBody: ContactSupportRequest):Observable<string>
     findUserWhoForgotPassword(emailOrPhone: string): Observable<UserWhoForgotPasswordResponse>
     requestOtpToResetPassword(userId: string, sendVia: string): Observable<OtpChangePhoneResponse>
     verifyOtpToResetPassword( input: VerifyOtpInput ): Observable<{resetPasswordToken: string}>

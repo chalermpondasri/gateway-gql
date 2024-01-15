@@ -36,6 +36,7 @@ import {
     VerifyOtpType,
     UserWhoForgotPasswordType,
     VerifyOtpToResetPasswordType,
+    TicketType,
 } from '@/types/objects'
 import {
     ContactSupportInput,
@@ -355,18 +356,18 @@ export class AuthService {
         )
     }
     
-    public sendTicketToSupport(input: ContactSupportInput):Observable<UserVerifyOtpType>{   
+    public sendTicketToSupport(input: ContactSupportInput):Observable<TicketType>{   
         const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true}) 
         if(input.images.length === 0){
             return this._authRepository.sendTicketToSupport(requestBody).pipe(
-                map(({ status }) => ({ status }))
+                map((ticketId) => ({ status: true, ticketId }))
             )    
         } 
         return this._byteArkRepository.generateOriginalUrlToSignedUrl(input.images, 180).pipe(
         mergeMap(imgWithSign=> {
             requestBody.signedImageUrls = imgWithSign
             return this._authRepository.sendTicketToSupport(requestBody).pipe(
-                map(({ status }) => ({ status }))
+                map((ticketId) => ({ status: true, ticketId }))
             )   
         })
         )
