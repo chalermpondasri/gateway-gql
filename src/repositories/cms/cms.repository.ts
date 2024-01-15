@@ -219,17 +219,4 @@ export class CmsRepository implements ICmsRepository {
         return from(promise).pipe(map((result) => result.data));
     }
     
-    public searchContentByKeyword(contentRatings: ContentRating[], keyword: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
-        let filters = contentRatings.reduce((a, c, i)=>{
-            return a += `filters[rating][value][$in][${i}]=${c}&`
-        },'')
-        if(keyword){
-            filters += `filters[$or][0][title][en][$containsi]=${keyword}&filters[$or][1][title][th][$containsi]=${keyword}`
-        }
-        const queryString = querystring.encode({populate: this._mediaContentPupulate})
-        const promise = this._axiosInstance.get(`/media-contents?${filters}${filters.endsWith('&')?'':'&'}${queryString}`)
-        return from(promise).pipe(
-            map(result => result.data)
-        )
-    }
 }

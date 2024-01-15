@@ -4,22 +4,15 @@ import {
 } from '@nestjs/common'
 import { ProviderName } from '@/constants/provider-name.const'
 import { ISearchRepository } from '@/repositories/search'
-import {
-    concatMap,
-    filter,
-    from,
-    iif,
-    map,
-    mergeMap,
+import { 
+    map, 
     Observable,
-    of,
-    pipe,
 } from 'rxjs'
-import { MediaContentType } from '@/types/objects'
+import { MediaContentDetailType} from '@/types/objects'
 import { RequestContext } from '@/providers/request-context.provider'
 import { SearchInput } from '@/types/inputs/search.input'
 import { IAuthRepository } from '@/repositories/auth'
-import { isNil } from 'lodash'
+import { plainToInstance } from 'class-transformer'
 
 @Injectable()
 export class SearchService {
@@ -33,26 +26,12 @@ export class SearchService {
     ) {
     }
 
-
-    // TODO
-    public searchContentByKeyword(query: SearchInput): Observable<MediaContentType[]> {
-        const getProfile$ = this._authRepository.getProfileById(query.profileId).pipe(
-            map(response => {
-                response.contentRating
+    public searchContentByKeyword(query: SearchInput): Observable<MediaContentDetailType[]> {
+        return this._searchRepository.findMediaContentWithKeyword(query).pipe(
+            map(data=>{
+                return plainToInstance(MediaContentDetailType, <object[]>data.data)
             })
         )
-        return iif(() => !isNil(SearchInput),getProfile$, of({}) ).pipe(
-            mergeMap( profile => {
-                return this._searchRepository.findMediaContentWithKeyword(query).pipe(
-                    concatMap(result => from(result.data)),
-                    filter(value => {
-
-                    }),
-                    map(),
-                )
-            })
-        )
-
     }
 
 }

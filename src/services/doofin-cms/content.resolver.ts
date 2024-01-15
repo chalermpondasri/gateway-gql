@@ -68,19 +68,11 @@ export class MediaContentDetailResolver {
     }
 
     @Query(()=> [MediaContentDetailType])
-    public searchContentByKeyword(
-        @Args('profileId') profileId: string,
-        @Args({name: 'keyword', nullable: true}) keyword: string, 
-    ){
-        return this._cmsService.searchContent(profileId, keyword)
-    }
-
-    @Query(()=> [MediaContentDetailType])
     public searchContentByTags(
         @Args('profileId') profileId: string,
         @Args({name: 'tags', type: ()=> [String]}) tags: string[],
     ){
-        return this._cmsService.searchContent(profileId, null, tags)
+        return this._cmsService.searchContent(profileId, tags)
     }
 
     @ResolveField()

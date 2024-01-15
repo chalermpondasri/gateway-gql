@@ -6,7 +6,7 @@ import {
     Observable,
 } from 'rxjs'
 import { PaginationQueryRequest, ListResponse } from '../auth'
-import { MediaContentResponse } from '../cms'
+import { MediaContentDetailResponse, MediaContentResponse } from '../cms'
 
 export class SearchRepository implements ISearchRepository {
     public constructor(
@@ -14,7 +14,7 @@ export class SearchRepository implements ISearchRepository {
     ) {
     }
 
-    public findMediaContentWithKeyword(query: PaginationQueryRequest): Observable<ListResponse<MediaContentResponse>> {
+    public findMediaContentWithKeyword(query: PaginationQueryRequest): Observable<ListResponse<MediaContentDetailResponse>> {
         const data = {
             limit: query.limit,
             page: query.page,
