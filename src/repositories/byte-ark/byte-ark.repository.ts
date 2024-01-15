@@ -7,16 +7,18 @@ import {
 } from '@aws-sdk/client-s3';
 import { IByteArkRepository } from './repository.interface';
 import { EnvironmentConfig } from '@/models/common';
-import { Observable, 
-    catchError, 
-    filter, 
-    from, 
-    map, 
-    mergeMap, 
-    of, 
+import {
+    Observable,
+    catchError,
+    filter,
+    from,
+    map,
+    mergeMap,
+    of,
     throwError,
-    toArray, 
-} from 'rxjs';
+    toArray,
+    tap,
+} from 'rxjs'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import axios from 'axios';
 import { 
@@ -34,7 +36,7 @@ export class ByteArkRepository implements IByteArkRepository {
     ) {}
 
     private _generateSignedUrlForPut(params: PutObjectCommandInput) {
-        return from(getSignedUrl(this._s3, new PutObjectCommand(params), { expiresIn: 60 }));
+        return from(getSignedUrl(this._s3, new PutObjectCommand(params), { expiresIn: 3600 }));
     }
 
     private _generateSignedUrlForGet(params: GetObjectCommandInput, expiresIn: number): Observable<string> {
