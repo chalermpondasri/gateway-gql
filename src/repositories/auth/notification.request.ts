@@ -1,4 +1,4 @@
-import { PaginationRequest } from './common.model';
+import { PaginationRequest } from '../../models/common/common.model';
 
 export class NotificationQueryRequest extends PaginationRequest {
     public profileId: string

@@ -1,4 +1,4 @@
-import { LocaleLabel } from '@/repositories/auth/common.model'
+import { LocaleLabel } from '@/models/common/common.model'
 import { Type } from 'class-transformer'
 
 export class CreateLocaleRequest {

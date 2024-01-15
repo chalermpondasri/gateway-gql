@@ -8,6 +8,7 @@ import { GlobalModule } from '@/modules/global.module'
 import { CmsModule } from '@/modules/cms.module'
 import { AuthModule } from '@/modules/auth.module'
 import { ConfigModule } from '@nestjs/config'
+import { SearchModule } from '@/modules/search.module'
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { ConfigModule } from '@nestjs/config'
         GlobalModule,
         CmsModule,
         AuthModule,
+        SearchModule,
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             autoSchemaFile: 'schema.gql',
