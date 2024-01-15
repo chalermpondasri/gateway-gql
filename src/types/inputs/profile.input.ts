@@ -80,7 +80,7 @@ export class UpdateContinueWatchingInput{
     @Field()
     public mediaContentId: string
     @Field()
-    public mediaEpisodetId: string
+    public mediaEpisodeId: string
     @Field()
     public watchingAt: number
 }
