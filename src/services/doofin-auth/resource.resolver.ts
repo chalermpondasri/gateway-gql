@@ -1,4 +1,4 @@
-import { Inject, NotFoundException } from "@nestjs/common";
+import { Inject } from "@nestjs/common";
 import { 
   Args,
   Int,
@@ -18,7 +18,6 @@ import { randomUUID } from 'crypto'
 import { streamToBuffer } from "@/utilities/stream-to-buffer.util";
 import { ProviderName } from "@/constants/provider-name.const";
 import { IByteArkRepository } from "@/repositories/byte-ark/repository.interface";
-import  mime from "mime";
 
 @Resolver()
 export class ResourceResolver {
@@ -63,24 +62,7 @@ export class ResourceResolver {
     public async getFiles(
         @Args({name:'filePaths', type:()=> [String]}) filePaths: string[],
     ){  
-      return from(filePaths).pipe(
-          mergeMap((f) => {
-              if (!f.startsWith(process.env.BYTE_ARK_END_POINT)) {
-                  throw new NotFoundException(`${f} NOT FOUND`);
-              }
-              const imgName = f.split("/").pop();
-              console.log(mime.getType(imgName));
-              return this._byteArkRepo.generateSignedUrlForGet(
-                  {
-                      Bucket: process.env.IMAGE_BUCKET_NAME,
-                      Key: imgName,
-                      ResponseContentType: mime.getType(imgName),
-                  },
-                  120
-              );
-          }),
-          toArray()
-      );
+      return this._byteArkRepo.generateOriginalUrlToSignedUrl(filePaths, 120)
     }
  
 

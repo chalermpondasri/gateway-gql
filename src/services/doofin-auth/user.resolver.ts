@@ -1,6 +1,7 @@
 import {
     DeviceSessionType,
     ProfileType,
+    TicketType,
     UserRequestEmailType,
     UserRequestOtpType,
     UserType,
@@ -117,7 +118,7 @@ export class UserResolver {
         return this._authService.updateUserSetting(input)
     }
 
-    @Mutation(() => UserVerifyOtpType)
+    @Mutation(() => TicketType)
     public sendTicketToSupport(
         @Args(ContactSupportInput.name) input: ContactSupportInput,
     ){ 

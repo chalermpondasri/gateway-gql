@@ -156,3 +156,13 @@ export class VerifyOtpToResetPasswordType {
     @Field()
     public resetPasswordToken: string
 }
+
+
+@ObjectType()
+export class TicketType {
+    @Field(() => Boolean)
+    public status: boolean
+
+    @Field()
+    public ticketId: string
+}

@@ -33,6 +33,7 @@ import { VerifyOtpResponse } from '@/repositories/auth/verify-otp.response'
 import { 
     CreateProfileInput,
     CreateProfilePinInput, 
+    UpdateContinueWatchingInput, 
     UpdateProfileInput, 
     UpdateProfilePinInput,
     UserChangePasswordInput,
@@ -77,12 +78,13 @@ export interface IAuthRepository {
     removeFromMyList(profileId: string, programId: string): Observable<MyListResponse[]>
     updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileResponse>
     requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>
-    sendTicketToSupport(requestBody: ContactSupportRequest):Observable<OtpVerifyPhoneResponse>
+    sendTicketToSupport(requestBody: ContactSupportRequest):Observable<string>
     findUserWhoForgotPassword(emailOrPhone: string): Observable<UserWhoForgotPasswordResponse>
     requestOtpToResetPassword(userId: string, sendVia: string): Observable<OtpChangePhoneResponse>
     verifyOtpToResetPassword( input: VerifyOtpInput ): Observable<{resetPasswordToken: string}>
     resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}>
     getContinueWatching(profileId: string, mediaContentId: string): Observable<{ [episodeId: string]: number }>
+    updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>
 }
 
 export interface ILocaleRepository {

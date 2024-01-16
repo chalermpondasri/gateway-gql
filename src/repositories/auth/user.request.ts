@@ -13,4 +13,6 @@ export class ContactSupportRequest {
     public detail: string
     @Expose()
     public images: string[]
+    @Expose()
+    public signedImageUrls: string[]
 }

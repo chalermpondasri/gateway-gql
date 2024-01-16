@@ -14,7 +14,9 @@ import {
 } from '@/types/inputs'
 import {
     map,
+    mergeMap,
     Observable,
+    of,
 } from 'rxjs'
 import {
     instanceToPlain,
@@ -27,12 +29,15 @@ import {
 } from '@/types/objects'
 import { PaginationInput } from '@/types/inputs/pagination.input'
 import { IdStringType } from '@/types/objects/id-string.type'
+import { CacheName, ICacheService } from '../cache/interface/service.interface'
 
 @Injectable()
 export class LocaleService {
     public constructor(
         @Inject(ProviderName.LOCALE_REPOSITORY)
-        private readonly _localeRepository: ILocaleRepository
+        private readonly _localeRepository: ILocaleRepository,
+        @Inject(ProviderName.CACHE_SERVICE)
+        private readonly _cacheServicey: ICacheService,
     ) {
     }
 
@@ -91,9 +96,23 @@ export class LocaleService {
     }
 
     public getLocalesByCode(localeKey: string): Observable<LocalizedKeyLabelType[]> {
-        return this._localeRepository.listLocalizedKeyLabel(localeKey).pipe(
-            map(data => {
-                return plainToInstance(LocalizedKeyLabelType, instanceToPlain(data.data) as unknown[])
+        const localeLowwerCase = localeKey.toLowerCase()
+        const cachName: CacheName = localeLowwerCase === 'th' 
+                                    ? CacheName.LOCALE_TH
+                                    : localeLowwerCase === 'cn' 
+                                    ? CacheName.LOCALE_CN
+                                    : CacheName.LOCALE_EN
+        return this._cacheServicey.getCache(cachName).pipe(
+            mergeMap(localeData=>{
+                if(localeData){  
+                    return of(plainToInstance(LocalizedKeyLabelType, instanceToPlain(JSON.parse(localeData)) as unknown[]))
+                }
+                return this._localeRepository.listLocalizedKeyLabel(localeKey).pipe(
+                    map(data => {
+                        this._cacheServicey.setCache(cachName, JSON.stringify(data.data), 7200)
+                        return plainToInstance(LocalizedKeyLabelType, instanceToPlain(data.data) as unknown[])
+                    })
+                )
             })
         )
     }

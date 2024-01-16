@@ -37,6 +37,7 @@ import { plainToInstance } from 'class-transformer'
 import {
     CreateProfileInput,
     CreateProfilePinInput,
+    UpdateContinueWatchingInput,
     UpdateProfileInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
@@ -351,7 +352,7 @@ export class AuthRepository implements IAuthRepository {
         ).pipe(map(res=> plainToInstance(ProfileRequestResetPinResponse, res.data)))
     }
 
-    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<OtpVerifyPhoneResponse> {       
+    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<string> {       
         return from(this._axiosInstance.post('/user/contact-support',requestBody)).pipe(
             map(res=> res.data)
         )
@@ -386,6 +387,15 @@ export class AuthRepository implements IAuthRepository {
             this._axiosInstance.get(`/user/me/profile/${profileId}/continue-watching?mediaContentId=${mediaContentId}`)
         ).pipe(
             map(res => res.data)
+        )
+    }
+
+    public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string> {
+        const {profileId, ...body} = input
+        return from(
+            this._axiosInstance.patch(`/user/me/profile/${profileId}/continue-watching`, body)
+        ).pipe(
+            map((res) => res.data)
         )
     }
 

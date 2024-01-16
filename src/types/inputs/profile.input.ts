@@ -1,6 +1,6 @@
 import { 
     Field, 
-    InputType, 
+    InputType,  
 } from '@nestjs/graphql';
 import { ContentRating } from '../enums';
 
@@ -71,4 +71,16 @@ export class UpdateProfileInput {
 
     @Field(()=> ContentRating, {nullable:true})
     public contentRating: ContentRating;
+}
+
+@InputType()
+export class UpdateContinueWatchingInput{
+    @Field()
+    public profileId: string
+    @Field()
+    public mediaContentId: string
+    @Field()
+    public mediaEpisodeId: string
+    @Field()
+    public watchingAt: number
 }
