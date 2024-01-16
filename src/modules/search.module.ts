@@ -8,6 +8,7 @@ import { authRepositoryProvider } from '@/providers/auth.provider'
         searchRepositoryProvider,
         authRepositoryProvider,
         SearchService,
-    ]
+    ],
+    exports: [SearchService],
 })
 export class SearchModule {}

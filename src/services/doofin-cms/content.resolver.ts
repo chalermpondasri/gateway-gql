@@ -8,6 +8,7 @@ import {
 } from '@nestjs/graphql'
 import {
     MediaContentDetailType,
+    MediaContentType,
     MediaEpisodeType,
 } from '@/types/objects'
 import { CmsService } from '@/services/doofin-cms/cms.service'
@@ -15,11 +16,15 @@ import { Inject } from '@nestjs/common'
 import { ProviderName } from '@/constants/provider-name.const'
 import { IAuthRepository } from '@/repositories/auth'
 import { map } from 'rxjs'
+import { SearchService } from '../search/services/search.service'
+import { SearchInput } from '@/types/inputs/search.input'
 @Resolver(() => MediaContentDetailType)
 export class MediaContentDetailResolver {
     public constructor(
         @Inject(CmsService)
-        private readonly _cmsService: CmsService
+        private readonly _cmsService: CmsService,
+        @Inject(SearchService)
+        private readonly _searchService: SearchService
     ) {
     }
 
@@ -68,11 +73,18 @@ export class MediaContentDetailResolver {
     }
 
     @Query(()=> [MediaContentDetailType])
+    public searchContentByKeyword(
+        @Args(SearchInput.name) input: SearchInput,
+    ){
+        return this._searchService.searchContentByKeyword(input)
+    }
+
+    @Query(()=> [MediaContentDetailType])
     public searchContentByTags(
         @Args('profileId') profileId: string,
         @Args({name: 'tags', type: ()=> [String]}) tags: string[],
     ){
-        return this._cmsService.searchContent(profileId, tags)
+        return this._cmsService.searchContentByTag(profileId,tags)
     }
 
     @ResolveField()

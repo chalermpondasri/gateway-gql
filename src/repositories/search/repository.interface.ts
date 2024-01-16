@@ -1,11 +1,10 @@
 import { Observable } from 'rxjs'
-
-import { MediaContentResponse } from '@/repositories/cms'
 import {
     ListResponse,
     PaginationQueryRequest,
 } from '@/models/common'
+import { SearchMediaContentResonse } from './search.response'
 
 export interface ISearchRepository {
-    findMediaContentWithKeyword(query: PaginationQueryRequest): Observable<ListResponse<MediaContentResponse>>
+    findMediaContentWithKeyword(query: PaginationQueryRequest, profileId: string): Observable<ListResponse<SearchMediaContentResonse>>
 }

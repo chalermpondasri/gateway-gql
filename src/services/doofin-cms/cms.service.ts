@@ -228,7 +228,7 @@ export class CmsService {
         )
     }
 
-    public isSeries(tags: LocalizedLabelType[]) {
+    public isSeries(tags: LocalizedLabelType[]) { 
         return some(tags, {id:'series'})
     }
 
@@ -384,7 +384,7 @@ export class CmsService {
         
     }
 
-    public searchContent(profileId: string, tags?: string[]) {
+    public searchContentByTag(profileId: string, tags?: string[]) {
         const lang = this._requestContext.languages[0].code ?? 'en'
         return this._authRepository.getProfileById(profileId).pipe(
             mergeMap((profile)=> this._cmsRepository.getMediaContentByTags(tags)),

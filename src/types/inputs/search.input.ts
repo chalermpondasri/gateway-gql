@@ -7,7 +7,7 @@ import {
 @InputType()
 export class SearchInput extends PaginationInput{
     @Field()
-    public keyword: string
+    public query: string
     @Field({nullable: true})
     public profileId: string
 }
