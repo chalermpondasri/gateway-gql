@@ -11,7 +11,6 @@ import {
     Observable,
     toArray,
 } from 'rxjs'
-import { MediaContentDetailType} from '@/types/objects'
 import { RequestContext } from '@/providers/request-context.provider'
 import { SearchInput } from '@/types/inputs/search.input'
 import { IAuthRepository } from '@/repositories/auth'
