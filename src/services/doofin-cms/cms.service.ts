@@ -259,7 +259,7 @@ export class CmsService {
         result.slug = attributes?.slug ?? '';
 
         let tags: LocalizedLabelType[] = [];
-        if (!!attributes.mediaTags.data) {
+        if (!!attributes.mediaTags.data) {  
             tags = (<BaseResponse<TagResponse>[]>attributes.mediaTags.data).map((t) => {
                 const label = new LocalizedLabelType();
                 label.id = t.attributes.slug;

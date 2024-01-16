@@ -1,5 +1,6 @@
 import { 
 CmsImageContent,
+    ExternalContent,
 LocaleTextResponse,
 } from "../cms"
 
@@ -11,7 +12,8 @@ export class SearchMediaContentResonse {
     public createdAt: Date
     public updatedAt: Date
     public publishedAt: Date
-    public mediaTags: string[]
+    public mediaTags: LocaleTextResponse[]
     public coverImage: CmsImageContent
     public rating: string
+    public trailers: ExternalContent[]
 }

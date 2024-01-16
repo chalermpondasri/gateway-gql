@@ -8,7 +8,6 @@ import {
 } from '@nestjs/graphql'
 import {
     MediaContentDetailType,
-    MediaContentType,
     MediaEpisodeType,
 } from '@/types/objects'
 import { CmsService } from '@/services/doofin-cms/cms.service'
@@ -16,15 +15,11 @@ import { Inject } from '@nestjs/common'
 import { ProviderName } from '@/constants/provider-name.const'
 import { IAuthRepository } from '@/repositories/auth'
 import { map } from 'rxjs'
-import { SearchService } from '../search/services/search.service'
-import { SearchInput } from '@/types/inputs/search.input'
 @Resolver(() => MediaContentDetailType)
 export class MediaContentDetailResolver {
     public constructor(
         @Inject(CmsService)
         private readonly _cmsService: CmsService,
-        @Inject(SearchService)
-        private readonly _searchService: SearchService
     ) {
     }
 
@@ -70,13 +65,6 @@ export class MediaContentDetailResolver {
         @Parent() parent: MediaContentDetailType
     ){
         return parent.seasons.flatMap( s=> s.mediaEpisodes.flatMap( ep => ep.audio))
-    }
-
-    @Query(()=> [MediaContentDetailType])
-    public searchContentByKeyword(
-        @Args(SearchInput.name) input: SearchInput,
-    ){
-        return this._searchService.searchContentByKeyword(input)
     }
 
     @Query(()=> [MediaContentDetailType])
