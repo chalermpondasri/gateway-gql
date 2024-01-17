@@ -7,6 +7,7 @@ import {
     LoginResponse,
     MediaContentDetailResponse,
     SectionResponse,
+    TagResponse,
     TermResponse,
     UserRoleResponse,
 } from '@/repositories/cms'
@@ -28,4 +29,5 @@ export interface ICmsRepository {
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentByTags(tag: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
+    getTags(): Observable<BaseResponse<TagResponse>[]>
 }

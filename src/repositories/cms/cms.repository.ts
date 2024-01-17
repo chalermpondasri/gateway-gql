@@ -10,6 +10,7 @@ import {
     MediaContentDetailResponse,
     PromotionalResponse,
     SectionResponse,
+    TagResponse,
     TermResponse,
     UserRoleResponse,
 } from '@/repositories/cms'
@@ -31,7 +32,6 @@ import {
     isNil,
 } from 'lodash'
 import { Cache } from 'cache-manager'
-import { ContentRating } from '@/types/enums'
 import { NotFoundException } from '@nestjs/common'
 
 export class CmsRepository implements ICmsRepository {
@@ -217,6 +217,12 @@ export class CmsRepository implements ICmsRepository {
         const queryString = querystring.encode({ populate: this._mediaContentPupulate });
         const promise = this._axiosInstance.get(`/media-contents?${filter}${queryString}`);
         return from(promise).pipe(map((result) => result.data));
+    }
+
+    public getTags(): Observable<BaseResponse<TagResponse>[]> {
+        return from(this._axiosInstance.get('tags?populate=name')).pipe(
+            map(res => get(res, 'data.data', []))
+        )
     }
     
 }

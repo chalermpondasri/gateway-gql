@@ -26,6 +26,6 @@ import { authRepositoryProvider } from '@/providers/auth.provider'
         authRepositoryProvider,
         MediaEpisodeResolver,
     ],
-    exports: [ CmsService ],
+    exports: [ CmsService, cmsRepositoryProvider  ],
 })
 export class CmsModule {}
