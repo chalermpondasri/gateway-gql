@@ -8,18 +8,14 @@ import {
     concatMap,
     from,
     map, 
-    mergeMap, 
     Observable,
-    of,
     toArray,
 } from 'rxjs'
 import { RequestContext } from '@/providers/request-context.provider'
 import { SearchInput } from '@/types/inputs/search.input'
 import { IAuthRepository } from '@/repositories/auth'
 import { get } from 'lodash'
-import { SearchContentType } from '@/types/objects/search.type'
-import { ICmsRepository } from '@/repositories/cms'
-import { CacheName, ICacheService } from '@/services/cache/interface/service.interface'
+import { MediaContentDetailType } from '@/types/objects'
 
 @Injectable()
 export class SearchService {
@@ -30,47 +26,37 @@ export class SearchService {
         private readonly _requestContext: RequestContext,
         @Inject(ProviderName.AUTH_REPOSITORY)
         private readonly _authRepository: IAuthRepository,
-        @Inject(ProviderName.CMS_REPOSITORY)
-        private readonly _cmsRepository: ICmsRepository,
-        @Inject(ProviderName.CACHE_SERVICE)
-        private readonly _cacheService: ICacheService,
     ) {
     }
 
-    public searchContentByKeyword(query: SearchInput): Observable<SearchContentType[]> {
+    public searchContentByKeyword(query: SearchInput): Observable<MediaContentDetailType[]> {
         const lang = this._requestContext.languages[0].code
-        return this._cacheService.getCache(CacheName.MEDIA_TAG).pipe(
-            mergeMap(tagsString=>{
-                if(!! tagsString) return of(<{[name: string]: [slug: string]}>JSON.parse(tagsString))
-
-                return this._cmsRepository.getTags().pipe(
-                    map((data)=>{
-                        const tagReduce = data.reduce<{[name: string]: [slug: string]}>((a,c)=>{
-                             Object.values(c.attributes.name).filter(e=> !Number.isInteger(e)).forEach(e=>{
-                                 Object.assign(a,{[e]: c.attributes.slug})
-                             })
-                             return a
-                         },{})
-                        this._cacheService.setCache(CacheName.MEDIA_TAG, JSON.stringify(tagReduce), 43_200)                               
-                         return tagReduce
-                     }),
-                )
-            }),
-            mergeMap((media)=> {
-            //    console.log(media);              
-               return this._searchRepository.findMediaContentWithKeyword(query, query.profileId)
-            }),
+        return this._searchRepository.findMediaContentWithKeyword(query, query.profileId).pipe(
             concatMap(data=> from(data.data)),
             map(content => {   
-                const mediaContent: SearchContentType = {
+                const media: MediaContentDetailType = {
                     id: content.id,
-                    coverImage: content.coverImage as any,
-                    contentRating: content.rating,
                     title: get(content, `title.${lang}`, content.title.en),
+                    subtitle: get(content,`title.${lang}`, content.subtitle.en),
+                    contentRating: get(content,'rating', ''),
+                    trailers: get(content, 'trailers', []),
+                    coverImage:  content.coverImage as any,
+                    slug: get(content,'slug', ''),
                     tags: get(content, `mediaTags`, []).map(e=> ({id: e.slug, label: e.name[lang]})),
-                    trailers: get(content, 'trailers', [])
+                    captions: [],
+                    shortVideos: [],
+                    link: get(content,'link'),
+                    casts:get(content,'casts'),
+                    director:get(content,'directors'),
+                    episodes: [],
+                    //resolve
+                    isSeries: false,
+                    audios: [],
+                    seasons: [],
+                    totalEpisode: 0,
+                    totalSeason: 0,
                 }
-                return mediaContent
+                return media
             }),
             toArray()
         )

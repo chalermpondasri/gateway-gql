@@ -1,3 +1,4 @@
+import { PersonType } from "@/types/objects"
 import { 
 CmsImageContent,
     ExternalContent,
@@ -16,4 +17,7 @@ export class SearchMediaContentResonse {
     public coverImage: CmsImageContent
     public rating: string
     public trailers: ExternalContent[]
+    public directors: PersonType[]
+    public casts: PersonType[]
+    public link: ExternalContent
 }

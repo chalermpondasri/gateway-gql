@@ -20,7 +20,7 @@ export class SearchRepository implements ISearchRepository {
             limit: query.limit,
             page: query.page,
             keyword: query?.query ?? '',
-            profileId: profileId ?? 'none'
+            profileId: profileId
         }
         const queryString = querystring.encode(data)
         return from(this._axiosInstance.get(`/search/media-contents?${queryString}`)).pipe(
