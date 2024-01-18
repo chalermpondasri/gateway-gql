@@ -25,12 +25,14 @@ import {
     MediaContentResponse,
     MediaEpisodeResponse,
     MediaSeasonResponse,
+    PersonResponse,
     TagResponse,
 } from '@/repositories/cms'
 import { BaseRequest } from '@/repositories/cms/base.request'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
     AvatarType,
+    CmsImageType,
     CmsPromotionalContentType,
     CmsRoleType,
     CmsUserType,
@@ -257,6 +259,20 @@ export class CmsService {
         result.link = attributes?.link;
         result.shortVideos = [];
         result.slug = attributes?.slug ?? '';
+
+        const personMapper = (e: BaseResponse<PersonResponse> ) => {
+            const img: CmsImageType = get(e,'attributes.portrait.data.attributes',null)
+            if(img){
+                img.id = get(e,'attributes.portrait.data.id',0)
+            }
+            return {
+                id: e.id,
+                name: get(e,'attributes.name',''),
+                portrait: img
+            }
+        }
+        result.casts = (get(attributes,'casts.data', []) as BaseResponse<PersonResponse>[]).map(personMapper)
+        result.director = (get(attributes,'directors.data', []) as BaseResponse<PersonResponse>[]).map(personMapper)
 
         let tags: LocalizedLabelType[] = [];
         if (!!attributes.mediaTags.data) {  

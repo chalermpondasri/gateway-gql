@@ -76,6 +76,14 @@ export class MediaContentType extends IdType{
 }
 
 @ObjectType()
+export class PersonType extends IdType {
+    @Field()
+    public name: string
+    @Field(() => CmsImageType, {nullable: true})
+    public portrait: CmsImageType
+}
+
+@ObjectType()
 export class MediaContentDetailType extends MediaContentType {
     @Field()
     public subtitle: string
@@ -86,6 +94,12 @@ export class MediaContentDetailType extends MediaContentType {
 
     @Field(() => [MediaSeasonType])
     public seasons: MediaSeasonType[]
+
+    @Field(()=> [PersonType])
+    public casts: PersonType[]
+
+    @Field(()=> [PersonType])
+    public director: PersonType[]
 }
 @ObjectType()
 export class SectionItemType extends MediaContentType {
