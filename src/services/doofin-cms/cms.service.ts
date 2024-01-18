@@ -234,8 +234,8 @@ export class CmsService {
         return some(tags, {id:'series'})
     }
 
-    public totalSeason(media: MediaContentDetailType): number {
-        return  size(media.seasons)
+    public totalSeason(media: MediaContentDetailType): Observable<number> {
+        return  this._cmsRepository.getTotalSeason(media.id.toString())
     }
 
     public totalEpisode(media: MediaContentDetailType): number {
@@ -284,52 +284,10 @@ export class CmsService {
             });
         }
         result.tags = tags;
-
-        const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
-            const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
-            if(img){
-                img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
-            }
-            return {
-                id: v.id,
-                coverImage: img,
-                order: v?.attributes?.ordering ?? 0,
-                duration: String(v?.attributes?.duration ?? 0),
-                episodeName: v?.attributes?.name[lang] ?? '',
-                continueWatchingAt: 0,
-            };
-        };
-        result.episodes = (<BaseResponse<MediaEpisodeResponse>[]>attributes?.mediaEpisodes?.data ?? []).map(
-            episodeMapper
-        );
-        result.seasons = (<BaseResponse<MediaSeasonResponse>[]>attributes?.mediaSeasons?.data ?? []).map(
-            (v) => {
-                return {
-                    id: String(v.id),
-                    slug: v?.attributes?.slug ?? '',
-                    name: v?.attributes?.name[lang] ?? '',
-                    ordering: v?.attributes?.ordering ?? 0,
-                    mediaEpisodes: (
-                        <BaseResponse<MediaEpisodeResponse>[]>v?.attributes?.mediaEpisodes?.data ?? []
-                    ).map((v) => {
-                        const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
-                        if(img){
-                            img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
-                        }
-                        return {
-                            id: v.id,
-                            audio: (v?.attributes?.audio ?? []).map((a) => a.key),
-                            captions: (v?.attributes?.subtitle ?? []).map((a) => a.key),
-                            coverImage: img,
-                            order: v?.attributes?.ordering ?? 0,
-                            duration: String(v?.attributes?.duration ?? 0),
-                            episodeName: v?.attributes?.name[lang] ?? '',
-                            continueWatchingAt: 0,
-                        };
-                    }),
-                };
-            }
-        );
+        //* move to season
+        result.episodes =[]
+        //* resolve field
+        result.seasons = []
         return result;
         
     }

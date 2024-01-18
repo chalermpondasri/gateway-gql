@@ -177,18 +177,7 @@ export class CmsRepository implements ICmsRepository {
         'directors.portrait',
         'mediaTags',
         'mediaTags.name',
-        'mediaEpisodes',
-        'mediaEpisodes.name',
-        'mediaEpisodes.coverImage',
         'rating',
-        'mediaSeasons',
-        'mediaSeasons.name',
-        'mediaSeasons.mediaEpisodes',
-        'mediaSeasons.mediaEpisodes.name',
-        'mediaSeasons.mediaEpisodes.coverImage',
-        'mediaSeasons.mediaEpisodes.audio',
-        'mediaSeasons.mediaEpisodes.subtitle',
-        'mediaSeasons.mediaEpisodes.subtitle',
     ]
 
     public getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
@@ -225,6 +214,16 @@ export class CmsRepository implements ICmsRepository {
         return from(this._axiosInstance.get('tags?populate=name')).pipe(
             map(res => get(res, 'data.data', []))
         )
+    }
+
+    public getTotalSeason(mediaContentId: string): Observable<number> {
+       return from(this._axiosInstance.get(`media-seasons?filters[mediaContent][id][$eq]=${mediaContentId}`)).pipe(
+        map(res => {
+            console.log(res.data);
+            
+           return get(res.data, 'meta.pagination.total', 0)
+        })
+       )
     }
     
 }

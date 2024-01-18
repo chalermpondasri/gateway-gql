@@ -30,4 +30,5 @@ export interface ICmsRepository {
     getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentByTags(tag: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getTags(): Observable<BaseResponse<TagResponse>[]>
+    getTotalSeason(mediaContentId: string): Observable<number>
 }
