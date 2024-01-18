@@ -43,33 +43,33 @@ export class MediaContentDetailResolver {
 
         return this._cmsService.isSeries(parent.tags)
     }
-    @ResolveField('totalSeason')
-    public totalSeason(
-        @Parent() parent: MediaContentDetailType,
-    ) {
-        return this._cmsService.totalSeason(parent)
-    }
+    // @ResolveField('totalSeason')
+    // public totalSeason(
+    //     @Parent() parent: MediaContentDetailType,
+    // ) {
+    //     return this._cmsService.totalSeason(parent)
+    // }
 
-    @ResolveField('totalEpisode')
-    public totalEpisode(
-        @Parent() parent: MediaContentDetailType,
-    ) {
-        return this._cmsService.totalEpisode(parent)
-    }
+    // @ResolveField('totalEpisode')
+    // public totalEpisode(
+    //     @Parent() parent: MediaContentDetailType,
+    // ) {
+    //     return this._cmsService.totalEpisode(parent)
+    // }
 
-    @ResolveField('captions')
-    public captions(
-        @Parent() parent: MediaContentDetailType
-    ){
-        return parent.seasons.flatMap( s=> s.mediaEpisodes.flatMap( ep => ep.captions))
-    }
+    // @ResolveField('captions')
+    // public captions(
+    //     @Parent() parent: MediaContentDetailType
+    // ){
+    //     return parent.seasons.flatMap( s=> s.mediaEpisodes.flatMap( ep => ep.captions))
+    // }
 
-    @ResolveField('audios')
-    public audios(
-        @Parent() parent: MediaContentDetailType
-    ){
-        return parent.seasons.flatMap( s=> s.mediaEpisodes.flatMap( ep => ep.audio))
-    }
+    // @ResolveField('audios')
+    // public audios(
+    //     @Parent() parent: MediaContentDetailType
+    // ){
+    //     return parent.seasons.flatMap( s=> s.mediaEpisodes.flatMap( ep => ep.audio))
+    // }
     @Query(()=> [MediaContentDetailType])
     public searchContentByKeyword(@Args(SearchInput.name) input: SearchInput){
         return this._searchService.searchContentByKeyword(input)
@@ -85,14 +85,7 @@ export class MediaContentDetailResolver {
 
     @ResolveField()
     public seasons(@Parent() parent:MediaContentDetailType) {
-        const newSeason = parent.seasons.map(s=>{
-            s.mediaEpisodes = s.mediaEpisodes.map((e) => {
-                e.mediaContentId = parent.id;
-                return e;
-            });
-            return s;
-        })
-        return newSeason
+        return this._cmsService.getSeason(parent)
     }
 
 }

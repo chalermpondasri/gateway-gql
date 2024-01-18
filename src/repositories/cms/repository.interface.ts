@@ -6,6 +6,7 @@ import {
     ListResponse,
     LoginResponse,
     MediaContentDetailResponse,
+    MediaSeasonResponse,
     SectionResponse,
     TagResponse,
     TermResponse,
@@ -30,5 +31,5 @@ export interface ICmsRepository {
     getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentByTags(tag: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getTags(): Observable<BaseResponse<TagResponse>[]>
-    getTotalSeason(mediaContentId: string): Observable<number>
+    getSeason(mediaContentId: string): Observable<ListResponse<BaseResponse<MediaSeasonResponse>>>
 }

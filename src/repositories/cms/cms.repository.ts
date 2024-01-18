@@ -8,6 +8,7 @@ import {
     ListResponse,
     LoginResponse,
     MediaContentDetailResponse,
+    MediaSeasonResponse,
     PromotionalResponse,
     SectionResponse,
     TagResponse,
@@ -178,6 +179,10 @@ export class CmsRepository implements ICmsRepository {
         'mediaTags',
         'mediaTags.name',
         'rating',
+        'mediaSeasons',       
+        'mediaSeasons.mediaEpisodes',
+        'mediaSeasons.mediaEpisodes.audio',
+        'mediaSeasons.mediaEpisodes.subtitle',
     ]
 
     public getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
@@ -215,15 +220,19 @@ export class CmsRepository implements ICmsRepository {
             map(res => get(res, 'data.data', []))
         )
     }
-
-    public getTotalSeason(mediaContentId: string): Observable<number> {
-       return from(this._axiosInstance.get(`media-seasons?filters[mediaContent][id][$eq]=${mediaContentId}`)).pipe(
-        map(res => {
-            console.log(res.data);
-            
-           return get(res.data, 'meta.pagination.total', 0)
-        })
-       )
-    }
     
+    public getSeason(mediaContentId: string): Observable<ListResponse<BaseResponse<MediaSeasonResponse>>> {
+        const populate = [
+            "name",
+            "mediaEpisodes",
+            "mediaEpisodes.name",
+            "mediaEpisodes.coverImage",
+            "mediaEpisodes.audio",
+            "mediaEpisodes.subtitle",
+        ];
+        const queryString = querystring.encode({ populate })
+        return from(this._axiosInstance.get(`media-seasons?filters[mediaContent][id][$eq]=${mediaContentId}&${queryString}`)).pipe(
+            map(res => res.data)
+        )
+    }
 }

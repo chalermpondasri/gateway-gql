@@ -21,6 +21,7 @@ import {
     CmsImageContent,
     ContentRatingResponse,
     ICmsRepository,
+    KeyValueResponse,
     MediaContentDetailResponse,
     MediaContentResponse,
     MediaEpisodeResponse,
@@ -37,6 +38,8 @@ import {
     CmsRoleType,
     CmsUserType,
     MediaContentDetailType,
+    MediaEpisodeType,
+    MediaSeasonType,
     SectionItemType,
     SectionType,
     TermType,
@@ -234,8 +237,8 @@ export class CmsService {
         return some(tags, {id:'series'})
     }
 
-    public totalSeason(media: MediaContentDetailType): Observable<number> {
-        return  this._cmsRepository.getTotalSeason(media.id.toString())
+    public totalSeason(media: MediaContentDetailType): number {
+        return  size(media.seasons)
     }
 
     public totalEpisode(media: MediaContentDetailType): number {
@@ -283,9 +286,31 @@ export class CmsService {
                 return label;
             });
         }
-        result.tags = tags;
+        result.tags = tags; 
+        result.totalSeason = size(attributes.mediaSeasons)
+
+        const { captions , audio, totalEp} = (get(attributes,'mediaSeasons.data',[]) as BaseResponse<MediaSeasonResponse>[]).reduce((a, c)=>{
+            const episodes = get(c,'attributes.mediaEpisodes.data',[]) as BaseResponse<MediaEpisodeResponse>[]
+            
+            const cap = episodes.flatMap(m=>{
+                return (get(m, 'attributes.subtitle',[]) as KeyValueResponse[]).flatMap(n=> n.key).filter(n=> !!n)
+            })
+            const audi = episodes.flatMap(m=>{
+                return (get(m, 'attributes.audio',[]) as KeyValueResponse[]).flatMap(n=> n.key).filter(n=> !!n)
+            })
+            const total = size(episodes)
+            
+            a.captions =  a.captions.concat(cap)
+            a.audio =  a.audio.concat(audi)
+            a.totalEp +=  total
+            return a
+        },{captions:[], audio:[], totalEp: 0})
+
+        result.totalEpisode = totalEp
+        result.captions = captions
+        result.audios = audio
         //* move to season
-        result.episodes =[]
+        result.episodes = []
         //* resolve field
         result.seasons = []
         return result;
@@ -365,6 +390,44 @@ export class CmsService {
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
             map((res)=>this._toMediaContentDetailType(res, lang)),
+            toArray()
+        )
+    }
+
+    public getSeason(media: MediaContentDetailType): Observable<MediaSeasonType[]>{
+        const lang = this._requestContext.languages[0].code ?? 'en'
+        return this._cmsRepository.getSeason(media.id.toString()).pipe(
+            concatMap(data=> from(data.data)),
+            map(season=> {
+                const episodeMapper = (ep: BaseResponse<MediaEpisodeResponse>) => {
+                    const img:CmsImageType = get(ep, 'attributes.coverImage.data.attributes',null) 
+                    if(img){
+                        img.id = get(ep, 'attributes.coverImage.data.id',0)
+                    }
+                    const newEp: MediaEpisodeType = {
+                        audio: (get(ep, 'attributes.audio',[]) as KeyValueResponse[]).map(e=>e.key),
+                        captions: (get(ep, 'attributes.audio',[]) as KeyValueResponse[]).map(e=>e.key),
+                        order: get(ep, 'attributes.ordering',0),
+                        duration: get(ep, 'attributes.duration',0).toString(),
+                        episodeName: get(ep,`attributes.name.${lang}`, ep.attributes.name.en),
+                        coverImage: img,
+                        //* resolve field
+                        continueWatchingAt: 0,
+                        id: ep.id,
+                        mediaContentId: media.id
+                    }
+                    return newEp
+                }
+
+                const newSeason: MediaSeasonType = {
+                    slug: get(season,'attributes.slug'),
+                    name: get(season,`attributes.name.${lang}`, season.attributes.name.en),
+                    ordering: get(season, 'attributes.ordering', 0),
+                    mediaEpisodes: (get(season, 'attributes.mediaEpisodes.data', []) as BaseResponse<MediaEpisodeResponse>[]).map(episodeMapper),
+                    id: season.id.toString(),
+                }
+                return newSeason
+            }),
             toArray()
         )
     }
