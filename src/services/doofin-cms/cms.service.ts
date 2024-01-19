@@ -237,14 +237,22 @@ export class CmsService {
         return some(tags, {id:'series'})
     }
 
-    public totalSeason(media: MediaContentDetailType): number {
-        return  size(media.seasons)
+    public getTotalSeason(media: MediaContentDetailType): Observable<number> {
+        return  this._cmsRepository.getSeason(media.id.toString()).pipe(
+            map(data=> data.meta.pagination.total)
+        )
     }
 
-    public totalEpisode(media: MediaContentDetailType): number {
-        return  reduce(media.seasons, (acc, each) => {
-            return acc + size(each.mediaEpisodes)
-        }, 0)
+    public getCaptionAudioOrTotalEp(media: MediaContentDetailType, want:'audio' | 'caption' | 'totalEp'): Observable<number | string[]> {
+        return this._cmsRepository.getSeason(media.id.toString()).pipe(
+            map((data) => {
+                if(data.meta.pagination.total === 0){
+                    return want === "audio" || want === 'caption' ? [] : 0
+                }
+                const { captions, audio, totalEp } = this._countAudioSubtitleAndTotalEp(data.data);
+                return want === "audio" ? audio : want === "caption" ? captions : totalEp;
+            })
+        );
     }
 
     private _toMediaContentDetailType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType{
@@ -289,22 +297,7 @@ export class CmsService {
         result.tags = tags; 
         result.totalSeason = size(attributes.mediaSeasons)
 
-        const { captions , audio, totalEp} = (get(attributes,'mediaSeasons.data',[]) as BaseResponse<MediaSeasonResponse>[]).reduce((a, c)=>{
-            const episodes = get(c,'attributes.mediaEpisodes.data',[]) as BaseResponse<MediaEpisodeResponse>[]
-            
-            const cap = episodes.flatMap(m=>{
-                return (get(m, 'attributes.subtitle',[]) as KeyValueResponse[]).flatMap(n=> n.key).filter(n=> !!n)
-            })
-            const audi = episodes.flatMap(m=>{
-                return (get(m, 'attributes.audio',[]) as KeyValueResponse[]).flatMap(n=> n.key).filter(n=> !!n)
-            })
-            const total = size(episodes)
-            
-            a.captions =  a.captions.concat(cap)
-            a.audio =  a.audio.concat(audi)
-            a.totalEp +=  total
-            return a
-        },{captions:[], audio:[], totalEp: 0})
+        const { captions , audio, totalEp} = this._countAudioSubtitleAndTotalEp(get(attributes,'mediaSeasons.data',[]) as BaseResponse<MediaSeasonResponse>[])
 
         result.totalEpisode = totalEp
         result.captions = captions
@@ -430,6 +423,33 @@ export class CmsService {
             }),
             toArray()
         )
+    }
+
+    private _countAudioSubtitleAndTotalEp(seasons: BaseResponse<MediaSeasonResponse>[]):{ captions: string[] , audio: string[], totalEp: number} {
+        const result = seasons.reduce(
+            (a, c) => {
+                const episodes = get(c, "attributes.mediaEpisodes.data", []) as BaseResponse<MediaEpisodeResponse>[];
+
+                const cap = episodes.flatMap((m) => {
+                    return (get(m, "attributes.subtitle", []) as KeyValueResponse[])
+                        .flatMap((n) => n.key)
+                        .filter((n) => !!n);
+                });
+                const audi = episodes.flatMap((m) => {
+                    return (get(m, "attributes.audio", []) as KeyValueResponse[])
+                        .flatMap((n) => n.key)
+                        .filter((n) => !!n);
+                });
+                const total = size(episodes);
+
+                a.captions = a.captions.concat(cap);
+                a.audio = a.audio.concat(audi);
+                a.totalEp += total;
+                return a;
+            },
+            { captions: [], audio: [], totalEp: 0 }
+        );
+        return result;
     }
 
 }

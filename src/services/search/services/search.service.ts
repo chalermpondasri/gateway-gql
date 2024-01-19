@@ -36,14 +36,13 @@ export class SearchService {
             map(content => {   
                 const media: MediaContentDetailType = {
                     id: content.id,
-                    title: get(content, `title.${lang}`, content.title.en),
-                    subtitle: get(content,`title.${lang}`, content.subtitle.en),
+                    title: get(content, `title.${lang}`),
+                    subtitle: get(content,`title.${lang}`),
                     contentRating: get(content,'rating', ''),
                     trailers: get(content, 'trailers', []),
                     coverImage:  content.coverImage as any,
                     slug: get(content,'slug', ''),
                     tags: get(content, `mediaTags`, []).map(e=> ({id: e.slug, label: e.name[lang]})),
-                    captions: [],
                     shortVideos: [],
                     link: get(content,'link'),
                     casts:get(content,'casts'),
@@ -51,10 +50,11 @@ export class SearchService {
                     episodes: [],
                     //resolve
                     isSeries: false,
-                    audios: [],
-                    seasons: [],
-                    totalEpisode: 0,
-                    totalSeason: 0,
+                    audios: null,
+                    captions: null,
+                    seasons: null,
+                    totalEpisode: null,
+                    totalSeason: null,
                 }
                 return media
             }),
