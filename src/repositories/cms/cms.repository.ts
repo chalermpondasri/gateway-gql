@@ -8,8 +8,10 @@ import {
     ListResponse,
     LoginResponse,
     MediaContentDetailResponse,
+    MediaSeasonResponse,
     PromotionalResponse,
     SectionResponse,
+    TagResponse,
     TermResponse,
     UserRoleResponse,
 } from '@/repositories/cms'
@@ -31,7 +33,6 @@ import {
     isNil,
 } from 'lodash'
 import { Cache } from 'cache-manager'
-import { ContentRating } from '@/types/enums'
 import { NotFoundException } from '@nestjs/common'
 
 export class CmsRepository implements ICmsRepository {
@@ -177,17 +178,10 @@ export class CmsRepository implements ICmsRepository {
         'directors.portrait',
         'mediaTags',
         'mediaTags.name',
-        'mediaEpisodes',
-        'mediaEpisodes.name',
-        'mediaEpisodes.coverImage',
         'rating',
-        'mediaSeasons',
-        'mediaSeasons.name',
+        'mediaSeasons',       
         'mediaSeasons.mediaEpisodes',
-        'mediaSeasons.mediaEpisodes.name',
-        'mediaSeasons.mediaEpisodes.coverImage',
         'mediaSeasons.mediaEpisodes.audio',
-        'mediaSeasons.mediaEpisodes.subtitle',
         'mediaSeasons.mediaEpisodes.subtitle',
     ]
 
@@ -220,18 +214,25 @@ export class CmsRepository implements ICmsRepository {
         const promise = this._axiosInstance.get(`/media-contents?${filter}${queryString}`);
         return from(promise).pipe(map((result) => result.data));
     }
+
+    public getTags(): Observable<BaseResponse<TagResponse>[]> {
+        return from(this._axiosInstance.get('tags?populate=name')).pipe(
+            map(res => get(res, 'data.data', []))
+        )
+    }
     
-    public searchContentByKeyword(contentRatings: ContentRating[], keyword: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
-        let filters = contentRatings.reduce((a, c, i)=>{
-            return a += `filters[rating][value][$in][${i}]=${c}&`
-        },'')
-        if(keyword){
-            filters += `filters[$or][0][title][en][$containsi]=${keyword}&filters[$or][1][title][th][$containsi]=${keyword}`
-        }
-        const queryString = querystring.encode({populate: this._mediaContentPupulate})
-        const promise = this._axiosInstance.get(`/media-contents?${filters}${filters.endsWith('&')?'':'&'}${queryString}`)
-        return from(promise).pipe(
-            map(result => result.data)
+    public getSeason(mediaContentId: string): Observable<ListResponse<BaseResponse<MediaSeasonResponse>>> {
+        const populate = [
+            "name",
+            "mediaEpisodes",
+            "mediaEpisodes.name",
+            "mediaEpisodes.coverImage",
+            "mediaEpisodes.audio",
+            "mediaEpisodes.subtitle",
+        ];
+        const queryString = querystring.encode({ populate })
+        return from(this._axiosInstance.get(`media-seasons?filters[mediaContent][id][$eq]=${mediaContentId}&${queryString}`)).pipe(
+            map(res => res.data)
         )
     }
 }

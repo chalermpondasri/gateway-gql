@@ -15,11 +15,15 @@ import { Inject } from '@nestjs/common'
 import { ProviderName } from '@/constants/provider-name.const'
 import { IAuthRepository } from '@/repositories/auth'
 import { map } from 'rxjs'
+import { SearchInput } from '@/types/inputs/search.input'
+import { SearchService } from '../search/services/search.service'
 @Resolver(() => MediaContentDetailType)
 export class MediaContentDetailResolver {
     public constructor(
         @Inject(CmsService)
-        private readonly _cmsService: CmsService
+        private readonly _cmsService: CmsService,
+        @Inject(SearchService)
+        private readonly _searchService: SearchService,
     ) {
     }
 
@@ -43,36 +47,37 @@ export class MediaContentDetailResolver {
     public totalSeason(
         @Parent() parent: MediaContentDetailType,
     ) {
-        return this._cmsService.totalSeason(parent)
+        if(!!parent.totalSeason) return parent.totalSeason
+        return this._cmsService.getTotalSeason(parent)
     }
 
     @ResolveField('totalEpisode')
     public totalEpisode(
         @Parent() parent: MediaContentDetailType,
     ) {
-        return this._cmsService.totalEpisode(parent)
+        if(!!parent.totalEpisode) return parent.totalEpisode
+        return this._cmsService.getCaptionAudioOrTotalEp(parent, 'totalEp')
     }
 
     @ResolveField('captions')
     public captions(
         @Parent() parent: MediaContentDetailType
     ){
-        return parent.seasons.flatMap( s=> s.mediaEpisodes.flatMap( ep => ep.captions))
+        if(!!parent.captions) return parent.captions
+        return this._cmsService.getCaptionAudioOrTotalEp(parent, 'caption')
     }
 
     @ResolveField('audios')
     public audios(
         @Parent() parent: MediaContentDetailType
     ){
-        return parent.seasons.flatMap( s=> s.mediaEpisodes.flatMap( ep => ep.audio))
+        if(!!parent.audios) return parent.audios
+        return this._cmsService.getCaptionAudioOrTotalEp(parent, 'audio')
     }
 
     @Query(()=> [MediaContentDetailType])
-    public searchContentByKeyword(
-        @Args('profileId') profileId: string,
-        @Args({name: 'keyword', nullable: true}) keyword: string, 
-    ){
-        return this._cmsService.searchContent(profileId, keyword)
+    public searchContentByKeyword(@Args(SearchInput.name) input: SearchInput){
+        return this._searchService.searchContentByKeyword(input)
     }
 
     @Query(()=> [MediaContentDetailType])
@@ -80,19 +85,12 @@ export class MediaContentDetailResolver {
         @Args('profileId') profileId: string,
         @Args({name: 'tags', type: ()=> [String]}) tags: string[],
     ){
-        return this._cmsService.searchContent(profileId, null, tags)
+        return this._cmsService.searchContentByTag(profileId,tags)
     }
 
     @ResolveField()
     public seasons(@Parent() parent:MediaContentDetailType) {
-        const newSeason = parent.seasons.map(s=>{
-            s.mediaEpisodes = s.mediaEpisodes.map((e) => {
-                e.mediaContentId = parent.id;
-                return e;
-            });
-            return s;
-        })
-        return newSeason
+        return this._cmsService.getSeason(parent)
     }
 
 }

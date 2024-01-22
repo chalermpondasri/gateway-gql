@@ -18,6 +18,9 @@ export class EnvironmentConfig {
     public declare readonly AUTH_ENDPOINT: string
 
     @IsNotEmpty()
+    public declare readonly SEARCH_ENDPOINT: string
+
+    @IsNotEmpty()
     public declare readonly LOCALE_ENDPOINT: string
 
     @IsNotEmpty()

@@ -21,6 +21,7 @@ import {
     CmsImageContent,
     ContentRatingResponse,
     ICmsRepository,
+    KeyValueResponse,
     MediaContentDetailResponse,
     MediaContentResponse,
     MediaEpisodeResponse,
@@ -37,6 +38,8 @@ import {
     CmsRoleType,
     CmsUserType,
     MediaContentDetailType,
+    MediaEpisodeType,
+    MediaSeasonType,
     SectionItemType,
     SectionType,
     TermType,
@@ -59,7 +62,6 @@ import {
 import { RequestContext } from '@/providers/request-context.provider'
 import { LocalizedLabelType } from '@/types/objects/label.type'
 import { IAuthRepository } from '@/repositories/auth'
-import { ContentRating } from '@/types/enums'
 
 @Injectable()
 export class CmsService {
@@ -231,18 +233,26 @@ export class CmsService {
         )
     }
 
-    public isSeries(tags: LocalizedLabelType[]) {
+    public isSeries(tags: LocalizedLabelType[]) { 
         return some(tags, {id:'series'})
     }
 
-    public totalSeason(media: MediaContentDetailType): number {
-        return  size(media.seasons)
+    public getTotalSeason(media: MediaContentDetailType): Observable<number> {
+        return  this._cmsRepository.getSeason(media.id.toString()).pipe(
+            map(data=> data.meta.pagination.total)
+        )
     }
 
-    public totalEpisode(media: MediaContentDetailType): number {
-        return  reduce(media.seasons, (acc, each) => {
-            return acc + size(each.mediaEpisodes)
-        }, 0)
+    public getCaptionAudioOrTotalEp(media: MediaContentDetailType, want:'audio' | 'caption' | 'totalEp'): Observable<number | string[]> {
+        return this._cmsRepository.getSeason(media.id.toString()).pipe(
+            map((data) => {
+                if(data.meta.pagination.total === 0){
+                    return want === "audio" || want === 'caption' ? [] : 0
+                }
+                const { captions, audio, totalEp } = this._countAudioSubtitleAndTotalEp(data.data);
+                return want === "audio" ? audio : want === "caption" ? captions : totalEp;
+            })
+        );
     }
 
     private _toMediaContentDetailType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType{
@@ -276,7 +286,7 @@ export class CmsService {
         result.director = (get(attributes,'directors.data', []) as BaseResponse<PersonResponse>[]).map(personMapper)
 
         let tags: LocalizedLabelType[] = [];
-        if (!!attributes.mediaTags.data) {
+        if (!!attributes.mediaTags.data) {  
             tags = (<BaseResponse<TagResponse>[]>attributes.mediaTags.data).map((t) => {
                 const label = new LocalizedLabelType();
                 label.id = t.attributes.slug;
@@ -284,53 +294,18 @@ export class CmsService {
                 return label;
             });
         }
-        result.tags = tags;
+        result.tags = tags; 
+        result.totalSeason = size(attributes.mediaSeasons)
 
-        const episodeMapper = (v: BaseResponse<MediaEpisodeResponse>) => {
-            const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
-            if(img){
-                img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
-            }
-            return {
-                id: v.id,
-                coverImage: img,
-                order: v?.attributes?.ordering ?? 0,
-                duration: String(v?.attributes?.duration ?? 0),
-                episodeName: v?.attributes?.name[lang] ?? '',
-                continueWatchingAt: 0,
-            };
-        };
-        result.episodes = (<BaseResponse<MediaEpisodeResponse>[]>attributes?.mediaEpisodes?.data ?? []).map(
-            episodeMapper
-        );
-        result.seasons = (<BaseResponse<MediaSeasonResponse>[]>attributes?.mediaSeasons?.data ?? []).map(
-            (v) => {
-                return {
-                    id: String(v.id),
-                    slug: v?.attributes?.slug ?? '',
-                    name: v?.attributes?.name[lang] ?? '',
-                    ordering: v?.attributes?.ordering ?? 0,
-                    mediaEpisodes: (
-                        <BaseResponse<MediaEpisodeResponse>[]>v?.attributes?.mediaEpisodes?.data ?? []
-                    ).map((v) => {
-                        const img = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.attributes
-                        if(img){
-                            img.id = (<BaseResponse<CmsImageContent>>v?.attributes?.coverImage?.data)?.id
-                        }
-                        return {
-                            id: v.id,
-                            audio: (v?.attributes?.audio ?? []).map((a) => a.key),
-                            captions: (v?.attributes?.subtitle ?? []).map((a) => a.key),
-                            coverImage: img,
-                            order: v?.attributes?.ordering ?? 0,
-                            duration: String(v?.attributes?.duration ?? 0),
-                            episodeName: v?.attributes?.name[lang] ?? '',
-                            continueWatchingAt: 0,
-                        };
-                    }),
-                };
-            }
-        );
+        const { captions , audio, totalEp} = this._countAudioSubtitleAndTotalEp(get(attributes,'mediaSeasons.data',[]) as BaseResponse<MediaSeasonResponse>[])
+
+        result.totalEpisode = totalEp
+        result.captions = captions
+        result.audios = audio
+        //* move to season
+        result.episodes = []
+        //* resolve field
+        result.seasons = []
         return result;
         
     }
@@ -401,22 +376,80 @@ export class CmsService {
         
     }
 
-    public searchContent(profileId: string, keyword?: string, tags?: string[]) {
+    public searchContentByTag(profileId: string, tags?: string[]) {
         const lang = this._requestContext.languages[0].code ?? 'en'
         return this._authRepository.getProfileById(profileId).pipe(
-            mergeMap((profile)=>{            
-                if(tags && tags.length > 0){
-                    return this._cmsRepository.getMediaContentByTags(tags)
-                }         
-                const indexR = Object.values(ContentRating).findIndex(i => i === profile.contentRating)
-                const rating = Object.values(ContentRating).slice(0, indexR+1)  
-                return this._cmsRepository.searchContentByKeyword(rating, keyword)
-            }),
+            mergeMap((profile)=> this._cmsRepository.getMediaContentByTags(tags)),
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
             map((res)=>this._toMediaContentDetailType(res, lang)),
             toArray()
         )
+    }
+
+    public getSeason(media: MediaContentDetailType): Observable<MediaSeasonType[]>{
+        const lang = this._requestContext.languages[0].code ?? 'en'
+        return this._cmsRepository.getSeason(media.id.toString()).pipe(
+            concatMap(data=> from(data.data)),
+            map(season=> {
+                const episodeMapper = (ep: BaseResponse<MediaEpisodeResponse>) => {
+                    const img:CmsImageType = get(ep, 'attributes.coverImage.data.attributes',null) 
+                    if(img){
+                        img.id = get(ep, 'attributes.coverImage.data.id',0)
+                    }
+                    const newEp: MediaEpisodeType = {
+                        audio: (get(ep, 'attributes.audio',[]) as KeyValueResponse[]).map(e=>e.key),
+                        captions: (get(ep, 'attributes.audio',[]) as KeyValueResponse[]).map(e=>e.key),
+                        order: get(ep, 'attributes.ordering',0),
+                        duration: get(ep, 'attributes.duration',0).toString(),
+                        episodeName: get(ep,`attributes.name.${lang}`, ep.attributes.name.en),
+                        coverImage: img,
+                        //* resolve field
+                        continueWatchingAt: 0,
+                        id: ep.id,
+                        mediaContentId: media.id
+                    }
+                    return newEp
+                }
+
+                const newSeason: MediaSeasonType = {
+                    slug: get(season,'attributes.slug'),
+                    name: get(season,`attributes.name.${lang}`, season.attributes.name.en),
+                    ordering: get(season, 'attributes.ordering', 0),
+                    mediaEpisodes: (get(season, 'attributes.mediaEpisodes.data', []) as BaseResponse<MediaEpisodeResponse>[]).map(episodeMapper),
+                    id: season.id.toString(),
+                }
+                return newSeason
+            }),
+            toArray()
+        )
+    }
+
+    private _countAudioSubtitleAndTotalEp(seasons: BaseResponse<MediaSeasonResponse>[]):{ captions: string[] , audio: string[], totalEp: number} {
+        const result = seasons.reduce(
+            (a, c) => {
+                const episodes = get(c, "attributes.mediaEpisodes.data", []) as BaseResponse<MediaEpisodeResponse>[];
+
+                const cap = episodes.flatMap((m) => {
+                    return (get(m, "attributes.subtitle", []) as KeyValueResponse[])
+                        .flatMap((n) => n.key)
+                        .filter((n) => !!n);
+                });
+                const audi = episodes.flatMap((m) => {
+                    return (get(m, "attributes.audio", []) as KeyValueResponse[])
+                        .flatMap((n) => n.key)
+                        .filter((n) => !!n);
+                });
+                const total = size(episodes);
+
+                a.captions = a.captions.concat(cap);
+                a.audio = a.audio.concat(audi);
+                a.totalEp += total;
+                return a;
+            },
+            { captions: [], audio: [], totalEp: 0 }
+        );
+        return result;
     }
 
 }

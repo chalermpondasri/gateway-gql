@@ -11,13 +11,13 @@ import {
 import {
     IdResponse,
     PaginationQueryRequest,
-} from '@/repositories/auth/common.model'
+} from '@/models/common/common.model'
 import { plainToInstance } from 'class-transformer'
 import {
     LocaleResponse,
     LocalizedKeyLabelResponse,
 } from '@/repositories/auth/locale.response'
-import { ListResponse } from '@/repositories/auth/list.response'
+import { ListResponse } from '@/models/common'
 import { AxiosInstance } from 'axios'
 import { LocalizedKeyLabelType } from '@/types/objects'
 import { EnvironmentConfig } from '@/models/common'
