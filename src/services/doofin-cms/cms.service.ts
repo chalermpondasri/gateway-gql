@@ -267,7 +267,8 @@ export class CmsService {
             result.coverImage.id = (<BaseResponse<CmsImageContent>> attributes?.coverImage?.data)?.id
         }
         result.trailers = attributes?.trailers ?? [];
-        result.link = attributes?.link;
+        const link = attributes?.link
+        result.link = !!link ? {id:link.linkId, url:link.url, mimeType: link.mimeType } : null;
         result.shortVideos = [];
         result.slug = attributes?.slug ?? '';
 
@@ -320,7 +321,9 @@ export class CmsService {
         }
         item.trailers = mediaContent?.attributes?.trailers ?? [];
         item.title = mediaContent?.attributes?.title[lang] ?? '';
-        item.link = mediaContent?.attributes?.link;
+
+        const link = mediaContent?.attributes?.link
+        item.link = !!link ? {id:link.linkId, url:link.url, mimeType: link.mimeType } : null;
         item.slug = mediaContent?.attributes?.slug ?? '';
 
         let tags: LocalizedLabelType[] = [];

@@ -18,6 +18,12 @@ export class ExternalContentType {
     @Field({nullable: true})
     public mimeType?: string
 }
+
+@ObjectType()
+export class MediaContentLinkType extends ExternalContentType {
+    @Field()
+    public id: string
+}
 @ObjectType()
 export class BaseEpisodeType extends IdType {
     @Field()
@@ -59,8 +65,8 @@ export class MediaContentType extends IdType{
     public trailers: ExternalContentType[]
     @Field(() => CmsImageType, {nullable: true})
     public coverImage: CmsImageType
-    @Field(() => ExternalContentType, { nullable: true})
-    public link: ExternalContentType
+    @Field(() => MediaContentLinkType, { nullable: true})
+    public link: MediaContentLinkType
     @Field(() => [LocalizedLabelType])
     public tags: LocalizedLabelType[]
     @Field(() => [EpisodeItemType], { nullable: true, deprecationReason: 'move to season in mediaContentDetail'})
@@ -134,3 +140,4 @@ export class SectionType extends IdType {
     @Field(() => CmsImageType, { nullable: true})
     public coverImage: CmsImageType
 }
+

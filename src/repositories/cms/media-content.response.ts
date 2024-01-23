@@ -12,12 +12,16 @@ import { MediaEpisodeResponse } from '@/repositories/cms/media-episode.response'
 import { ContentRatingResponse } from '@/repositories/cms/content-rating.response'
 import { MediaSeasonResponse } from '@/repositories/cms/media-season.response'
 
+export class MediaContentLinkResponse extends ExternalContent {
+    public linkId: string
+}
+
 export class BaseMediaContentResponse {
     public title: LocaleTextResponse
     public subtitle: LocaleTextResponse
     public trailers: ExternalContent[]
     public coverImage: CmsDataResponse<CmsImageContent>
-    public link: ExternalContent
+    public link: MediaContentLinkResponse
     public casts: CmsDataResponse<PersonResponse>
     public directors: CmsDataResponse<PersonResponse>
     public mediaTags: CmsDataResponse<TagResponse>

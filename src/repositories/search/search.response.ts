@@ -3,6 +3,7 @@ import {
 CmsImageContent,
     ExternalContent,
 LocaleTextResponse,
+MediaContentLinkResponse,
 } from "../cms"
 
 export class SearchMediaContentResonse {
@@ -19,5 +20,5 @@ export class SearchMediaContentResonse {
     public trailers: ExternalContent[]
     public directors: PersonType[]
     public casts: PersonType[]
-    public link: ExternalContent
+    public link: MediaContentLinkResponse
 }
