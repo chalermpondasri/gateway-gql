@@ -268,7 +268,7 @@ export class CmsService {
         }
         result.trailers = attributes?.trailers ?? [];
         const link = attributes?.link
-        result.link = !!link ? {id:link.linkId, url:link.url, mimeType: link.mimeType } : null;
+        result.link = !!link ? {urlId: get(link,'urlId',''), url:link.url, mimeType: link.mimeType } : null;
         result.shortVideos = [];
         result.slug = attributes?.slug ?? '';
 
@@ -323,7 +323,9 @@ export class CmsService {
         item.title = mediaContent?.attributes?.title[lang] ?? '';
 
         const link = mediaContent?.attributes?.link
-        item.link = !!link ? {id:link.linkId, url:link.url, mimeType: link.mimeType } : null;
+        console.log(link);
+        
+        item.link = !!link ? {urlId: get(link,'urlId',''), url:link.url, mimeType: link.mimeType } : null;
         item.slug = mediaContent?.attributes?.slug ?? '';
 
         let tags: LocalizedLabelType[] = [];

@@ -1,10 +1,9 @@
-import { PersonType } from "@/types/objects"
+import { PersonType } from '@/types/objects'
 import { 
 CmsImageContent,
     ExternalContent,
 LocaleTextResponse,
-MediaContentLinkResponse,
-} from "../cms"
+} from '../cms'
 
 export class SearchMediaContentResonse {
     public id: number
@@ -20,5 +19,5 @@ export class SearchMediaContentResonse {
     public trailers: ExternalContent[]
     public directors: PersonType[]
     public casts: PersonType[]
-    public link: MediaContentLinkResponse
+    public link: ExternalContent
 }

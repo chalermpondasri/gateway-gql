@@ -45,7 +45,7 @@ export class SearchService {
                     slug: get(content,'slug', ''),
                     tags: get(content, `mediaTags`, []).map(e=> ({id: e.slug, label: e.name[lang]})),
                     shortVideos: [],
-                    link: !!link ? {id:get(link,'linkId'), url:link.url, mimeType: link.mimeType } : null,
+                    link: !!link ? {urlId :get(link,'urlId',''), url:link.url, mimeType: link.mimeType } : null,
                     casts:get(content,'casts'),
                     director:get(content,'directors'),
                     episodes: [],
