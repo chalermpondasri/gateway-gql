@@ -4,19 +4,21 @@ import { AuthRepository } from '@/repositories/auth/auth.repository'
 import { LocaleRepository } from '@/repositories/auth/locale.repository'
 import { EnvironmentConfig } from '@/models/common'
 import { AxiosInstance } from 'axios'
+import { ICacheService } from '@/services/cache/interface/service.interface'
 
 export const authRepositoryProvider: Provider = {
     provide: ProviderName.AUTH_REPOSITORY,
     inject: [
         ProviderName.ENV_CONFIG,
         ProviderName.HTTP_CLIENT,
+        ProviderName.CACHE_SERVICE
     ],
-    useFactory: (config: EnvironmentConfig, client: AxiosInstance) => {
+    useFactory: (config: EnvironmentConfig, client: AxiosInstance, cache: ICacheService) => {
         client.defaults.baseURL = config.AUTH_ENDPOINT
         client.interceptors.response.use(null, error => {
             throw new BadRequestException(error?.response?.data)
         })
-        return new AuthRepository(client)
+        return new AuthRepository(client, cache)
     }
 
 }

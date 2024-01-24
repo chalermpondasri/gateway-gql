@@ -7,12 +7,11 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { GlobalModule } from '@/modules/global.module'
 import { CmsModule } from '@/modules/cms.module'
 import { AuthModule } from '@/modules/auth.module'
-import { ConfigModule } from '@nestjs/config'
+import { KmsModule } from '@/modules/kms.module'
 import { SearchModule } from '@/modules/search.module'
 
 @Module({
     imports: [
-        ConfigModule.forRoot(),
         GlobalModule,
         CmsModule,
         AuthModule,
@@ -29,6 +28,7 @@ import { SearchModule } from '@/modules/search.module'
             } : false,
             context: ({ req }) => ({ req }),
         }),
+        KmsModule
     ],
 })
 export class AppModule {

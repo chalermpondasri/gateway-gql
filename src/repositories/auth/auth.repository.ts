@@ -1,14 +1,15 @@
 import {
     BaseProfileResponse,
     CategoryResponse,
+    ContactSupportRequest,
     CreateUserRequest,
     CreateUserResponse,
     DeviceSessionResponse,
     IAuthRepository,
     ListResponse,
+    MyListResponse,
     NotificationQueryRequest,
     NotificationResponse,
-    MyListResponse,
     OtpChangePhoneResponse,
     OtpVerifyPhoneResponse,
     ProfileRequestResetPinResponse,
@@ -18,16 +19,18 @@ import {
     UpdateUserDeviceSettingRequest,
     UserResponse,
     UserVerifyEmailRequest,
+    UserWhoForgotPasswordResponse,
     VerifyEmailUserResponse,
     VerifyOtpRequest,
     VerifyOtpResponse,
-    ContactSupportRequest,
-    UserWhoForgotPasswordResponse,
 } from '@/repositories/auth'
 import {
+    catchError,
     from,
     map,
+    mergeMap,
     Observable,
+    of,
 } from 'rxjs'
 import {
     AxiosInstance,
@@ -45,12 +48,27 @@ import {
     VerifyOtpInput,
     VerifyResetProfilePin,
 } from '@/types/inputs'
-import { omit } from 'lodash'
+import {
+    isNil,
+    omit,
+} from 'lodash'
+import { ICacheService } from '@/services/cache/interface/service.interface'
+import {
+    Logger,
+    LoggerService,
+} from '@nestjs/common'
 
 export class AuthRepository implements IAuthRepository {
+    private readonly _prefixVideoCache = 'video-id'
+    private readonly _logger: LoggerService
+
     public constructor(
         private readonly _axiosInstance: AxiosInstance,
-    ) {}
+        private readonly _cacheService: ICacheService
+    ) {
+        this._logger = new Logger(AuthRepository.name)
+    }
+
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
         return from(this._axiosInstance.post<CreateUserResponse>(`/user`, request)).pipe(
             map((result: AxiosResponse<CreateUserResponse>) => {
@@ -84,7 +102,7 @@ export class AuthRepository implements IAuthRepository {
     }
 
     public updateProfilePreferences(profileId: string, preferences: string[]): Observable<ProfileResponse> {
-        return from(this._axiosInstance.patch(`user/me/profile/${profileId}/category`, {categories: preferences})).pipe(
+        return from(this._axiosInstance.patch(`user/me/profile/${profileId}/category`, { categories: preferences })).pipe(
             map((result: AxiosResponse<ProfileResponse>) => {
                 return result.data
             }),
@@ -93,8 +111,8 @@ export class AuthRepository implements IAuthRepository {
 
     public getCategories(): Observable<ListResponse<CategoryResponse>> {
         return from(this._axiosInstance.get(`/categories`)).pipe(
-            map(({data}) => {
-                return plainToInstance(ListResponse<CategoryResponse>, data)
+            map(({ data }) => {
+                return plainToInstance(ListResponse < CategoryResponse >, data)
             }),
         )
     }
@@ -102,9 +120,9 @@ export class AuthRepository implements IAuthRepository {
     public login(identity: string, password: string): Observable<{ accessToken: string; refreshToken: string }> {
         return from(this._axiosInstance.post(
             `/auth/login`,
-            {identity, password},
+            { identity, password },
         )).pipe(
-            map(({data}) => {
+            map(({ data }) => {
                 return data
             }),
         )
@@ -112,14 +130,14 @@ export class AuthRepository implements IAuthRepository {
 
     public verifyEmail(request: UserVerifyEmailRequest): Observable<VerifyEmailUserResponse> {
         return from(this._axiosInstance.patch(`/user/verify/email`, request)).pipe(
-            map(({data}) => {
+            map(({ data }) => {
                 return data
             }),
         )
     }
 
     public getProfiles(token: string): Observable<ListResponse<BaseProfileResponse>> {
-        return from(this._axiosInstance.get<ListResponse<BaseProfileResponse>>('user/me/profiles', {headers: {Authorization: 'Bearer ' + token}})).pipe(
+        return from(this._axiosInstance.get<ListResponse<BaseProfileResponse>>('user/me/profiles', { headers: { Authorization: 'Bearer ' + token } })).pipe(
             map(res => res.data),
         )
     }
@@ -128,26 +146,26 @@ export class AuthRepository implements IAuthRepository {
         return from(
             this._axiosInstance.post<ProfileResponse>(
                 `user/me/profile/${arg.profileId}/pin`,
-                {newPin: arg.newPin},
-                {headers: {Authorization: 'Bearer ' + token}},
+                { newPin: arg.newPin },
+                { headers: { Authorization: 'Bearer ' + token } },
             ),
         ).pipe(map((res) => res.data))
     }
 
     public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileResponse> {
-        const {newPin, oldPin} = arg
+        const { newPin, oldPin } = arg
         return from(
             this._axiosInstance.patch<ProfileResponse>(
                 `user/me/profile/${arg.profileId}/pin`,
-                {newPin, oldPin},
-                {headers: {Authorization: 'Bearer ' + token}},
+                { newPin, oldPin },
+                { headers: { Authorization: 'Bearer ' + token } },
             ),
         ).pipe(map((res) => res.data))
     }
 
     public refreshToken(token: string): Observable<{ accessToken: string; refreshToken: string }> {
-        return from(this._axiosInstance.get('/auth/token/refresh', {headers: {Authorization: `Bearer ${token}`}})).pipe(
-            map(({data}) => {
+        return from(this._axiosInstance.get('/auth/token/refresh', { headers: { Authorization: `Bearer ${token}` } })).pipe(
+            map(({ data }) => {
                 return data
             }),
         )
@@ -157,7 +175,7 @@ export class AuthRepository implements IAuthRepository {
         return from(
             this._axiosInstance.post(
                 '/user/me/request/phone-number',
-                {phoneNumber},
+                { phoneNumber },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -201,25 +219,25 @@ export class AuthRepository implements IAuthRepository {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            })
+            }),
         ).pipe(
-            map(res=> plainToInstance(UserResponse, res.data))
+            map(res => plainToInstance(UserResponse, res.data)),
         )
     }
 
     public listUserSessions(): Observable<DeviceSessionResponse[]> {
         const promise = this._axiosInstance.get(`/user/me/sessions`)
         return from(promise).pipe(
-            map( res => {
-                return plainToInstance(DeviceSessionResponse,<Array<object>>res.data)
-            })
+            map(res => {
+                return plainToInstance(DeviceSessionResponse, <Array<object>>res.data)
+            }),
         )
     }
 
     public revokeSingleSession(sessionId: string): Observable<DeviceSessionResponse> {
         const promise = this._axiosInstance.delete(`/user/me/session/${sessionId}`)
         return from(promise).pipe(
-            map( res => plainToInstance(DeviceSessionResponse,res.data))
+            map(res => plainToInstance(DeviceSessionResponse, res.data)),
         )
     }
 
@@ -233,18 +251,18 @@ export class AuthRepository implements IAuthRepository {
 
     public getContentRating(): Observable<string[]> {
         return from(this._axiosInstance.get<string[]>('/resources/content-rating')).pipe(
-            map(res=> res?.data ?? [])
+            map(res => res?.data ?? []),
         )
     }
 
     public requestToChangeEmail(token: string, newEmail: string): Observable<Omit<OtpChangePhoneResponse, 'remaining'>> {
         return from(
             this._axiosInstance.post(`/user/me/request/email`,
-            {email: newEmail},
-            {headers: {Authorization: `Bearer ${token}`}},
-            )
+                { email: newEmail },
+                { headers: { Authorization: `Bearer ${token}` } },
+            ),
         ).pipe(
-            map(res => plainToInstance(OtpChangePhoneResponse, res.data))
+            map(res => plainToInstance(OtpChangePhoneResponse, res.data)),
         )
     }
 
@@ -256,147 +274,185 @@ export class AuthRepository implements IAuthRepository {
                 },
             }),
         ).pipe(
-            map((res) => plainToInstance(OtpVerifyPhoneResponse, res.data))
-        )        
-    }
-
-    public validateProfilePin(profileId: string, pin: string): Observable<{isValid: boolean}> {       
-        return from(
-            this._axiosInstance.post<{isValid: boolean}>(
-                `/user/me/profile/${profileId}/validate/pin`,
-                { pin }
-            )
-        ).pipe(
-            map(({ data }) => ({ isValid: data.isValid}))
+            map((res) => plainToInstance(OtpVerifyPhoneResponse, res.data)),
         )
     }
-    
+
+    public validateProfilePin(profileId: string, pin: string): Observable<{ isValid: boolean }> {
+        return from(
+            this._axiosInstance.post<{ isValid: boolean }>(
+                `/user/me/profile/${profileId}/validate/pin`,
+                { pin },
+            ),
+        ).pipe(
+            map(({ data }) => ({ isValid: data.isValid })),
+        )
+    }
+
     public createProfile(body: CreateProfileInput): Observable<ProfileResponse> {
         return from(
-            this._axiosInstance.post(`/user/me/profile`, body)
+            this._axiosInstance.post(`/user/me/profile`, body),
         ).pipe(
-            map(res=> plainToInstance(ProfileResponse, res.data))
+            map(res => plainToInstance(ProfileResponse, res.data)),
         )
     }
 
     public requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinResponse> {
         return from(
-            this._axiosInstance.post(`/user/me/profile/${profileId}/request/reset-pin`, { password })
+            this._axiosInstance.post(`/user/me/profile/${profileId}/request/reset-pin`, { password }),
         ).pipe(
-            map(res => plainToInstance(ProfileRequestResetPinResponse, res.data))
+            map(res => plainToInstance(ProfileRequestResetPinResponse, res.data)),
         )
     }
 
     public verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileResponse> {
         return from(
-            this._axiosInstance.patch(`/user/me/profile/${input.profileId}/verify/reset-pin`, omit(input,["profileId"]))
+            this._axiosInstance.patch(`/user/me/profile/${input.profileId}/verify/reset-pin`, omit(input, ['profileId'])),
         ).pipe(
-            map(res => plainToInstance(ProfileResponse, res.data))
+            map(res => plainToInstance(ProfileResponse, res.data)),
         )
     }
 
     public updateUserSetting(input: UpdateUserDeviceSettingRequest): Observable<UserResponse> {
         return from(
-            this._axiosInstance.patch(`/user/me/setting`, input)
+            this._axiosInstance.patch(`/user/me/setting`, input),
         ).pipe(
-            map( res => plainToInstance(UserResponse, res.data))
+            map(res => plainToInstance(UserResponse, res.data)),
         )
     }
-    
-    public getNotification(notiQueryRequest: NotificationQueryRequest): Observable<ListResponse<NotificationResponse>> { 
-        return from(this._axiosInstance.get('notifications',{params: notiQueryRequest})).pipe(
-            map(res => plainToInstance(ListResponse<NotificationResponse>, res.data))
+
+    public getNotification(notiQueryRequest: NotificationQueryRequest): Observable<ListResponse<NotificationResponse>> {
+        return from(this._axiosInstance.get('notifications', { params: notiQueryRequest })).pipe(
+            map(res => plainToInstance(ListResponse < NotificationResponse >, res.data)),
         )
     }
 
     public readAllNotification(profileId: string): Observable<{ status: boolean }> {
-        return from(this._axiosInstance.patch('notifications/read',{},{params:{ profileId }})).pipe(
-            map(res =>  res.data)
+        return from(this._axiosInstance.patch('notifications/read', {}, { params: { profileId } })).pipe(
+            map(res => res.data),
         )
     }
 
     public readNotificationById(notificationId: string): Observable<NotificationResponse> {
         return from(this._axiosInstance.patch(`notifications/read/${notificationId}`)).pipe(
-            map(res => plainToInstance(NotificationResponse, res.data))
+            map(res => plainToInstance(NotificationResponse, res.data)),
         )
     }
-    
+
     public getMyList(profileId: string): Observable<MyListResponse[]> {
         return from(this._axiosInstance.get(`/user/me/${profileId}/my-list`)).pipe(
-            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+            map(res => plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? []))),
         )
     }
 
-    public addToMyList(profileId: string, programId:string): Observable<MyListResponse[]> {
-        return from(this._axiosInstance.post(`/user/me/${profileId}/my-list`,{ programId })).pipe(
-            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+    public addToMyList(profileId: string, programId: string): Observable<MyListResponse[]> {
+        return from(this._axiosInstance.post(`/user/me/${profileId}/my-list`, { programId })).pipe(
+            map(res => plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? []))),
         )
     }
 
-    
-    public removeFromMyList(profileId: string, programId:string): Observable<MyListResponse[]> {
+    public removeFromMyList(profileId: string, programId: string): Observable<MyListResponse[]> {
         return from(this._axiosInstance.delete(`/user/me/${profileId}/my-list/${programId}`)).pipe(
-            map(res=> plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? [])))
+            map(res => plainToInstance(MyListResponse, <Array<MyListResponse>>(res?.data?.subList ?? []))),
         )
     }
-    
+
     public updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileResponse> {
         return from(
-            this._axiosInstance.patch(`/user/me/profile/${profileId}`,input)
+            this._axiosInstance.patch(`/user/me/profile/${profileId}`, input),
         ).pipe(map(res => plainToInstance(ProfileResponse, res.data)))
     }
 
-    public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse>{
+    public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinResponse> {
         return from(
-            this._axiosInstance.post(`/user/me/profile/${profileId}/request/reset-audience-pin`,{pin: adminPin})
-        ).pipe(map(res=> plainToInstance(ProfileRequestResetPinResponse, res.data)))
+            this._axiosInstance.post(`/user/me/profile/${profileId}/request/reset-audience-pin`, { pin: adminPin }),
+        ).pipe(map(res => plainToInstance(ProfileRequestResetPinResponse, res.data)))
     }
 
-    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<string> {       
-        return from(this._axiosInstance.post('/user/contact-support',requestBody)).pipe(
-            map(res=> res.data)
+    public sendTicketToSupport(requestBody: ContactSupportRequest): Observable<string> {
+        return from(this._axiosInstance.post('/user/contact-support', requestBody)).pipe(
+            map(res => res.data),
         )
     }
 
     public findUserWhoForgotPassword(emailOrPhone: string): Observable<UserWhoForgotPasswordResponse> {
         return from(this._axiosInstance.get(`/user/forgot/password?emailOrPhoneNumber=${emailOrPhone}`)).pipe(
-            map(res=> plainToInstance(UserWhoForgotPasswordResponse,res.data))
+            map(res => plainToInstance(UserWhoForgotPasswordResponse, res.data)),
         )
     }
 
     public requestOtpToResetPassword(userId: string, sendVia: string): Observable<OtpChangePhoneResponse> {
-      return from(this._axiosInstance.post('/user/request/otp/reset-password', {userId, sendVia})).pipe(
-        map(res=> plainToInstance(OtpChangePhoneResponse, res.data))
-      )  
-    }
-    
-    public verifyOtpToResetPassword(input: VerifyOtpInput): Observable<{ resetPasswordToken: string; }> {
-        return from(this._axiosInstance.post('/user/verify/otp/reset-password', input)).pipe(
-            map(res=> res.data)
+        return from(this._axiosInstance.post('/user/request/otp/reset-password', { userId, sendVia })).pipe(
+            map(res => plainToInstance(OtpChangePhoneResponse, res.data)),
         )
     }
 
-    public resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}> {
-        return from(this._axiosInstance.patch('/user/reset-password', {resetPasswordToken, newPassword})).pipe(
-            map(res=> res.data)
+    public verifyOtpToResetPassword(input: VerifyOtpInput): Observable<{ resetPasswordToken: string; }> {
+        return from(this._axiosInstance.post('/user/verify/otp/reset-password', input)).pipe(
+            map(res => res.data),
+        )
+    }
+
+    public resetPassword(resetPasswordToken: string, newPassword: string): Observable<{ status: boolean }> {
+        return from(this._axiosInstance.patch('/user/reset-password', { resetPasswordToken, newPassword })).pipe(
+            map(res => res.data),
         )
     }
 
     public getContinueWatching(profileId: string, mediaContentId: string): Observable<{ [episodeId: string]: number; }> {
         return from(
-            this._axiosInstance.get(`/user/me/profile/${profileId}/continue-watching?mediaContentId=${mediaContentId}`)
+            this._axiosInstance.get(`/user/me/profile/${profileId}/continue-watching?mediaContentId=${mediaContentId}`),
         ).pipe(
-            map(res => res.data)
+            map(res => res.data),
         )
     }
 
     public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string> {
-        const {profileId, ...body} = input
+        const { profileId, ...body } = input
         return from(
-            this._axiosInstance.patch(`/user/me/profile/${profileId}/continue-watching`, body)
+            this._axiosInstance.patch(`/user/me/profile/${profileId}/continue-watching`, body),
         ).pipe(
-            map((res) => res.data)
+            map((res) => res.data),
         )
     }
+
+    public getKMSVideoKey(videoId: string): Observable<string> {
+        const findCache = this._cacheService.getCache(`${this._prefixVideoCache}-${videoId}`)
+        return from(findCache).pipe(
+            mergeMap(resultCache => {
+                if(isNil(resultCache)) {
+                    const reqAxios = this._axiosInstance.get(`/kms/get-key?vid=${videoId}`)
+                    return from(reqAxios).pipe(
+                        map(res => res.data),
+                    )
+                } else {
+                    return of(resultCache)
+                }
+            }),
+            catchError((err) => {
+                this._logger.error(`[GET KMS] : ${err.toString()}`)
+                return of(null)
+            })
+        )
+    }
+
+    public newKMSVideoKey(videoId: string, hash: string): Observable<boolean> {
+        this._cacheService.setCache(`${this._prefixVideoCache}-${videoId}`, hash, 3600)
+        const reqAxios = this._axiosInstance.post('/kms/new-key', {
+            videoId,
+            hash
+        })
+        return from(reqAxios).pipe(
+            map(() => {
+                return true
+            }),
+            catchError(err => {
+                this._logger.error(`[NEW KMS] : ${err.toString()}`)
+                return of(false)
+            })
+        )
+    }
+
+
 
 }

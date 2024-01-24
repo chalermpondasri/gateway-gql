@@ -8,7 +8,7 @@ export enum CacheName {
 }
 
 export interface ICacheService {
-    getCache(name: CacheName): Observable<string>
+    getCache(name: CacheName | string): Observable<string>
 
-    setCache(name: CacheName, value: string, ttl: null | number): void
+    setCache(name: CacheName | string, value: string, ttl: null | number): void
 }
