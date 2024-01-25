@@ -1,9 +1,9 @@
-import { PersonType } from "@/types/objects"
+import { PersonType } from '@/types/objects'
 import { 
 CmsImageContent,
     ExternalContent,
 LocaleTextResponse,
-} from "../cms"
+} from '../cms'
 
 export class SearchMediaContentResonse {
     public id: number

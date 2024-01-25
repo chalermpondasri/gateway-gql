@@ -17,7 +17,10 @@ export class ExternalContentType {
     public url: string
     @Field({nullable: true})
     public mimeType?: string
+    @Field()
+    public urlId: string
 }
+
 @ObjectType()
 export class BaseEpisodeType extends IdType {
     @Field()
@@ -60,7 +63,7 @@ export class MediaContentType extends IdType{
     @Field(() => CmsImageType, {nullable: true})
     public coverImage: CmsImageType
     @Field(() => ExternalContentType, { nullable: true})
-    public link: ExternalContentType
+    public link:  ExternalContentType
     @Field(() => [LocalizedLabelType])
     public tags: LocalizedLabelType[]
     @Field(() => [EpisodeItemType], { nullable: true, deprecationReason: 'move to season in mediaContentDetail'})
@@ -134,3 +137,4 @@ export class SectionType extends IdType {
     @Field(() => CmsImageType, { nullable: true})
     public coverImage: CmsImageType
 }
+

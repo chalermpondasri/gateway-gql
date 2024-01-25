@@ -33,7 +33,8 @@ export class SearchService {
         const lang = this._requestContext.languages[0].code
         return this._searchRepository.findMediaContentWithKeyword(query, query.profileId).pipe(
             concatMap(data=> from(data.data)),
-            map(content => {   
+            map(content => {  
+                const link = get(content,'link')
                 const media: MediaContentDetailType = {
                     id: content.id,
                     title: get(content, `title.${lang}`),
@@ -44,7 +45,7 @@ export class SearchService {
                     slug: get(content,'slug', ''),
                     tags: get(content, `mediaTags`, []).map(e=> ({id: e.slug, label: e.name[lang]})),
                     shortVideos: [],
-                    link: get(content,'link'),
+                    link: !!link ? {urlId :get(link,'urlId',''), url:link.url, mimeType: link.mimeType } : null,
                     casts:get(content,'casts'),
                     director:get(content,'directors'),
                     episodes: [],
