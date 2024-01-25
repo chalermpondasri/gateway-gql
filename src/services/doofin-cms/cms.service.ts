@@ -323,8 +323,7 @@ export class CmsService {
         item.title = mediaContent?.attributes?.title[lang] ?? '';
 
         const link = mediaContent?.attributes?.link
-        console.log(link);
-        
+         
         item.link = !!link ? {urlId: get(link,'urlId',''), url:link.url, mimeType: link.mimeType } : null;
         item.slug = mediaContent?.attributes?.slug ?? '';
 
