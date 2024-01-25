@@ -85,6 +85,8 @@ export interface IAuthRepository {
     resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}>
     getContinueWatching(profileId: string, mediaContentId: string): Observable<{ [episodeId: string]: number }>
     updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>
+    newKMSVideoKey(videoId: string, hash: string): Observable<boolean>
+    getKMSVideoKey(videoId: string): Observable<string | null>
 }
 
 export interface ILocaleRepository {

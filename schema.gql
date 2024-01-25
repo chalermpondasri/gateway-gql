@@ -93,20 +93,10 @@ type MediaEpisodeType {
   captions: [String!]!
 }
 
-type SectionItemType {
+type PersonType {
   id: ID!
-  title: String
-  contentRating: String!
-  shortVideos: [ExternalContentType!]!
-  trailers: [ExternalContentType!]!
-  coverImage: CmsImageType
-  link: ExternalContentType
-  tags: [LocalizedLabelType!]!
-  episodes: [EpisodeItemType!] @deprecated(reason: "move to season")
-  isSeries: Boolean!
-  totalEpisode: Float!
-  totalSeason: Float!
-  recentlyPublished: Boolean!
+  name: String!
+  portrait: CmsImageType
 }
 
 type MediaContentDetailType {
@@ -118,14 +108,35 @@ type MediaContentDetailType {
   coverImage: CmsImageType
   link: ExternalContentType
   tags: [LocalizedLabelType!]!
-  episodes: [EpisodeItemType!] @deprecated(reason: "move to season")
+  episodes: [EpisodeItemType!] @deprecated(reason: "move to season in mediaContentDetail")
   isSeries: Boolean!
   totalEpisode: Float!
   totalSeason: Float!
+  slug: String!
   subtitle: String!
   captions: [String!]!
   audios: [String!]!
   seasons: [MediaSeasonType!]!
+  casts: [PersonType!]!
+  director: [PersonType!]!
+}
+
+type SectionItemType {
+  id: ID!
+  title: String
+  contentRating: String!
+  shortVideos: [ExternalContentType!]!
+  trailers: [ExternalContentType!]!
+  coverImage: CmsImageType
+  link: ExternalContentType
+  tags: [LocalizedLabelType!]!
+  episodes: [EpisodeItemType!] @deprecated(reason: "move to season in mediaContentDetail")
+  isSeries: Boolean!
+  totalEpisode: Float!
+  totalSeason: Float!
+  slug: String!
+  recentlyPublished: Boolean!
+  mediaContentDetail: MediaContentDetailType!
 }
 
 type SectionType {
@@ -176,7 +187,7 @@ type ProfileRequestResetPinType {
 type MyListType {
   programId: String!
   addDate: DateTime!
-  mediaContent: SectionItemType!
+  mediaContent: MediaContentDetailType!
 }
 
 type DeviceSessionType {
@@ -281,6 +292,21 @@ type UserRequestEmailType {
   token: String!
 }
 
+type UserWhoForgotPasswordType {
+  userId: String!
+  verifiedPhone: Boolean!
+  verifiedEmail: Boolean!
+}
+
+type VerifyOtpToResetPasswordType {
+  resetPasswordToken: String!
+}
+
+type TicketType {
+  status: Boolean!
+  ticketId: String!
+}
+
 type TokenType {
   accessToken: String!
   refreshToken: String!
@@ -363,9 +389,11 @@ type Query {
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
-  getMainPage: [SectionType!]!
-  getKidFin: [SectionItemType!]!
-  getMediaContent(id: String!): MediaContentDetailType!
+  getMainPage(profileId: String): [SectionType!]!
+  getKidFin(profileId: String): [SectionItemType!]!
+  getMediaContent(id: String!, profileId: String): MediaContentDetailType!
+  searchContentByKeyword(SearchInput: SearchInput!): [MediaContentDetailType!]!
+  searchContentByTags(profileId: String!, tags: [String!]!): [MediaContentDetailType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
@@ -377,10 +405,18 @@ type Query {
   validateProfilePin(ValidateProfilePinInputType: ValidateProfilePinInputType!): ValidateProfilePinType!
   requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
   getUser: UserType!
+  findUserWhoForgotPassword(emailOrPhone: String!): UserWhoForgotPasswordType!
   getContentRating: [String!]!
   getAvatars(id: Int): [AvatarType!]!
   getUserSessions: [DeviceSessionType!]!
   getNotification(NotificationInput: NotificationInput): NotificationListType!
+}
+
+input SearchInput {
+  limit: Float = 20
+  page: Float = 1
+  query: String!
+  profileId: String
 }
 
 input PaginationInput {
@@ -418,12 +454,23 @@ type Mutation {
   removeFromMyList(profileId: String!, programId: String!): [MyListType!]!
   updateProfile(profileId: String!, UpdateProfileInput: UpdateProfileInput!): ProfileType!
   requestTokenToResetPinByAdmin(profileId: String!, adminPin: String!): ProfileRequestResetPinType!
+  updateContinueWatching(UpdateContinueWatchingInput: UpdateContinueWatchingInput!): String!
   verifyToChangePhoneNumber(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
   changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
   requestToChangeEmail(newEmail: String!): UserRequestEmailType!
   verifyToChangeEmail(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
   updateUserSetting(UserSettingInput: UserSettingInput!): UserType!
-  sendTicketToSupport(ContactSupportInput: ContactSupportInput!): UserVerifyOtpType!
+  sendTicketToSupport(ContactSupportInput: ContactSupportInput!): TicketType!
+  requestOtpToResetPassword(
+    userId: String!
+
+    """email | phone-number"""
+    sendVia: String!
+  ): UserRequestOtpType!
+  verifyOtpToResetPassword(VerifyOtpInput: VerifyOtpInput!): VerifyOtpToResetPasswordType!
+  resetPassword(resetPasswordToken: String!, newPassword: String!): UserVerifyOtpType!
+  uploadFiles(files: [Upload!]!): [String!]!
+  getFiles(filePaths: [String!]!): [String!]!
   revokeUserSessions: [String!]!
   revokeSession(sessionId: String!): DeviceSessionType!
   markAllNotiAsRead(profileId: String): ReadAllNotificationType!
@@ -514,6 +561,13 @@ enum ContentRating {
   NO_RESTRICT
 }
 
+input UpdateContinueWatchingInput {
+  profileId: String!
+  mediaContentId: String!
+  mediaEpisodeId: String!
+  watchingAt: Float!
+}
+
 input UserVerifyOtpInput {
   token: String!
   referenceNumber: String!
@@ -545,9 +599,7 @@ input ContactSupportInput {
   email: String!
   phoneNumber: String!
   detail: String!
-  image1: Upload
-  image2: Upload
-  image3: Upload
+  images: [String!]
 }
 
 """The `Upload` scalar type represents a file upload."""

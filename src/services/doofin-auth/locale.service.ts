@@ -37,7 +37,7 @@ export class LocaleService {
         @Inject(ProviderName.LOCALE_REPOSITORY)
         private readonly _localeRepository: ILocaleRepository,
         @Inject(ProviderName.CACHE_SERVICE)
-        private readonly _cacheServicey: ICacheService,
+        private readonly _cacheService: ICacheService,
     ) {
     }
 
@@ -102,14 +102,14 @@ export class LocaleService {
                                     : localeLowwerCase === 'cn' 
                                     ? CacheName.LOCALE_CN
                                     : CacheName.LOCALE_EN
-        return this._cacheServicey.getCache(cachName).pipe(
+        return this._cacheService.getCache(cachName).pipe(
             mergeMap(localeData=>{
                 if(localeData){  
                     return of(plainToInstance(LocalizedKeyLabelType, instanceToPlain(JSON.parse(localeData)) as unknown[]))
                 }
                 return this._localeRepository.listLocalizedKeyLabel(localeKey).pipe(
                     map(data => {
-                        this._cacheServicey.setCache(cachName, JSON.stringify(data.data), 7200)
+                        this._cacheService.setCache(cachName, JSON.stringify(data.data), 7200)
                         return plainToInstance(LocalizedKeyLabelType, instanceToPlain(data.data) as unknown[])
                     })
                 )

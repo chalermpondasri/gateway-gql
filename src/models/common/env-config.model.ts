@@ -49,4 +49,14 @@ export class EnvironmentConfig {
 
     @IsString()
     public declare readonly IMAGE_BUCKET_NAME: string
+
+    @IsString()
+    public declare readonly BYTE_ARK_VIDEO_SECRET_ENCODE: string
+
+    @IsString()
+    public declare readonly BYTE_ARK_VIDEO_SECRET_JWT: string
+
+    @IsString()
+    public declare readonly SECRET_ENCRYPT_KEY_VIDEO: string
+
 }
