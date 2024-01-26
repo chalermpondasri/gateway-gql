@@ -6,8 +6,8 @@ export interface IByteArkTokenPayload {
     definition?: string
 }
 
-
 export interface IKMSByteArkService {
     getKeyEncode(secret: string, jwtToken: string): Observable<string>
+
     getKeyPlayer(secret: string, jwtToken: string): Observable<string>
 }

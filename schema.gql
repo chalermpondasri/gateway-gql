@@ -71,6 +71,7 @@ type MediaSeasonType {
 type ExternalContentType {
   url: String!
   mimeType: String
+  urlId: String!
 }
 
 type EpisodeItemType {

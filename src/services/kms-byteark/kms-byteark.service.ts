@@ -23,9 +23,11 @@ import {
     decryptionData,
     encryptionData,
 } from '@/utilities/encrypt-decrypt.util'
-import { ICacheService } from '@/services/cache/interface/service.interface'
 import { IAuthRepository } from '@/repositories/auth'
-import { isNil } from 'lodash'
+import {
+    isEmpty,
+    isNil,
+} from 'lodash'
 
 export class KmsByteArkService implements IKMSByteArkService {
     private readonly _logger: LoggerService
@@ -65,7 +67,8 @@ export class KmsByteArkService implements IKMSByteArkService {
             mergeMap((payload: IByteArkTokenPayload) => {
                 return this._authRepo.getKMSVideoKey(payload.content_id).pipe(
                     map(hashData => {
-                        if(isNil(hashData)) {
+                        this._logger.log(`[KEY-EN] Hash DATA > ${hashData} is null > ${isNil(hashData)}`)
+                        if(isNil(hashData) || isEmpty(hashData)) {
                             const keyVideo = crypto.randomBytes(8).toString('hex')
                             const enData = encryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, keyVideo)
                             this._authRepo.newKMSVideoKey(payload.content_id, enData).subscribe()
