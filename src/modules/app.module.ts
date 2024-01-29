@@ -27,6 +27,11 @@ import { SearchModule } from '@/modules/search.module'
                 },
             } : false,
             context: ({ req }) => ({ req }),
+            formatError: (err) => {
+                return process.env.NODE_ENV !== 'production' ? err : ({
+                    message: err.message,
+                })
+            }
         }),
         KmsModule
     ],

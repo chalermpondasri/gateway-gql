@@ -7,8 +7,6 @@ import {
     Query,
     Res,
 } from '@nestjs/common'
-import { sign } from 'jsonwebtoken'
-import * as CryptoJS from 'crypto-js'
 import { ProviderName } from '@/constants/provider-name.const'
 import { IKMSByteArkService } from '@/services/kms-byteark/interface/service.interface'
 import {
@@ -53,11 +51,5 @@ export class KmsByteArkController {
                 return stringKey
             })
         )
-        // return throwError(() => new ForbiddenException('Nope'))
-        // return new ForbiddenException('SSS')
-        // console.log('GET KEY')
-        // const b = Buffer.alloc(16)
-        // b.write('FAKE-TOKEN-TEST1', 'utf8')
-        // return b.toString('utf8')
     }
 }

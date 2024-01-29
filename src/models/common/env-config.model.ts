@@ -59,4 +59,13 @@ export class EnvironmentConfig {
     @IsString()
     public declare readonly SECRET_ENCRYPT_KEY_VIDEO: string
 
+    @IsString()
+    public declare readonly BYTE_ARK_SIGN_URL_ACCESS: string
+
+    @IsString()
+    public declare readonly BYTE_ARK_SIGN_URL_SECRET: string
+
+    @IsString()
+    public declare readonly BYTE_ARK_SIGN_URL_DOMAIN: string
+
 }

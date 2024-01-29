@@ -8,7 +8,7 @@ export const kmsByteArkProvider: Provider = {
     provide: ProviderName.KMS_BYTE_ARK_PROVIDER,
     inject: [
         ProviderName.ENV_CONFIG,
-        ProviderName.AUTH_REPOSITORY
+        ProviderName.AUTH_REPOSITORY,
     ],
     useFactory: (
         config: EnvironmentConfig,
