@@ -31,6 +31,7 @@ import {
     mergeMap,
     Observable,
     of,
+    throwError,
 } from 'rxjs'
 import {
     AxiosInstance,
@@ -64,7 +65,7 @@ export class AuthRepository implements IAuthRepository {
 
     public constructor(
         private readonly _axiosInstance: AxiosInstance,
-        private readonly _cacheService: ICacheService
+        private readonly _cacheService: ICacheService,
     ) {
         this._logger = new Logger(AuthRepository.name)
     }
@@ -420,19 +421,22 @@ export class AuthRepository implements IAuthRepository {
         const findCache = this._cacheService.getCache(`${this._prefixVideoCache}-${videoId}`)
         return from(findCache).pipe(
             mergeMap(resultCache => {
-                if(isNil(resultCache)) {
+                if (isNil(resultCache)) {
                     const reqAxios = this._axiosInstance.get(`/kms/get-key?vid=${videoId}`)
                     return from(reqAxios).pipe(
-                        map(res => res.data),
+                        map(res => {
+                            this._cacheService.setCache(`${this._prefixVideoCache}-${videoId}`, res?.data, 3600)
+                            return res?.data
+                        }),
+                        catchError(err => {
+                            this._logger.error(`[GET-VIDEO-KEY][${err?.response?.statusCode}] : ${err.toString()}`)
+                            return throwError(() => new Error(err))
+                        }),
                     )
                 } else {
                     return of(resultCache)
                 }
             }),
-            catchError((err) => {
-                this._logger.error(`[GET KMS] : ${err.toString()}`)
-                return of(null)
-            })
         )
     }
 
@@ -440,7 +444,7 @@ export class AuthRepository implements IAuthRepository {
         this._cacheService.setCache(`${this._prefixVideoCache}-${videoId}`, hash, 3600)
         const reqAxios = this._axiosInstance.post('/kms/new-key', {
             videoId,
-            hash
+            hash,
         })
         return from(reqAxios).pipe(
             map(() => {
@@ -449,10 +453,8 @@ export class AuthRepository implements IAuthRepository {
             catchError(err => {
                 this._logger.error(`[NEW KMS] : ${err.toString()}`)
                 return of(false)
-            })
+            }),
         )
     }
-
-
 
 }

@@ -8,6 +8,8 @@ import {
     map,
     mergeMap,
     Observable,
+    of,
+    tap,
     throwError,
 } from 'rxjs'
 import { EnvironmentConfig } from '@/models/common'
@@ -24,6 +26,7 @@ import {
     encryptionData,
 } from '@/utilities/encrypt-decrypt.util'
 import { IAuthRepository } from '@/repositories/auth'
+import { isNil } from 'lodash'
 import {
     isEmpty,
     isNil,
@@ -67,7 +70,7 @@ export class KmsByteArkService implements IKMSByteArkService {
             mergeMap((payload: IByteArkTokenPayload) => {
                 return this._authRepo.getKMSVideoKey(payload.content_id).pipe(
                     map(hashData => {
-                        if(isNil(hashData)) {
+                        if (isNil(hashData)) {
                             this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is null -> save new `)
                             const keyVideo = crypto.randomBytes(8).toString('hex')
                             const enData = encryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, keyVideo)
@@ -75,10 +78,10 @@ export class KmsByteArkService implements IKMSByteArkService {
                             // const deData = decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, enData)
                             return keyVideo
                         } else {
-                            this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is not null `)
+                            this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is not null ${hashData}`)
                             return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, hashData)
                         }
-                    })
+                    }),
                 )
             }),
             catchError(err => {
@@ -97,12 +100,18 @@ export class KmsByteArkService implements IKMSByteArkService {
             }),
             map((hash: string) => {
                 if (isNil(hash)) {
-                    throw new InternalServerErrorException('Hash is null')
+                    throw new InternalServerErrorException('Hash not found')
                 }
                 return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, hash)
             }),
             catchError(err => {
-                return ''
+                this._logger.error(`[GET-KEY-PLAYER] : ${err}`)
+                return of(null)
+            }),
+            tap(result => {
+                if(isNil(result)){
+                    throw new InternalServerErrorException('Key not found')
+                }
             })
         )
     }
