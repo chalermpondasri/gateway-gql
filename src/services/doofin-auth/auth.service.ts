@@ -199,7 +199,7 @@ export class AuthService {
           .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
     }
 
-    public getProfileInformation(token: string, profileId: string): Observable<ProfileType>{
+    public getProfileInformation(profileId: string): Observable<ProfileType>{
         return this._authRepository
           .getProfileById(profileId)
           .pipe(
@@ -399,6 +399,10 @@ export class AuthService {
 
     public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>{
         return this._authRepository.updateContinueWatching(input)
+    }
+
+    public switchProfile(profileId: string):Observable<ProfileType>{
+        return this.getProfileInformation(profileId)
     }
     
 }

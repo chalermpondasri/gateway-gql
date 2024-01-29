@@ -20,6 +20,7 @@ export const httpClientProvider: Provider = {
             headers: {
                 ...requestContext.getHeaders(),
                 'x-did': requestContext.deviceId,
+                'profileId': requestContext.profileId,
             },
         })
 

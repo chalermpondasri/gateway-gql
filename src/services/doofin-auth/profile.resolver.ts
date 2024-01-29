@@ -8,7 +8,7 @@ import {
     UserType,
     ValidateProfilePinType,
 } from '@/types/objects'
-import { Inject } from '@nestjs/common'
+import { Inject} from '@nestjs/common'
 import {
     Args,
     Context,
@@ -29,7 +29,7 @@ import {
     VerifyResetProfilePin,
 } from '@/types/inputs'
 import { CmsService } from '../doofin-cms/cms.service'
-import { map } from 'rxjs'
+import { map, tap } from 'rxjs'
 
 @Resolver(() =>  ProfileType)
 export class ProfileResolver {
@@ -64,10 +64,9 @@ export class ProfileResolver {
 
     @Query(() => ProfileType)
     public getProfileAndAccountInformation(
-        @Context() ctx: any,
         @Args('profileId') profileId: string,
     ) {
-        return this._authService.getProfileInformation(ctx.req.headers.authorization, profileId)
+        return this._authService.getProfileInformation(profileId)
     }
 
     @ResolveField('avatar',() => AvatarType)
@@ -156,6 +155,16 @@ export class ProfileResolver {
         @Args(UpdateContinueWatchingInput.name) input: UpdateContinueWatchingInput,
     ){
         return this._authService.updateContinueWatching(input)
+    }
+
+    @Mutation(()=> ProfileType)
+    public switchProfile(
+        @Args("profileId") profileId: string,
+        @Context() context: any
+    ){
+        return this._authService.switchProfile(profileId).pipe(
+            tap(res=> context.res.cookie('profileId', res.id))
+        )
     }
     
 }

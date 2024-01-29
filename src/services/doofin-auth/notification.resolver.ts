@@ -1,7 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { 
     Args,
-    Context,
     Mutation,
     Parent,
     Query, 
@@ -31,9 +30,8 @@ export class NotificationResolver {
     @ResolveField('profile',()=> ProfileType)
     public profile(
         @Parent() parent: NotificationType,
-        @Context() ctx: any,
     ){
-        return this._authService.getProfileInformation(ctx.req.headers.authorization, parent.profileId)
+        return this._authService.getProfileInformation(parent.profileId)
     }
 
     @Mutation(() => ReadAllNotificationType)

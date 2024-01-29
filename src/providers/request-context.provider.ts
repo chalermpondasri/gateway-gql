@@ -32,6 +32,7 @@ export class RequestContext {
     public headers: any
     public token: string
     public deviceId: string
+    public profileId: string
 
     public parseLanguageFromHeader(acceptLang: string): void {
         this.languages = parse(acceptLang)
@@ -78,6 +79,7 @@ export class RequestContextMiddleware implements NestMiddleware {
                         return EMPTY
                     }
                     this._rc.token = extractTokenFromHeader(r.headers['authorization'])
+                    this._rc.profileId = req.cookies['profileId'] ?? null
 
 
                 }),
