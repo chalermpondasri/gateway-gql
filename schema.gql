@@ -385,6 +385,10 @@ type SubFaqType {
   content: String!
 }
 
+type BytearkPlayerType {
+  signUrl: String!
+}
+
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
@@ -411,6 +415,7 @@ type Query {
   getAvatars(id: Int): [AvatarType!]!
   getUserSessions: [DeviceSessionType!]!
   getNotification(NotificationInput: NotificationInput): NotificationListType!
+  getPreSignPlayer(vid: String!): BytearkPlayerType!
 }
 
 input SearchInput {

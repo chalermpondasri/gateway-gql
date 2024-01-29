@@ -28,22 +28,24 @@ import {
 import { IAuthRepository } from '@/repositories/auth'
 import { isNil } from 'lodash'
 import {
-    isEmpty,
-    isNil,
-} from 'lodash'
+    instanceToPlain,
+    plainToInstance,
+} from 'class-transformer'
+import { BytearkPlayerType } from '@/types/objects/byteark-player.type'
+import { ByteArkV2UrlSigner } from 'byteark-sdk'
 
 export class KmsByteArkService implements IKMSByteArkService {
     private readonly _logger: LoggerService
 
     public constructor(
         private readonly _config: EnvironmentConfig,
-        private readonly _authRepo: IAuthRepository
+        private readonly _authRepo: IAuthRepository,
     ) {
         this._logger = new Logger(KmsByteArkService.name)
     }
-    
+
     private _validateSecretAndToken(secret: string, jwtToken: string, mode?: string): Promise<IByteArkTokenPayload> {
-        if(isNil(mode)) {
+        if (isNil(mode)) {
             if (this._config.BYTE_ARK_VIDEO_SECRET_ENCODE !== secret) {
                 this._logger.log(`[GetKey-Encode] secret not match income : ${secret}`)
                 throw new ForbiddenException('Secret not match')
@@ -55,7 +57,6 @@ export class KmsByteArkService implements IKMSByteArkService {
                 complete: true,
             }, (error, decoded) => {
                 if (error) {
-                    console.log(error)
                     reject('Verify not success')
                 }
                 resolve(decoded.payload as IByteArkTokenPayload)
@@ -114,6 +115,18 @@ export class KmsByteArkService implements IKMSByteArkService {
                 }
             })
         )
+    }
+
+    public getPreSignPlayer(vid: string): Observable<BytearkPlayerType> {
+        const signer = new ByteArkV2UrlSigner({
+            access_id: this._config.BYTE_ARK_SIGN_URL_ACCESS,
+            access_secret: this._config.BYTE_ARK_SIGN_URL_SECRET,
+        })
+        const videoUrl = `${this._config.BYTE_ARK_SIGN_URL_DOMAIN}/streams/${vid}/playlist.m3u8`
+        const signUrl = signer.sign(videoUrl)
+        return of(plainToInstance(BytearkPlayerType, instanceToPlain({
+            signUrl,
+        })))
     }
 
 }
