@@ -67,14 +67,15 @@ export class KmsByteArkService implements IKMSByteArkService {
             mergeMap((payload: IByteArkTokenPayload) => {
                 return this._authRepo.getKMSVideoKey(payload.content_id).pipe(
                     map(hashData => {
-                        this._logger.log(`[KEY-EN] Hash DATA > ${hashData} is null > ${isNil(hashData)}`)
-                        if(isNil(hashData) || isEmpty(hashData)) {
+                        if(isNil(hashData)) {
+                            this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is null -> save new `)
                             const keyVideo = crypto.randomBytes(8).toString('hex')
                             const enData = encryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, keyVideo)
                             this._authRepo.newKMSVideoKey(payload.content_id, enData).subscribe()
                             // const deData = decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, enData)
                             return keyVideo
                         } else {
+                            this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is not null `)
                             return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, hashData)
                         }
                     })
