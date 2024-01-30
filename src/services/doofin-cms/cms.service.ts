@@ -259,8 +259,8 @@ export class CmsService {
         const { attributes } = resp;
         const result = new MediaContentDetailType();
         result.id = resp.id;
-        result.title = attributes?.title[lang] ?? '';
-        result.subtitle = attributes?.subtitle[lang] ?? '';
+        result.title = get(attributes,`title.${lang}`,attributes?.title?.en ?? '') 
+        result.subtitle = get(attributes,`subtitle.${lang}`,attributes?.subtitle?.en ?? '') 
         result.contentRating =(<BaseResponse<ContentRatingResponse>>attributes?.rating?.data)?.attributes?.value ?? '';
         result.coverImage = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.attributes;
         if(result.coverImage){
