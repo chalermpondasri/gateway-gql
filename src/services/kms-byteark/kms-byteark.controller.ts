@@ -31,7 +31,6 @@ export class KmsByteArkController {
     ) {
         return this._kmsByteArkService.getKeyEncode(secret, token).pipe(
             tap(stringKey => {
-                console.log('SK', stringKey)
                 const b = Buffer.alloc(16)
                 b.write(stringKey, 'utf8')
                 res.setHeader('Content-Type', 'application/octet-stream')
