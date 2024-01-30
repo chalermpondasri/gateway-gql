@@ -35,10 +35,10 @@ export class JwtGuard implements CanActivate {
         if(isNil(splitHeader[1])) {
             throw new UnauthorizedException(UnauthorizedException.name)
         }
-        return this._authRepo.getCurrentUser(splitHeader[1]).pipe(
+        return this._authRepo.getProfiles(splitHeader[1]).pipe(
             map(() => {
                 // resp.status
-                return context.switchToHttp().getRequest()
+                return true
             }),
             catchError(err => {
                 return of(false)
