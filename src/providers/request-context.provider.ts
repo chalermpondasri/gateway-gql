@@ -1,4 +1,3 @@
-
 import {
     Inject,
     Injectable,
@@ -25,6 +24,7 @@ import { ProviderName } from '@/constants/provider-name.const'
 import { extractTokenFromHeader } from '@/utilities/token.util'
 import { pick } from 'lodash'
 import { randomUUID } from 'crypto'
+
 export class RequestContext {
     public readonly ts = Date.now()
     public request: Request
@@ -38,7 +38,7 @@ export class RequestContext {
         this.languages = parse(acceptLang)
     }
 
-    public getHeaders(): Record<string,string> {
+    public getHeaders(): Record<string, string> {
         return pick(this.headers, [
             'authorization',
             'accept-language',
@@ -56,6 +56,7 @@ export const requestContextProvider: Provider = {
 @Injectable()
 export class RequestContextMiddleware implements NestMiddleware {
     private readonly _logger: Logger
+
     public constructor(
         @Inject(ProviderName.REQUEST_CONTEXT)
         private readonly _rc: RequestContext,
@@ -80,7 +81,6 @@ export class RequestContextMiddleware implements NestMiddleware {
                     }
                     this._rc.token = extractTokenFromHeader(r.headers['authorization'])
                     this._rc.profileId = req.cookies['profileId'] ?? null
-
 
                 }),
             )

@@ -3,13 +3,13 @@ import {
     AuthResolver,
     AuthService,
     CategoryResolver,
-    ResourceResolver,
-    LocaleService,
-    ProfileResolver,
-    UserResolver,
     DeviceSessionResolver,
-    NotificationResolver,
+    LocaleService,
     MyListResolver,
+    NotificationResolver,
+    ProfileResolver,
+    ResourceResolver,
+    UserResolver,
 } from '@/services/doofin-auth'
 import {
     authRepositoryProvider,

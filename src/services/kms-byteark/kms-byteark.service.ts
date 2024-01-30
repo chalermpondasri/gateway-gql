@@ -8,6 +8,8 @@ import {
     map,
     mergeMap,
     Observable,
+    of,
+    tap,
     throwError,
 } from 'rxjs'
 import { EnvironmentConfig } from '@/models/common'
@@ -24,23 +26,26 @@ import {
     encryptionData,
 } from '@/utilities/encrypt-decrypt.util'
 import { IAuthRepository } from '@/repositories/auth'
+import { isNil } from 'lodash'
 import {
-    isEmpty,
-    isNil,
-} from 'lodash'
+    instanceToPlain,
+    plainToInstance,
+} from 'class-transformer'
+import { BytearkPlayerType } from '@/types/objects/byteark-player.type'
+import { ByteArkV2UrlSigner } from 'byteark-sdk'
 
 export class KmsByteArkService implements IKMSByteArkService {
     private readonly _logger: LoggerService
 
     public constructor(
         private readonly _config: EnvironmentConfig,
-        private readonly _authRepo: IAuthRepository
+        private readonly _authRepo: IAuthRepository,
     ) {
         this._logger = new Logger(KmsByteArkService.name)
     }
-    
+
     private _validateSecretAndToken(secret: string, jwtToken: string, mode?: string): Promise<IByteArkTokenPayload> {
-        if(isNil(mode)) {
+        if (isNil(mode)) {
             if (this._config.BYTE_ARK_VIDEO_SECRET_ENCODE !== secret) {
                 this._logger.log(`[GetKey-Encode] secret not match income : ${secret}`)
                 throw new ForbiddenException('Secret not match')
@@ -52,7 +57,6 @@ export class KmsByteArkService implements IKMSByteArkService {
                 complete: true,
             }, (error, decoded) => {
                 if (error) {
-                    console.log(error)
                     reject('Verify not success')
                 }
                 resolve(decoded.payload as IByteArkTokenPayload)
@@ -67,7 +71,7 @@ export class KmsByteArkService implements IKMSByteArkService {
             mergeMap((payload: IByteArkTokenPayload) => {
                 return this._authRepo.getKMSVideoKey(payload.content_id).pipe(
                     map(hashData => {
-                        if(isNil(hashData)) {
+                        if (isNil(hashData) || hashData.length === 0) {
                             this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is null -> save new `)
                             const keyVideo = crypto.randomBytes(8).toString('hex')
                             const enData = encryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, keyVideo)
@@ -75,10 +79,10 @@ export class KmsByteArkService implements IKMSByteArkService {
                             // const deData = decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, enData)
                             return keyVideo
                         } else {
-                            this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is not null `)
+                            this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is not null ${hashData}`)
                             return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, hashData)
                         }
-                    })
+                    }),
                 )
             }),
             catchError(err => {
@@ -97,14 +101,32 @@ export class KmsByteArkService implements IKMSByteArkService {
             }),
             map((hash: string) => {
                 if (isNil(hash)) {
-                    throw new InternalServerErrorException('Hash is null')
+                    throw new InternalServerErrorException('Hash not found')
                 }
                 return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, hash)
             }),
             catchError(err => {
-                return ''
+                this._logger.error(`[GET-KEY-PLAYER] : ${err}`)
+                return of(null)
+            }),
+            tap(result => {
+                if(isNil(result)){
+                    throw new InternalServerErrorException('Key not found')
+                }
             })
         )
+    }
+
+    public getPreSignPlayer(vid: string): Observable<BytearkPlayerType> {
+        const signer = new ByteArkV2UrlSigner({
+            access_id: this._config.BYTE_ARK_SIGN_URL_ACCESS,
+            access_secret: this._config.BYTE_ARK_SIGN_URL_SECRET,
+        })
+        const videoUrl = `${this._config.BYTE_ARK_SIGN_URL_DOMAIN}/streams/${vid}/playlist.m3u8`
+        const signUrl = signer.sign(videoUrl)
+        return of(plainToInstance(BytearkPlayerType, instanceToPlain({
+            signUrl,
+        })))
     }
 
 }
