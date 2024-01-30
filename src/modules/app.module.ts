@@ -26,7 +26,7 @@ import { SearchModule } from '@/modules/search.module'
                     'request.credentials': 'include',
                 },
             } : false,
-            context: ({ req }) => ({ req }),
+            context: ({ req, res }) => ({ req, res }),
             formatError: (err) => {
                 return process.env.NODE_ENV !== 'production' ? err : ({
                     message: err.message,
