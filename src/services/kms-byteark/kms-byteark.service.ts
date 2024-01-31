@@ -23,6 +23,7 @@ import { verify } from 'jsonwebtoken'
 import {
     decryptionData,
     encryptionData,
+    videoHash,
 } from '@/utilities/encrypt-decrypt.util'
 import { IAuthRepository } from '@/repositories/auth'
 import { isNil } from 'lodash'
@@ -32,7 +33,6 @@ import {
 } from 'class-transformer'
 import { BytearkPlayerType } from '@/types/objects/byteark-player.type'
 import { ByteArkV2UrlSigner } from 'byteark-sdk'
-import * as crypto from 'crypto'
 
 export class KmsByteArkService implements IKMSByteArkService {
     private readonly _logger: LoggerService
@@ -74,11 +74,8 @@ export class KmsByteArkService implements IKMSByteArkService {
                     map(hashData => {
                         if (isNil(hashData) || hashData.length === 0) {
                             this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is null -> save new `)
-                            const hash = crypto.createHash('sha512')
-                            hash.push(payload.content_id)
-                            const hashedFileMeta = hash.digest()
-                            const encryption = crypto.pbkdf2Sync(hashedFileMeta, Buffer.from(this._config.SECRET_ENCRYPT_KEY_VIDEO_ENCODE), 12, 8, 'sha1');
-                            const keyVideo = encryption.toString('hex')
+
+                            const keyVideo = videoHash(payload.content_id, this._config.SECRET_ENCRYPT_KEY_VIDEO_ENCODE)
                             const enData = encryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO_DB, keyVideo)
                             this._authRepo.newKMSVideoKey(payload.content_id, enData).subscribe()
                             // const deData = decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, enData)
