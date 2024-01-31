@@ -13,6 +13,7 @@ import { httpClientProvider } from '@/providers/http-client.provider'
 import { CacheRedisModule } from '@/modules/cache-redis.module'
 import { ConfigModule } from '@nestjs/config'
 import { byteArkRepositoryProvider } from '@/providers/byte-ark.provider'
+import { contentRatingValidationProvider } from '@/providers/content-rating-validation.provider'
 
 @Global()
 @Module({
@@ -21,12 +22,14 @@ import { byteArkRepositoryProvider } from '@/providers/byte-ark.provider'
         requestContextProvider,
         httpClientProvider,
         byteArkRepositoryProvider,
+        contentRatingValidationProvider,
     ],
     exports: [
         envConfigProvider,
         requestContextProvider,
         httpClientProvider,
         byteArkRepositoryProvider,
+        contentRatingValidationProvider
     ],
     imports: [
         ConfigModule.forRoot(),

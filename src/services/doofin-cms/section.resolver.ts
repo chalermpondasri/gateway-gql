@@ -77,6 +77,11 @@ export class SectionResolver {
         context.req.profileId = profileId
         return this._cmsService.getKidFin()
     }
+
+    @Query(() => [SectionItemType])
+    public getNewFin() {
+        return []
+    }
 }
 
 @Resolver(() => SectionItemType)
