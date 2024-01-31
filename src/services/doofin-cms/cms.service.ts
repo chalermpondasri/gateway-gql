@@ -6,7 +6,6 @@ import {
     UnauthorizedException,
 } from '@nestjs/common'
 import {
-    catchError,
     concatMap,
     from,
     iif,
