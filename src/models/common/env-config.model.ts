@@ -57,7 +57,10 @@ export class EnvironmentConfig {
     public declare readonly BYTE_ARK_VIDEO_SECRET_JWT: string
 
     @IsString()
-    public declare readonly SECRET_ENCRYPT_KEY_VIDEO: string
+    public declare readonly SECRET_ENCRYPT_KEY_VIDEO_DB: string
+
+    @IsString()
+    public declare readonly SECRET_ENCRYPT_KEY_VIDEO_ENCODE: string
 
     @IsString()
     public declare readonly BYTE_ARK_SIGN_URL_ACCESS: string
