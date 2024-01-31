@@ -6,6 +6,7 @@ import {
     UnauthorizedException,
 } from '@nestjs/common'
 import {
+    catchError,
     concatMap,
     from,
     iif,
@@ -62,6 +63,7 @@ import {
 import { RequestContext } from '@/providers/request-context.provider'
 import { LocalizedLabelType } from '@/types/objects/label.type'
 import { IAuthRepository } from '@/repositories/auth'
+import { ContentRating, ContentRatingValidation } from '@/types/enums'
 
 @Injectable()
 export class CmsService {
@@ -75,6 +77,8 @@ export class CmsService {
         private readonly _requestContext: RequestContext,
         @Inject(ProviderName.AUTH_REPOSITORY)
         private readonly _authRepository: IAuthRepository,
+        @Inject(ProviderName.CONTENT_RATING_VALIDATION)
+        private readonly _ratingValidation: ContentRatingValidation
     ) {
         this._logger = new Logger(this.constructor.name)
     }
@@ -454,6 +458,25 @@ export class CmsService {
             { captions: [], audio: [], totalEp: 0 }
         );
         return result;
+    }
+
+    public getNewFin(){
+        const lang = this._requestContext.languages[0].code ?? 'en'
+        const currentProfileId = this._requestContext.profileId
+        return of(currentProfileId).pipe(
+            mergeMap(pfId=> {
+                if(!pfId) return of<Array<ContentRating>>([])
+                return this._authRepository.getProfileById(pfId).pipe(
+                    map(pfDetail=>{
+                        return this._ratingValidation.getValue(pfDetail.contentRating as ContentRating)
+                    }),
+                )
+            }),
+            mergeMap((ratings)=> this._cmsRepository.getLatestContent(ratings)),
+            concatMap(res=> from(res.data as Array<BaseResponse<MediaContentDetailResponse>>)),
+            map((data)=> this._toSectionItemType(data,lang)),
+            toArray()
+        )
     }
 
 }

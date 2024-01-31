@@ -80,7 +80,7 @@ export class SectionResolver {
 
     @Query(() => [SectionItemType])
     public getNewFin() {
-        return []
+        return this._cmsService.getNewFin()
     }
 }
 

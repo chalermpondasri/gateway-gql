@@ -34,6 +34,7 @@ import {
 } from 'lodash'
 import { Cache } from 'cache-manager'
 import { NotFoundException } from '@nestjs/common'
+import { ContentRating } from '@/types/enums'
 
 export class CmsRepository implements ICmsRepository {
     public constructor(
@@ -160,13 +161,13 @@ export class CmsRepository implements ICmsRepository {
     }
 
     public getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
-        const queryString = querystring.encode({populate: this._mediaContentPupulate})
+        const queryString = querystring.encode({populate: this._mediaContentPopulate})
         return from(this._axiosInstance.get(`/media-contents/${id}/?${queryString}`)).pipe(
             map(res=> plainToClass(CmsDataResponse<MediaContentDetailResponse>, res.data))
         )
     }
 
-    private readonly _mediaContentPupulate = [
+    private readonly _mediaContentPopulate = [
         'title',
         'subtitle',
         'trailers',
@@ -186,7 +187,7 @@ export class CmsRepository implements ICmsRepository {
     ]
 
     public getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
-        const queryString = querystring.encode({populate: this._mediaContentPupulate})
+        const queryString = querystring.encode({populate: this._mediaContentPopulate})
         const promise = this._axiosInstance.get(`/media-contents?filters[slug][$eq]=${slug}&${queryString}`)
         return from(promise).pipe(
             map(res => {   
@@ -210,7 +211,7 @@ export class CmsRepository implements ICmsRepository {
             },
             { count: 0, filter: "" }
         );
-        const queryString = querystring.encode({ populate: this._mediaContentPupulate });
+        const queryString = querystring.encode({ populate: this._mediaContentPopulate });
         const promise = this._axiosInstance.get(`/media-contents?${filter}${queryString}`);
         return from(promise).pipe(map((result) => result.data));
     }
@@ -233,6 +234,17 @@ export class CmsRepository implements ICmsRepository {
         const queryString = querystring.encode({ populate })
         return from(this._axiosInstance.get(`media-seasons?filters[mediaContent][id][$eq]=${mediaContentId}&${queryString}`)).pipe(
             map(res => res.data)
+        )
+    }
+
+    public getLatestContent(contentRatings: ContentRating[]) :Observable<CmsDataResponse<MediaContentDetailResponse>>{
+        const filters = contentRatings.reduce((a,c,i)=>{
+            a += `&filters[rating][value][$in][${i}]=${c}`
+            return a
+        },'')
+        const queryString = querystring.encode({populate: this._mediaContentPopulate, sort:'publishedAt:desc'})    
+        return from(this._axiosInstance.get(`/media-contents/?${queryString}${filters}`)).pipe(
+            map(res=> plainToClass(CmsDataResponse<MediaContentDetailResponse>, res.data)),
         )
     }
 }

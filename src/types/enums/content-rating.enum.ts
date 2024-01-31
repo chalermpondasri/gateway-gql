@@ -48,4 +48,8 @@ export class ContentRatingValidation {
     public isAllowed(reference: ContentRating, subject: ContentRating) {
         return this._validationTable.get(reference).some((v) => v === subject)
     }
+
+    public getValue(reference: ContentRating): ContentRating[] {
+        return this._validationTable.get(reference)
+    }
 }
