@@ -166,6 +166,11 @@ export class ProfileResolver {
             tap(res=> context.res.cookie('profileId', res.id))
         )
     }
+
+    @Query(() => [ MyListType ])
+    public getMyFin(){
+        return this._authService.getMyList()
+    }
     
 }
 

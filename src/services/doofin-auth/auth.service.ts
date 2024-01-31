@@ -60,6 +60,7 @@ import {
 } from 'class-transformer'
 import { TokenType } from '@/types/objects/token.type'
 import { IByteArkRepository } from '@/repositories/byte-ark/repository.interface'
+import { RequestContext } from '@/providers/request-context.provider'
 
 @Injectable()
 export class AuthService {
@@ -69,6 +70,8 @@ export class AuthService {
         private readonly _authRepository: IAuthRepository,
         @Inject(ProviderName.BYTE_ARK_REPOSITORY)
         private readonly _byteArkRepository: IByteArkRepository,
+        @Inject(ProviderName.REQUEST_CONTEXT)
+        private readonly _reqCtxt: RequestContext,
     ) {
     }
 
@@ -304,8 +307,9 @@ export class AuthService {
         )
     }
 
-    public getMyList(profileId: string): Observable<MyListType[]>{ 
-        return this._authRepository.getMyList(profileId).pipe(
+    public getMyList(profileId?: string): Observable<MyListType[]>{ 
+        const currentProfileId = !!profileId ? profileId : this._reqCtxt.profileId
+        return this._authRepository.getMyList(currentProfileId).pipe(
             concatMap(res=> from(res)),
             map(res=>plainToInstance(MyListType, res)),
             toArray()
