@@ -20,7 +20,6 @@ import {
     LoggerService,
 } from '@nestjs/common'
 import { verify } from 'jsonwebtoken'
-import * as crypto from 'crypto'
 import {
     decryptionData,
     encryptionData,
@@ -33,6 +32,7 @@ import {
 } from 'class-transformer'
 import { BytearkPlayerType } from '@/types/objects/byteark-player.type'
 import { ByteArkV2UrlSigner } from 'byteark-sdk'
+import * as crypto from 'crypto'
 
 export class KmsByteArkService implements IKMSByteArkService {
     private readonly _logger: LoggerService
@@ -42,6 +42,7 @@ export class KmsByteArkService implements IKMSByteArkService {
         private readonly _authRepo: IAuthRepository,
     ) {
         this._logger = new Logger(KmsByteArkService.name)
+
     }
 
     private _validateSecretAndToken(secret: string, jwtToken: string, mode?: string): Promise<IByteArkTokenPayload> {
@@ -73,14 +74,18 @@ export class KmsByteArkService implements IKMSByteArkService {
                     map(hashData => {
                         if (isNil(hashData) || hashData.length === 0) {
                             this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is null -> save new `)
-                            const keyVideo = crypto.randomBytes(8).toString('hex')
-                            const enData = encryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, keyVideo)
+                            const hash = crypto.createHash('sha512')
+                            hash.push(payload.content_id)
+                            const hashedFileMeta = hash.digest()
+                            const encryption = crypto.pbkdf2Sync(hashedFileMeta, Buffer.from(this._config.SECRET_ENCRYPT_KEY_VIDEO_ENCODE), 12, 8, 'sha1');
+                            const keyVideo = encryption.toString('hex')
+                            const enData = encryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO_DB, keyVideo)
                             this._authRepo.newKMSVideoKey(payload.content_id, enData).subscribe()
                             // const deData = decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, enData)
                             return keyVideo
                         } else {
                             this._logger.log(`[KEY-EN][${payload.content_id}] Hash DATA is not null ${hashData}`)
-                            return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, hashData)
+                            return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO_DB, hashData)
                         }
                     }),
                 )
@@ -103,7 +108,7 @@ export class KmsByteArkService implements IKMSByteArkService {
                 if (isNil(hash)) {
                     throw new InternalServerErrorException('Hash not found')
                 }
-                return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO, hash)
+                return decryptionData(this._config.SECRET_ENCRYPT_KEY_VIDEO_DB, hash)
             }),
             catchError(err => {
                 this._logger.error(`[GET-KEY-PLAYER] : ${err}`)
