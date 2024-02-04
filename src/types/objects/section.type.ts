@@ -14,10 +14,13 @@ import { Transform } from 'class-transformer'
 @ObjectType()
 export class ExternalContentType {
     @Field()
+    @Transform(v => !!v.value ? v.value : '')
     public url: string
     @Field({nullable: true})
+    @Transform(v => !!v.value ? v.value : '')
     public mimeType?: string
     @Field()
+    @Transform(v => !!v.value ? v.value : '')
     public urlId: string
 }
 

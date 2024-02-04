@@ -45,24 +45,29 @@ export class CmsRepository implements ICmsRepository {
 
     public getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>> {
         const populate = [
+            'title',
+            'subtitle',
             'items',
+            'coverImage',
             'items.title',
             'items.subtitle',
             'items.trailers',
             'items.coverImage',
             'items.link',
-            'title',
-            'subtitle',
-            'coverImage',
-            'items.mediaEpisodes',
-            'items.mediaEpisodes.name',
             'items.mediaTags',
             'items.mediaTags.name',
             'items.rating',
-            'items.mediaEpisodes.coverImage',
             'items.mediaSeasons',
             'items.mediaSeasons.name',
-            'items.mediaSeasons.mediaEpisodes'
+            'items.mediaSeasons.mediaEpisodes',    
+            'items.mediaSeasons.mediaEpisodes.audio',
+            'items.mediaSeasons.mediaEpisodes.subtitle',
+            'items.mediaSeasons.mediaEpisodes.coverImage',
+            'items.mediaSeasons.mediaEpisodes.name',
+            'items.casts',
+            'items.casts.portrait',
+            'items.directors',
+            'items.directors.portrait',
         ]
         const queryString = querystring.encode({populate})
         const promise = this._axiosInstance.get(`/page-sections?${queryString}&sort=order:asc`)
@@ -181,9 +186,12 @@ export class CmsRepository implements ICmsRepository {
         'mediaTags.name',
         'rating',
         'mediaSeasons',       
+        'mediaSeasons.name',
         'mediaSeasons.mediaEpisodes',
         'mediaSeasons.mediaEpisodes.audio',
-        'mediaSeasons.mediaEpisodes.subtitle',
+        'mediaSeasons.mediaEpisodes.subtitle',  
+        'mediaSeasons.mediaEpisodes.coverImage',
+        'mediaSeasons.mediaEpisodes.name',
     ]
 
     public getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
@@ -243,7 +251,7 @@ export class CmsRepository implements ICmsRepository {
             return a
         },'')
         const queryString = querystring.encode({populate: this._mediaContentPopulate, sort:'publishedAt:desc'})    
-        return from(this._axiosInstance.get(`/media-contents/?${queryString}${filters}`)).pipe(
+        return from(this._axiosInstance.get(`/media-contents/?pagination[page]=1&pagination[pageSize]=10&${queryString}${filters}`)).pipe(
             map(res=> plainToClass(CmsDataResponse<MediaContentDetailResponse>, res.data)),
         )
     }

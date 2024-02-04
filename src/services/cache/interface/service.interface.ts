@@ -5,6 +5,7 @@ export enum CacheName {
     LOCALE_TH = 'LOCALE-TH',
     LOCALE_EN = 'LOCALE-EN',
     LOCALE_CN = 'LOCALE-CN',
+    NEW_FIN = 'new-fin',
 }
 
 export interface ICacheService {

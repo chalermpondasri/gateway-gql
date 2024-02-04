@@ -98,10 +98,10 @@ export class SectionItemResolver {
         return false
     }
 
-    @ResolveField('mediaContentDetail', () => MediaContentDetailType)
-    public mediaContentDetail(
-        @Parent() parent: SectionItemType,
-    ) {
-        return this._cmsService.getMediaContentById(parent.id.toString())
-    }
+    // @ResolveField('mediaContentDetail', () => MediaContentDetailType)
+    // public mediaContentDetail(
+    //     @Parent() parent: SectionItemType,
+    // ) {
+    //     return this._cmsService.getMediaContentById(parent.id.toString())
+    // }
 }
