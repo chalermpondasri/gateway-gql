@@ -21,7 +21,6 @@ import {
     BaseResponse,
     CmsImageContent,
     ContentRatingResponse,
-    ExternalContent,
     ICmsRepository,
     KeyValueResponse,
     MediaContentDetailResponse,
@@ -66,7 +65,6 @@ import { RequestContext } from '@/providers/request-context.provider'
 import { LocalizedLabelType } from '@/types/objects/label.type'
 import { IAuthRepository } from '@/repositories/auth'
 import { ContentRating, ContentRatingValidation } from '@/types/enums'
-import { ICacheService } from '../cache/interface/service.interface'
 
 @Injectable()
 export class CmsService {
