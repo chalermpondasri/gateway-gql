@@ -20,7 +20,7 @@ export class CategoryResolver {
     @Mutation(() => [CategoryType])
     public updateProfilePreferences(
         @Args({name: 'categoryIds', type: () => [String]}) ids: string[],
-        @Args('profileId') profileId: string,
+        @Args({name: 'profileId', nullable: true}) profileId: string,
     ) {
         return this._authService.updateUserPreferences(profileId, ids)
     }

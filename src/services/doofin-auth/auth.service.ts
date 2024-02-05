@@ -118,7 +118,7 @@ export class AuthService {
     }
 
     public updateUserPreferences(profileId: string, preferences: string[]): Observable<CategoryType[]> {
-        return this._authRepository.updateProfilePreferences(profileId, preferences).pipe(
+        return this._authRepository.updateProfilePreferences(this._getCurrentProfileId(profileId), preferences).pipe(
             mergeMap(result=>this.mapCategoryIdWithLabel(result.categories)),
         )
     }
@@ -332,7 +332,7 @@ export class AuthService {
     }
 
     public updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileType> {
-        return this._authRepository.updateProfile(profileId, input).pipe(
+        return this._authRepository.updateProfile(this._getCurrentProfileId(profileId), input).pipe(
             map(res=> plainToInstance(ProfileType, res))
         )
     }

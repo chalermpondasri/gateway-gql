@@ -131,7 +131,7 @@ export class ProfileResolver {
 
     @Mutation(()=> ProfileType)
     public updateProfile(
-        @Args('profileId') profileId: string,
+        @Args({name: 'profileId', nullable: true}) profileId: string,
         @Args(UpdateProfileInput.name) input: UpdateProfileInput
     ){
         return this._authService.updateProfile(profileId, input)
