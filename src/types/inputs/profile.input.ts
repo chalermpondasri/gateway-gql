@@ -21,7 +21,7 @@ export class UpdateProfilePinInput extends CreateProfilePinInput {
 
 @InputType()
 export class ValidateProfilePinInputType {
-    @Field()
+    @Field({nullable: true})
     public profileId: string
 
     @Field()

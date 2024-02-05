@@ -249,7 +249,7 @@ export class AuthService {
     }
 
     public validateProfilePin(profileId: string, pin: string): Observable<ValidateProfilePinType>{
-        return this._authRepository.validateProfilePin(profileId, pin).pipe(
+        return this._authRepository.validateProfilePin(this._getCurrentProfileId(profileId), pin).pipe(
             map(data => plainToInstance(ValidateProfilePinType, data))
         )
     }
@@ -308,8 +308,7 @@ export class AuthService {
     }
 
     public getMyList(profileId?: string): Observable<MyListType[]>{ 
-        const currentProfileId = !!profileId ? profileId : this._reqCtxt.profileId
-        return this._authRepository.getMyList(currentProfileId).pipe(
+        return this._authRepository.getMyList(this._getCurrentProfileId(profileId)).pipe(
             concatMap(res=> from(res)),
             map(res=>plainToInstance(MyListType, res)),
             toArray()
@@ -402,12 +401,16 @@ export class AuthService {
     }
 
     public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>{
-        input.profileId = !!input.profileId ? input.profileId : this._reqCtxt.profileId
+        input.profileId = this._getCurrentProfileId(input.profileId)
         return this._authRepository.updateContinueWatching(input)
     }
 
     public switchProfile(profileId: string):Observable<ProfileType>{
         return this.getProfileInformation(profileId)
+    }
+
+    private _getCurrentProfileId(profileIdInput?: string): string{
+        return !!profileIdInput ? profileIdInput : this._reqCtxt.profileId
     }
     
 }
