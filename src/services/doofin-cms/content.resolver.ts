@@ -79,7 +79,7 @@ export class MediaContentDetailResolver {
 
     @Query(()=> [MediaContentDetailType])
     public searchContentByTags(
-        @Args('profileId') profileId: string,
+        @Args({name: 'profileId', nullable: true}) profileId: string,
         @Args({name: 'tags', type: ()=> [String]}) tags: string[],
     ){
         return this._cmsService.searchContentByTag(profileId,tags)

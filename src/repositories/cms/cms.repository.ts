@@ -208,7 +208,7 @@ export class CmsRepository implements ICmsRepository {
         )
     }
 
-    public getMediaContentByTags(tags: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>> {
+    public getMediaContentByTags(tags: string[], contentRatings: Array<ContentRating> = []): Observable<CmsDataResponse<MediaContentDetailResponse>> { 
         const { filter } = tags.reduce(
             (a, c) => {
                 a.filter += `filters[$or][${a.count}][mediaTags][slug][$eq]=${c}&filters[$or][${
@@ -219,8 +219,12 @@ export class CmsRepository implements ICmsRepository {
             },
             { count: 0, filter: "" }
         );
+        const filterRating = contentRatings.reduce((a,c,i)=>{
+            a += `&filters[rating][value][$in][${i}]=${c}`
+            return a
+        },'')
         const queryString = querystring.encode({ populate: this._mediaContentPopulate });
-        const promise = this._axiosInstance.get(`/media-contents?${filter}${queryString}`);
+        const promise = this._axiosInstance.get(`/media-contents?${filter}${queryString}&${filterRating}`);
         return from(promise).pipe(map((result) => result.data));
     }
 
@@ -250,8 +254,13 @@ export class CmsRepository implements ICmsRepository {
             a += `&filters[rating][value][$in][${i}]=${c}`
             return a
         },'')
-        const queryString = querystring.encode({populate: this._mediaContentPopulate, sort:'publishedAt:desc'})    
-        return from(this._axiosInstance.get(`/media-contents/?pagination[page]=1&pagination[pageSize]=10&${queryString}${filters}`)).pipe(
+        const queryString = querystring.encode({
+            populate: this._mediaContentPopulate, 
+            sort:'publishedAt:desc',
+            'pagination[pageSize]': 10,
+            'pagination[page]': 1,
+        })    
+        return from(this._axiosInstance.get(`/media-contents/?${queryString}${filters}`)).pipe(
             map(res=> plainToClass(CmsDataResponse<MediaContentDetailResponse>, res.data)),
         )
     }
