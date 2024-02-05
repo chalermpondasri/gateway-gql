@@ -461,7 +461,7 @@ export class CmsService {
             }
             const newEp: MediaEpisodeType = {
                 audio: (get(ep, 'attributes.audio',[]) as KeyValueResponse[]).map(e=>e.key),
-                captions: (get(ep, 'attributes.captions',[]) as KeyValueResponse[]).map(e=>e.key),
+                captions: (get(ep, 'attributes.subtitle',[]) as KeyValueResponse[]).map(e=>e.key),
                 order: get(ep, 'attributes.ordering',0),
                 duration: get(ep, 'attributes.duration',0).toString(),
                 episodeName: get(ep,`attributes.name.${lang}`, get(ep, 'attributes.name.en', '')),
