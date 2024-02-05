@@ -90,6 +90,7 @@ export class MediaContentDetailResolver {
 
     @ResolveField()
     public seasons(@Parent() parent:MediaContentDetailType) {
+        if(!!parent.seasons) return parent.seasons
         return this._cmsService.getSeason(parent)
     }
 

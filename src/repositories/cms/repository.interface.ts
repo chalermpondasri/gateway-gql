@@ -18,6 +18,7 @@ import {
     IBaseRequest, 
 } from '@/repositories/cms/base.request'
 import { PromotionalResponse } from '@/repositories/cms/promotional.response'
+import { ContentRating } from '@/types/enums'
 
 export interface ICmsRepository {
     getTermsAndConditions(request: IBaseRequest): Observable<ListResponse<TermResponse>>
@@ -32,4 +33,5 @@ export interface ICmsRepository {
     getMediaContentByTags(tag: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getTags(): Observable<BaseResponse<TagResponse>[]>
     getSeason(mediaContentId: string): Observable<ListResponse<BaseResponse<MediaSeasonResponse>>>
+    getLatestContent(contentRatings: ContentRating[]) :Observable<CmsDataResponse<MediaContentDetailResponse>>
 }
