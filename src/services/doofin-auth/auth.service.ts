@@ -316,7 +316,7 @@ export class AuthService {
     }
 
     public addToMyList(profileId: string, programId: string): Observable<MyListType[]>{
-        return this._authRepository.addToMyList(profileId, programId).pipe(
+        return this._authRepository.addToMyList(this._getCurrentProfileId(profileId), programId).pipe(
             concatMap(res=> from(res)),
             map(res=>plainToInstance(MyListType, res)),
             toArray()
@@ -324,7 +324,7 @@ export class AuthService {
     }
 
     public removeFromMyList(profileId: string, programId: string): Observable<MyListType[]>{
-        return this._authRepository.removeFromMyList(profileId, programId).pipe(
+        return this._authRepository.removeFromMyList(this._getCurrentProfileId(profileId), programId).pipe(
             concatMap(res=> from(res)),
             map(res=>plainToInstance(MyListType, res)),
             toArray()
