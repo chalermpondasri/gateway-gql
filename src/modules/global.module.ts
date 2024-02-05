@@ -29,7 +29,7 @@ import { contentRatingValidationProvider } from '@/providers/content-rating-vali
         requestContextProvider,
         httpClientProvider,
         byteArkRepositoryProvider,
-        contentRatingValidationProvider
+        contentRatingValidationProvider,
     ],
     imports: [
         ConfigModule.forRoot(),

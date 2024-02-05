@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import {
-    MediaContentDetailType,
     SectionItemType,
     SectionType,
 } from '@/types/objects'
@@ -98,10 +97,4 @@ export class SectionItemResolver {
         return false
     }
 
-    // @ResolveField('mediaContentDetail', () => MediaContentDetailType)
-    // public mediaContentDetail(
-    //     @Parent() parent: SectionItemType,
-    // ) {
-    //     return this._cmsService.getMediaContentById(parent.id.toString())
-    // }
 }
