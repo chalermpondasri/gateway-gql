@@ -8,6 +8,4 @@ import {
 export class SearchInput extends PaginationInput{
     @Field()
     public query: string
-    @Field({nullable: true})
-    public profileId: string
 }

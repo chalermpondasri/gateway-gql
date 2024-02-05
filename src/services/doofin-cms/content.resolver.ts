@@ -68,7 +68,7 @@ export class MediaContentDetailResolver {
     public audios(
         @Parent() parent: MediaContentDetailType
     ){
-        if(!!parent.audios) return parent.audios
+        if(!!parent.audios) return parent.audios     
         return this._cmsService.getCaptionAudioOrTotalEp(parent, 'audio')
     }
 

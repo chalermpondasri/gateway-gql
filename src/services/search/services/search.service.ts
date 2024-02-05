@@ -13,9 +13,9 @@ import {
 } from 'rxjs'
 import { RequestContext } from '@/providers/request-context.provider'
 import { SearchInput } from '@/types/inputs/search.input'
-import { IAuthRepository } from '@/repositories/auth'
 import { get } from 'lodash'
-import { MediaContentDetailType } from '@/types/objects'
+import { ExternalContentType, MediaContentDetailType } from '@/types/objects'
+import { plainToInstance } from 'class-transformer'
 
 @Injectable()
 export class SearchService {
@@ -24,32 +24,31 @@ export class SearchService {
         private readonly _searchRepository: ISearchRepository,
         @Inject(ProviderName.REQUEST_CONTEXT)
         private readonly _requestContext: RequestContext,
-        @Inject(ProviderName.AUTH_REPOSITORY)
-        private readonly _authRepository: IAuthRepository,
     ) {
     }
 
     public searchContentByKeyword(query: SearchInput): Observable<MediaContentDetailType[]> {
         const lang = this._requestContext.languages[0].code
-        return this._searchRepository.findMediaContentWithKeyword(query, query.profileId).pipe(
+        return this._searchRepository.findMediaContentWithKeyword(query, this._requestContext.profileId).pipe(
             concatMap(data=> from(data.data)),
             map(content => {  
-                const link = get(content,'link')
+                const link = get(content,'link', {})
                 const media: MediaContentDetailType = {
                     id: content.id,
                     title: get(content, `title.${lang}`),
                     subtitle: get(content,`title.${lang}`),
                     contentRating: get(content,'rating', ''),
-                    trailers: get(content, 'trailers', []),
+                    trailers: get(content, 'trailers', []).map(e => plainToInstance(ExternalContentType, e)),
                     coverImage:  content.coverImage as any,
                     slug: get(content,'slug', ''),
                     tags: get(content, `mediaTags`, []).map(e=> ({id: get(e,'slug',''), label: get(e,`name.${lang}`,'')})),
                     shortVideos: [],
-                    link: !!link ? {urlId :get(link,'urlId',''), url:link?.url ?? '', mimeType: link?.mimeType ??'' } : null,
+                    link: plainToInstance(ExternalContentType, link),
                     casts:get(content,'casts'),
                     director:get(content,'directors'),
+                    //! move to season
                     episodes: [],
-                    //resolve
+                    //* resolve field
                     isSeries: false,
                     audios: null,
                     captions: null,
