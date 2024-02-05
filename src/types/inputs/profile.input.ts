@@ -75,7 +75,7 @@ export class UpdateProfileInput {
 
 @InputType()
 export class UpdateContinueWatchingInput{
-    @Field()
+    @Field({nullable: true})
     public profileId: string
     @Field()
     public mediaContentId: string

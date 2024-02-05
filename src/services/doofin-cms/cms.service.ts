@@ -304,7 +304,7 @@ export class CmsService {
             });
         }
         result.tags = tags; 
-        result.totalSeason = size(attributes.mediaSeasons)
+        result.totalSeason = size(attributes.mediaSeasons.data)
 
         const { captions , audio, totalEp, newSeasons} = this._countAudioSubtitleAndTotalEp(get(attributes,'mediaSeasons.data',[]) as BaseResponse<MediaSeasonResponse>[], resp.id, lang)
 
@@ -440,16 +440,16 @@ export class CmsService {
             concatMap(res=> from(res.data as Array<BaseResponse<MediaContentDetailResponse>>)),
             map((data)=> this._toSectionItemType(data,lang)),
             toArray(),
-            mergeMap(items=>{
-                return forkJoin(items.map(i => this._cmsRepository.getMediaContentById(i.id.toString()))).pipe(
-                    map(contents=>{
-                        contents.forEach((c, i)=> {
-                            items[i].mediaContentDetail = this._toMediaContentDetailType(<BaseResponse<MediaContentDetailResponse>>c.data, lang)
-                        })
-                        return items
-                    })
-                )
-            })
+            // mergeMap(items=>{
+            //     return forkJoin(items.map(i => this._cmsRepository.getMediaContentById(i.id.toString()))).pipe(
+            //         map(contents=>{
+            //             contents.forEach((c, i)=> {
+            //                 items[i].mediaContentDetail = this._toMediaContentDetailType(<BaseResponse<MediaContentDetailResponse>>c.data, lang)
+            //             })
+            //             return items
+            //         })
+            //     )
+            // })
         )
     }
 
@@ -482,6 +482,15 @@ export class CmsService {
             id: season.id.toString(),
         }
         return newSeason
+    }
+
+    public getContinueWatching(profileId: string, mediaContentId: string, epId: string): Observable<number>{
+        const currentProfileId = !!profileId ? profileId : this._requestContext.profileId
+        return this._authRepository.getContinueWatching(currentProfileId, mediaContentId).pipe(
+            map(watchingDetail=>{
+                return watchingDetail[epId] ?? 0
+            })
+        )
     }
 
 }

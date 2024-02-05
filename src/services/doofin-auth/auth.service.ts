@@ -402,6 +402,7 @@ export class AuthService {
     }
 
     public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>{
+        input.profileId = !!input.profileId ? input.profileId : this._reqCtxt.profileId
         return this._authRepository.updateContinueWatching(input)
     }
 
