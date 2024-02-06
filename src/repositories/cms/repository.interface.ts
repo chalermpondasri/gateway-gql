@@ -30,7 +30,7 @@ export interface ICmsRepository {
     getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>>
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
-    getMediaContentByTags(tag: string[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
+    getMediaContentByTags(tag: string[], contentRatings?: ContentRating[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getTags(): Observable<BaseResponse<TagResponse>[]>
     getSeason(mediaContentId: string): Observable<ListResponse<BaseResponse<MediaSeasonResponse>>>
     getLatestContent(contentRatings: ContentRating[]) :Observable<CmsDataResponse<MediaContentDetailResponse>>

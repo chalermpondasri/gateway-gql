@@ -118,7 +118,7 @@ export class AuthService {
     }
 
     public updateUserPreferences(profileId: string, preferences: string[]): Observable<CategoryType[]> {
-        return this._authRepository.updateProfilePreferences(profileId, preferences).pipe(
+        return this._authRepository.updateProfilePreferences(this._getCurrentProfileId(profileId), preferences).pipe(
             mergeMap(result=>this.mapCategoryIdWithLabel(result.categories)),
         )
     }
@@ -249,7 +249,7 @@ export class AuthService {
     }
 
     public validateProfilePin(profileId: string, pin: string): Observable<ValidateProfilePinType>{
-        return this._authRepository.validateProfilePin(profileId, pin).pipe(
+        return this._authRepository.validateProfilePin(this._getCurrentProfileId(profileId), pin).pipe(
             map(data => plainToInstance(ValidateProfilePinType, data))
         )
     }
@@ -308,8 +308,7 @@ export class AuthService {
     }
 
     public getMyList(profileId?: string): Observable<MyListType[]>{ 
-        const currentProfileId = !!profileId ? profileId : this._reqCtxt.profileId
-        return this._authRepository.getMyList(currentProfileId).pipe(
+        return this._authRepository.getMyList(this._getCurrentProfileId(profileId)).pipe(
             concatMap(res=> from(res)),
             map(res=>plainToInstance(MyListType, res)),
             toArray()
@@ -317,7 +316,7 @@ export class AuthService {
     }
 
     public addToMyList(profileId: string, programId: string): Observable<MyListType[]>{
-        return this._authRepository.addToMyList(profileId, programId).pipe(
+        return this._authRepository.addToMyList(this._getCurrentProfileId(profileId), programId).pipe(
             concatMap(res=> from(res)),
             map(res=>plainToInstance(MyListType, res)),
             toArray()
@@ -325,7 +324,7 @@ export class AuthService {
     }
 
     public removeFromMyList(profileId: string, programId: string): Observable<MyListType[]>{
-        return this._authRepository.removeFromMyList(profileId, programId).pipe(
+        return this._authRepository.removeFromMyList(this._getCurrentProfileId(profileId), programId).pipe(
             concatMap(res=> from(res)),
             map(res=>plainToInstance(MyListType, res)),
             toArray()
@@ -333,7 +332,7 @@ export class AuthService {
     }
 
     public updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileType> {
-        return this._authRepository.updateProfile(profileId, input).pipe(
+        return this._authRepository.updateProfile(this._getCurrentProfileId(profileId), input).pipe(
             map(res=> plainToInstance(ProfileType, res))
         )
     }
@@ -402,11 +401,16 @@ export class AuthService {
     }
 
     public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>{
+        input.profileId = this._getCurrentProfileId(input.profileId)
         return this._authRepository.updateContinueWatching(input)
     }
 
     public switchProfile(profileId: string):Observable<ProfileType>{
         return this.getProfileInformation(profileId)
+    }
+
+    private _getCurrentProfileId(profileIdInput?: string): string{
+        return !!profileIdInput ? profileIdInput : this._reqCtxt.profileId
     }
     
 }

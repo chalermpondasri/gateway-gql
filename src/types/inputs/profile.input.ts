@@ -21,7 +21,7 @@ export class UpdateProfilePinInput extends CreateProfilePinInput {
 
 @InputType()
 export class ValidateProfilePinInputType {
-    @Field()
+    @Field({nullable: true})
     public profileId: string
 
     @Field()
@@ -75,7 +75,7 @@ export class UpdateProfileInput {
 
 @InputType()
 export class UpdateContinueWatchingInput{
-    @Field()
+    @Field({nullable: true})
     public profileId: string
     @Field()
     public mediaContentId: string

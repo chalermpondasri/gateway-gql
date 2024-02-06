@@ -115,7 +115,7 @@ export class ProfileResolver {
 
     @Mutation(() => [MyListType])
     public addToMyList(
-        @Args('profileId') profileId: string,
+        @Args({name: 'profileId', nullable: true}) profileId: string,
         @Args('programId') programId: string,
     ){
         return this._authService.addToMyList(profileId, programId)
@@ -123,7 +123,7 @@ export class ProfileResolver {
 
     @Mutation(() => [MyListType])
     public removeFromMyList(
-        @Args('profileId') profileId: string,
+        @Args({name: 'profileId', nullable: true}) profileId: string,
         @Args('programId') programId: string,
     ){
         return this._authService.removeFromMyList(profileId, programId)
@@ -131,7 +131,7 @@ export class ProfileResolver {
 
     @Mutation(()=> ProfileType)
     public updateProfile(
-        @Args('profileId') profileId: string,
+        @Args({name: 'profileId', nullable: true}) profileId: string,
         @Args(UpdateProfileInput.name) input: UpdateProfileInput
     ){
         return this._authService.updateProfile(profileId, input)

@@ -12,9 +12,6 @@ import {
 } from '@/types/objects'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import { Inject } from '@nestjs/common'
-import { ProviderName } from '@/constants/provider-name.const'
-import { IAuthRepository } from '@/repositories/auth'
-import { map } from 'rxjs'
 import { SearchInput } from '@/types/inputs/search.input'
 import { SearchService } from '../search/services/search.service'
 @Resolver(() => MediaContentDetailType)
@@ -71,7 +68,7 @@ export class MediaContentDetailResolver {
     public audios(
         @Parent() parent: MediaContentDetailType
     ){
-        if(!!parent.audios) return parent.audios
+        if(!!parent.audios) return parent.audios     
         return this._cmsService.getCaptionAudioOrTotalEp(parent, 'audio')
     }
 
@@ -82,7 +79,7 @@ export class MediaContentDetailResolver {
 
     @Query(()=> [MediaContentDetailType])
     public searchContentByTags(
-        @Args('profileId') profileId: string,
+        @Args({name: 'profileId', nullable: true}) profileId: string,
         @Args({name: 'tags', type: ()=> [String]}) tags: string[],
     ){
         return this._cmsService.searchContentByTag(profileId,tags)
@@ -99,15 +96,15 @@ export class MediaContentDetailResolver {
 @Resolver(() => MediaEpisodeType)
 export class MediaEpisodeResolver {
     public constructor(
-        @Inject(ProviderName.AUTH_REPOSITORY)
-        private readonly _authRepository: IAuthRepository,
+        @Inject(CmsService)
+        private readonly _cmsService: CmsService,
     ){}
     @ResolveField("continueWatchingAt", ()=> Number)
     public continueWatchingAt(@Parent() parent: MediaEpisodeType, @Context() context: any){
-         return this._authRepository.getContinueWatching(context.req.profileId, parent.mediaContentId.toString()).pipe(
-            map(watchingDetail=>{
-                return watchingDetail[parent.id.toString()] ?? 0
-            })
-         )
+         return this._cmsService.getContinueWatching(
+            context.req.profileId, 
+            parent.mediaContentId.toString(), 
+            parent.id.toString()
+        )
     }
 }

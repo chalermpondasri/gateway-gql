@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common'
 import {
     concatMap,
-    forkJoin,
     from,
     iif,
     map,
@@ -304,7 +303,7 @@ export class CmsService {
             });
         }
         result.tags = tags; 
-        result.totalSeason = size(attributes.mediaSeasons)
+        result.totalSeason = size(attributes.mediaSeasons.data)
 
         const { captions , audio, totalEp, newSeasons} = this._countAudioSubtitleAndTotalEp(get(attributes,'mediaSeasons.data',[]) as BaseResponse<MediaSeasonResponse>[], resp.id, lang)
 
@@ -374,8 +373,8 @@ export class CmsService {
 
     public searchContentByTag(profileId: string, tags?: string[]) {
         const lang = this._requestContext.languages[0].code ?? 'en'
-        return this._authRepository.getProfileById(profileId).pipe(
-            mergeMap((profile)=> this._cmsRepository.getMediaContentByTags(tags)),
+        return this._getCurrentRating(profileId).pipe(
+            mergeMap((ratings)=> this._cmsRepository.getMediaContentByTags(tags, ratings)),
             map(res=> (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas)=> from(datas)),
             map((res)=>this._toMediaContentDetailType(res, lang)),
@@ -426,30 +425,11 @@ export class CmsService {
 
     public getNewFin(){
         const lang = this._requestContext.languages[0].code ?? 'en'
-        const currentProfileId = this._requestContext.profileId
-        return of(currentProfileId).pipe(
-            mergeMap(pfId=> {
-                if(!pfId) return of<Array<ContentRating>>([])
-                return this._authRepository.getProfileById(pfId).pipe(
-                    map(pfDetail=>{
-                        return this._ratingValidation.getValue(pfDetail.contentRating as ContentRating)
-                    }),
-                )
-            }),
+        return this._getCurrentRating().pipe( 
             mergeMap((ratings)=> this._cmsRepository.getLatestContent(ratings)),
             concatMap(res=> from(res.data as Array<BaseResponse<MediaContentDetailResponse>>)),
             map((data)=> this._toSectionItemType(data,lang)),
             toArray(),
-            mergeMap(items=>{
-                return forkJoin(items.map(i => this._cmsRepository.getMediaContentById(i.id.toString()))).pipe(
-                    map(contents=>{
-                        contents.forEach((c, i)=> {
-                            items[i].mediaContentDetail = this._toMediaContentDetailType(<BaseResponse<MediaContentDetailResponse>>c.data, lang)
-                        })
-                        return items
-                    })
-                )
-            })
         )
     }
 
@@ -482,6 +462,32 @@ export class CmsService {
             id: season.id.toString(),
         }
         return newSeason
+    }
+
+    public getContinueWatching(profileId: string, mediaContentId: string, epId: string): Observable<number>{
+        const currentProfileId = !!profileId ? profileId : this._requestContext.profileId
+        return this._authRepository.getContinueWatching(currentProfileId, mediaContentId).pipe(
+            map(watchingDetail=>{
+                return watchingDetail[epId] ?? 0
+            })
+        )
+    }
+
+    private _getCurrentProfileId(profileIdInput?: string): string{
+        return !!profileIdInput ? profileIdInput : this._requestContext.profileId
+    }
+
+    private _getCurrentRating(profileId?: string): Observable<Array<ContentRating>>{
+        return of(this._getCurrentProfileId(profileId)).pipe(
+            mergeMap(pfId=> {
+                if(!pfId) return of<Array<ContentRating>>([])
+                return this._authRepository.getProfileById(pfId).pipe(
+                    map(pfDetail=>{
+                        return this._ratingValidation.getValue(pfDetail.contentRating as ContentRating)
+                    }),
+                )
+            }),
+        )
     }
 
 }
