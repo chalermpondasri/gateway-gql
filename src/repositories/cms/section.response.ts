@@ -15,8 +15,6 @@ export class ExternalContent {
     public id: number
     public url: string
     public mimeType?: string
-    public urlId: string
-
 }
 
 export class SectionResponse {

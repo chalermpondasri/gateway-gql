@@ -448,6 +448,7 @@ export class CmsService {
                 coverImage: img,
                 id: ep.id,
                 mediaContentId: mediaContentId,
+                videoId: get(ep, 'attributes.videoId', ''),
                 //* resolve field
                 continueWatchingAt: 0,
             }
