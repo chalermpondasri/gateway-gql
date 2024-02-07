@@ -13,4 +13,5 @@ export class MediaEpisodeResponse {
     public coverImage: CmsDataResponse<CmsImageContent>
     public audio: KeyValueResponse[]
     public subtitle: KeyValueResponse[]
+    public videoId: string
 }

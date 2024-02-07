@@ -19,9 +19,6 @@ export class ExternalContentType {
     @Field({nullable: true})
     @Transform(v => !!v.value ? v.value : '')
     public mimeType?: string
-    @Field()
-    @Transform(v => !!v.value ? v.value : '')
-    public urlId: string
 }
 
 @ObjectType()
@@ -51,6 +48,8 @@ export class MediaEpisodeType extends BaseEpisodeType {
     public captions: string[]
 
     public mediaContentId?: number
+    @Field(() => String)
+    public videoId: string
 }
 
 @ObjectType()
