@@ -59,13 +59,13 @@ export class CmsImageFormatDetailType {
 
 @ObjectType()
 export class CmsImageFormatType {
-    @Field(() => CmsImageFormatDetailType)
+    @Field(() => CmsImageFormatDetailType, { nullable: true })
     public large: CmsImageFormatDetailType;
-    @Field(() => CmsImageFormatDetailType)
+    @Field(() => CmsImageFormatDetailType, { nullable: true })
     public small: CmsImageFormatDetailType;
-    @Field(() => CmsImageFormatDetailType)
+    @Field(() => CmsImageFormatDetailType, { nullable: true })
     public medium: CmsImageFormatDetailType;
-    @Field(() => CmsImageFormatDetailType)
+    @Field(() => CmsImageFormatDetailType, { nullable: true })
     public thumbnail: CmsImageFormatDetailType;
 }
 
