@@ -2,110 +2,110 @@ import { Field, ID, ObjectType } from "@nestjs/graphql";
 @ObjectType()
 export class CmsRoleType {
     @Field(() => ID)
-    public id: number;
+    public id: number
     @Field()
-    public name: string;
+    public name: string
     @Field()
-    public description: string;
+    public description: string
     @Field()
-    public type: string;
+    public type: string
 }
 @ObjectType()
 export class CmsUserType {
     @Field(() => ID)
-    public id: number;
+    public id: number
     @Field()
-    public username: string;
+    public username: string
     @Field()
-    public email: string;
+    public email: string
     @Field()
-    public provider: string;
+    public provider: string
 
     @Field(() => CmsRoleType)
-    public role: CmsRoleType;
+    public role: CmsRoleType
 
     @Field()
-    public jwt: string;
+    public jwt: string
 }
 
 @ObjectType({ isAbstract: true })
 export abstract class CmsDataType<T> {
-    public data: T;
+    public data: T
 }
 
 @ObjectType({ isAbstract: true })
 export abstract class IdType {
     @Field(() => ID)
-    public id: number;
+    public id: number
 }
 
 @ObjectType()
 export class CmsImageFormatDetailType {
     @Field()
-    public name: string;
+    public name: string
     @Field()
-    public width: number;
+    public width: number
     @Field()
-    public height: number;
+    public height: number
     @Field()
-    public hash: string;
+    public hash: string
     @Field()
-    public ext: string;
+    public ext: string
     @Field()
-    public mime: string;
+    public mime: string
     @Field()
-    public url: string;
+    public url: string
 }
 
 @ObjectType()
 export class CmsImageFormatType {
     @Field(() => CmsImageFormatDetailType, { nullable: true })
-    public large: CmsImageFormatDetailType;
+    public large: CmsImageFormatDetailType
     @Field(() => CmsImageFormatDetailType, { nullable: true })
-    public small: CmsImageFormatDetailType;
+    public small: CmsImageFormatDetailType
     @Field(() => CmsImageFormatDetailType, { nullable: true })
-    public medium: CmsImageFormatDetailType;
+    public medium: CmsImageFormatDetailType
     @Field(() => CmsImageFormatDetailType, { nullable: true })
-    public thumbnail: CmsImageFormatDetailType;
+    public thumbnail: CmsImageFormatDetailType
 }
 
 @ObjectType()
 export class CmsImageType extends IdType {
     @Field()
-    public name: string;
+    public name: string
     @Field()
-    public width: number;
+    public width: number
     @Field()
-    public height: number;
+    public height: number
     @Field()
-    public hash: string;
+    public hash: string
     @Field()
-    public ext: string;
+    public ext: string
     @Field()
-    public mime: string;
+    public mime: string
     @Field()
-    public url: string;
+    public url: string
     @Field(() => CmsImageFormatType)
-    public formats: CmsImageFormatType;
+    public formats: CmsImageFormatType
 }
 
 @ObjectType()
 export class CmsPromotionalContentType extends IdType {
     @Field()
-    public title: string;
+    public title: string
     @Field()
-    public description: string;
+    public description: string
     @Field(() => CmsImageType)
-    public imageWeb: CmsImageType;
+    public imageWeb: CmsImageType
     @Field(() => CmsImageType)
-    public imageMobile: CmsImageType;
+    public imageMobile: CmsImageType
 }
 
 @ObjectType()
 export class AvatarType extends IdType {
     @Field(() => CmsImageType)
-    public resourcePath: CmsImageType;
+    public resourcePath: CmsImageType
 
     @Field()
-    public color: string;
+    public color: string
 }
