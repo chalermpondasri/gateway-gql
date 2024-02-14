@@ -328,7 +328,8 @@ export class CmsService {
         }
         item.trailers = get(mediaContent, 'attributes.trailers', []).map(t => plainToInstance(ExternalContentType, t))
         item.title = mediaContent?.attributes?.title[lang] ?? '';
-       
+        item.subtitle = mediaContent?.attributes?.subtitle[lang] ?? '';
+
         item.link = plainToInstance(ExternalContentType, get(mediaContent, 'attributes.link', {}))
         item.slug = mediaContent?.attributes?.slug ?? '';
 
@@ -425,7 +426,7 @@ export class CmsService {
 
     public getNewFin(){
         const lang = this._requestContext.languages[0].code ?? 'en'
-        return this._getCurrentRating().pipe( 
+        return this._getCurrentRating().pipe(
             mergeMap((ratings)=> this._cmsRepository.getLatestContent(ratings)),
             concatMap(res=> from(res.data as Array<BaseResponse<MediaContentDetailResponse>>)),
             map((data)=> this._toSectionItemType(data,lang)),
@@ -435,7 +436,7 @@ export class CmsService {
 
     private _seasonMapper(mediaContentId: number, season: BaseResponse<MediaSeasonResponse>, lang: string){
         const episodeMapper = (ep: BaseResponse<MediaEpisodeResponse>) => {
-            const img:CmsImageType = get(ep, 'attributes.coverImage.data.attributes',null) 
+            const img:CmsImageType = get(ep, 'attributes.coverImage.data.attributes',null)
             if(img){
                 img.id = get(ep, 'attributes.coverImage.data.id',0)
             }

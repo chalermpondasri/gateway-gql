@@ -57,6 +57,8 @@ export class MediaContentType extends IdType{
     @Field({nullable: true})
     public title: string
     @Field()
+    public subtitle: string
+    @Field()
     public contentRating: string
     @Field(() => [ExternalContentType])
     public shortVideos: ExternalContentType[]
@@ -90,8 +92,6 @@ export class PersonType extends IdType {
 
 @ObjectType()
 export class MediaContentDetailType extends MediaContentType {
-    @Field()
-    public subtitle: string
     @Field(() => [String])
     public captions: string[]
     @Field(() => [String])
