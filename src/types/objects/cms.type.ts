@@ -1,7 +1,7 @@
-import {
-    Field,
-    ID,
-    ObjectType,
+import { 
+    Field, 
+    ID, 
+    ObjectType, 
 } from '@nestjs/graphql'
 @ObjectType()
 export class CmsRoleType {
@@ -32,18 +32,20 @@ export class CmsUserType {
     public jwt: string
 }
 
-@ObjectType({isAbstract: true})
+@ObjectType({ isAbstract: true })
 export abstract class CmsDataType<T> {
     public data: T
 }
 
-@ObjectType({isAbstract: true})
+@ObjectType({ isAbstract: true })
 export abstract class IdType {
     @Field(() => ID)
     public id: number
 }
+
 @ObjectType()
-export class CmsImageType extends IdType {
+export class CmsImageFormatDetailType {
+    @Field()
     public name: string
     @Field()
     public width: number
@@ -60,20 +62,52 @@ export class CmsImageType extends IdType {
 }
 
 @ObjectType()
+export class CmsImageFormatType {
+    @Field(() => CmsImageFormatDetailType, { nullable: true })
+    public large: CmsImageFormatDetailType
+    @Field(() => CmsImageFormatDetailType, { nullable: true })
+    public small: CmsImageFormatDetailType
+    @Field(() => CmsImageFormatDetailType, { nullable: true })
+    public medium: CmsImageFormatDetailType
+    @Field(() => CmsImageFormatDetailType, { nullable: true })
+    public thumbnail: CmsImageFormatDetailType
+}
+
+@ObjectType()
+export class CmsImageType extends IdType {
+    @Field()
+    public name: string
+    @Field()
+    public width: number
+    @Field()
+    public height: number
+    @Field()
+    public hash: string
+    @Field()
+    public ext: string
+    @Field()
+    public mime: string
+    @Field()
+    public url: string
+    @Field(() => CmsImageFormatType)
+    public formats: CmsImageFormatType
+}
+
+@ObjectType()
 export class CmsPromotionalContentType extends IdType {
     @Field()
     public title: string
     @Field()
     public description: string
-    @Field( () => CmsImageType)
+    @Field(() => CmsImageType)
     public imageWeb: CmsImageType
-    @Field( () => CmsImageType)
+    @Field(() => CmsImageType)
     public imageMobile: CmsImageType
 }
 
 @ObjectType()
 export class AvatarType extends IdType {
-    @Field(()=> CmsImageType)
+    @Field(() => CmsImageType)
     public resourcePath: CmsImageType
 
     @Field()
