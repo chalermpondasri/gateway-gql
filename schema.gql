@@ -71,7 +71,6 @@ type MediaSeasonType {
 type ExternalContentType {
   url: String!
   mimeType: String
-  urlId: String!
 }
 
 type EpisodeItemType {
@@ -92,6 +91,7 @@ type MediaEpisodeType {
   continueWatchingAt: Float!
   audio: [String!]!
   captions: [String!]!
+  videoId: String!
 }
 
 type PersonType {
@@ -103,6 +103,7 @@ type PersonType {
 type MediaContentDetailType {
   id: ID!
   title: String
+  subtitle: String!
   contentRating: String!
   shortVideos: [ExternalContentType!]!
   trailers: [ExternalContentType!]!
@@ -114,7 +115,6 @@ type MediaContentDetailType {
   totalEpisode: Float!
   totalSeason: Float!
   slug: String!
-  subtitle: String!
   captions: [String!]!
   audios: [String!]!
   seasons: [MediaSeasonType!]!
@@ -125,6 +125,7 @@ type MediaContentDetailType {
 type SectionItemType {
   id: ID!
   title: String
+  subtitle: String!
   contentRating: String!
   shortVideos: [ExternalContentType!]!
   trailers: [ExternalContentType!]!
@@ -396,9 +397,10 @@ type Query {
   getFAQs: [SubjectType!]!
   getMainPage(profileId: String): [SectionType!]!
   getKidFin(profileId: String): [SectionItemType!]!
+  getNewFin: [SectionItemType!]!
   getMediaContent(id: String!, profileId: String): MediaContentDetailType!
   searchContentByKeyword(SearchInput: SearchInput!): [MediaContentDetailType!]!
-  searchContentByTags(profileId: String!, tags: [String!]!): [MediaContentDetailType!]!
+  searchContentByTags(profileId: String, tags: [String!]!): [MediaContentDetailType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
@@ -408,6 +410,7 @@ type Query {
   getProfiles: [ProfileType!]!
   getProfileAndAccountInformation(profileId: String!): ProfileType!
   validateProfilePin(ValidateProfilePinInputType: ValidateProfilePinInputType!): ValidateProfilePinType!
+  getMyFin: [MyListType!]!
   requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
   getUser: UserType!
   findUserWhoForgotPassword(emailOrPhone: String!): UserWhoForgotPasswordType!
@@ -422,7 +425,6 @@ input SearchInput {
   limit: Float = 20
   page: Float = 1
   query: String!
-  profileId: String
 }
 
 input PaginationInput {
@@ -431,7 +433,7 @@ input PaginationInput {
 }
 
 input ValidateProfilePinInputType {
-  profileId: String!
+  profileId: String
   pin: String!
 }
 
@@ -447,7 +449,7 @@ type Mutation {
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   verifyEmail(VerifyEmailInput: VerifyEmailInput!): UserType!
-  updateProfilePreferences(categoryIds: [String!]!, profileId: String!): [CategoryType!]!
+  updateProfilePreferences(categoryIds: [String!]!, profileId: String): [CategoryType!]!
   createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
   deleteLocale(id: String!): LocaleType!
   patchLocale(id: String!, payload: UpdateLocaleLabelInput!): LocaleType!
@@ -456,11 +458,12 @@ type Mutation {
   createProfile(CreateProfileInput: CreateProfileInput!): ProfileType!
   requestTokenToResetPin(profileId: String!, password: String!): ProfileRequestResetPinType!
   verifyTokenToResetPin(VerifyResetProfilePin: VerifyResetProfilePin!): ProfileType!
-  addToMyList(profileId: String!, programId: String!): [MyListType!]!
-  removeFromMyList(profileId: String!, programId: String!): [MyListType!]!
-  updateProfile(profileId: String!, UpdateProfileInput: UpdateProfileInput!): ProfileType!
+  addToMyList(profileId: String, programId: String!): [MyListType!]!
+  removeFromMyList(profileId: String, programId: String!): [MyListType!]!
+  updateProfile(profileId: String, UpdateProfileInput: UpdateProfileInput!): ProfileType!
   requestTokenToResetPinByAdmin(profileId: String!, adminPin: String!): ProfileRequestResetPinType!
   updateContinueWatching(UpdateContinueWatchingInput: UpdateContinueWatchingInput!): String!
+  switchProfile(profileId: String!): ProfileType!
   verifyToChangePhoneNumber(UserVerifyOtpInput: UserVerifyOtpInput!): UserVerifyOtpType!
   changePassword(UserChangePasswordInput: UserChangePasswordInput!): UserVerifyOtpType!
   requestToChangeEmail(newEmail: String!): UserRequestEmailType!
@@ -568,7 +571,7 @@ enum ContentRating {
 }
 
 input UpdateContinueWatchingInput {
-  profileId: String!
+  profileId: String
   mediaContentId: String!
   mediaEpisodeId: String!
   watchingAt: Float!
