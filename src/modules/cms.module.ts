@@ -12,6 +12,8 @@ import {
 import { MediaContentDetailResolver, MediaEpisodeResolver } from '@/services/doofin-cms/content.resolver'
 import { authRepositoryProvider } from '@/providers/auth.provider'
 import { SearchModule } from './search.module'
+import { PresetSearchResolver } from '@/services/doofin-cms/preset-search.resolver'
+import { CacheRedisModule } from '@/modules/cache-redis.module'
 
 @Module({
     providers: [
@@ -26,8 +28,9 @@ import { SearchModule } from './search.module'
         MediaContentDetailResolver,
         authRepositoryProvider,
         MediaEpisodeResolver,
+        PresetSearchResolver,
     ],
     exports: [ CmsService ],
-    imports: [ SearchModule ],
+    imports: [ SearchModule, CacheRedisModule ],
 })
 export class CmsModule {}

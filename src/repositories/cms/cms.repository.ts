@@ -9,6 +9,7 @@ import {
     LoginResponse,
     MediaContentDetailResponse,
     MediaSeasonResponse,
+    PredefinedSearchResponse,
     PromotionalResponse,
     SectionResponse,
     TagResponse,
@@ -39,8 +40,27 @@ import { ContentRating } from '@/types/enums'
 export class CmsRepository implements ICmsRepository {
     public constructor(
         private readonly _axiosInstance: AxiosInstance,
-        private readonly _cacheManager: Cache
+        private readonly _cacheManager: Cache,
     ) {
+    }
+
+    public getPredefinedSearches(): Observable<ListResponse<BaseResponse<PredefinedSearchResponse>>> {
+        const populate = [
+            'title',
+            'coverImage',
+            'link',
+            'includeTags',
+            'includeTags.name',
+            'excludeTags',
+            'excludeTags.name',
+        ]
+        const queryString = querystring.encode({populate})
+        const promise = this._axiosInstance.get(`/predefined-searches?${queryString}&sort=order:asc`)
+
+        return from(promise).pipe(
+            map(result => result.data)
+        )
+
     }
 
     public getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>> {
@@ -208,7 +228,7 @@ export class CmsRepository implements ICmsRepository {
         )
     }
 
-    public getMediaContentByTags(tags: string[], contentRatings: Array<ContentRating> = []): Observable<CmsDataResponse<MediaContentDetailResponse>> { 
+    public getMediaContentByTags(tags: string[], contentRatings: Array<ContentRating> = []): Observable<ListResponse<BaseResponse<MediaContentDetailResponse>>>{
         const { filter } = tags.reduce(
             (a, c) => {
                 a.filter += `filters[$or][${a.count}][mediaTags][slug][$eq]=${c}&filters[$or][${
@@ -224,7 +244,7 @@ export class CmsRepository implements ICmsRepository {
             return a
         },'')
         const queryString = querystring.encode({ populate: this._mediaContentPopulate });
-        const promise = this._axiosInstance.get(`/media-contents?${filter}${queryString}&${filterRating}`);
+        const promise = this._axiosInstance.get(`/media-contents?${filter}${queryString}&${filterRating}&sort=id:desc`);
         return from(promise).pipe(map((result) => result.data));
     }
 

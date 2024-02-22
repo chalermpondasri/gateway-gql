@@ -31,14 +31,33 @@ type CmsUserType {
   jwt: String!
 }
 
-type CmsImageType {
-  id: ID!
+type CmsImageFormatDetailType {
+  name: String!
   width: Float!
   height: Float!
   hash: String!
   ext: String!
   mime: String!
   url: String!
+}
+
+type CmsImageFormatType {
+  large: CmsImageFormatDetailType
+  small: CmsImageFormatDetailType
+  medium: CmsImageFormatDetailType
+  thumbnail: CmsImageFormatDetailType
+}
+
+type CmsImageType {
+  id: ID!
+  name: String!
+  width: Float!
+  height: Float!
+  hash: String!
+  ext: String!
+  mime: String!
+  url: String!
+  formats: CmsImageFormatType!
 }
 
 type CmsPromotionalContentType {
@@ -374,6 +393,18 @@ type ReadAllNotificationType {
   status: Boolean!
 }
 
+type PresetSearchType {
+  id: Float!
+  order: Float!
+  title: String!
+  expanded: Boolean!
+  url: String!
+  coverImage: CmsImageType!
+  includeTags: [LocalizedLabelType!]!
+  excludeTags: [LocalizedLabelType!]!
+  contents: [MediaContentDetailType!]!
+}
+
 type SubjectType {
   id: ID!
   subject: String!
@@ -401,6 +432,7 @@ type Query {
   getMediaContent(id: String!, profileId: String): MediaContentDetailType!
   searchContentByKeyword(SearchInput: SearchInput!): [MediaContentDetailType!]!
   searchContentByTags(profileId: String, tags: [String!]!): [MediaContentDetailType!]!
+  presetSearches(presetId: Float): [PresetSearchType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
