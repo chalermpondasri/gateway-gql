@@ -7,6 +7,7 @@ import {
     LoginResponse,
     MediaContentDetailResponse,
     MediaSeasonResponse,
+    PredefinedSearchResponse,
     SectionResponse,
     TagResponse,
     TermResponse,
@@ -30,8 +31,9 @@ export interface ICmsRepository {
     getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>>
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
-    getMediaContentByTags(tag: string[], contentRatings?: ContentRating[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
+    getMediaContentByTags(tag: string[], contentRatings?: ContentRating[]): Observable<ListResponse<BaseResponse<MediaContentDetailResponse>>>
     getTags(): Observable<BaseResponse<TagResponse>[]>
     getSeason(mediaContentId: string): Observable<ListResponse<BaseResponse<MediaSeasonResponse>>>
     getLatestContent(contentRatings: ContentRating[]) :Observable<CmsDataResponse<MediaContentDetailResponse>>
+    getPredefinedSearches(): Observable<ListResponse<BaseResponse<PredefinedSearchResponse>>>
 }
