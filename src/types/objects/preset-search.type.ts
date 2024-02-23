@@ -21,7 +21,7 @@ export class PresetSearchType {
     @Field()
     public expanded: boolean
 
-    @Field()
+    @Field({nullable: true})
     public url: string
 
     @Field(() => CmsImageType)
