@@ -61,6 +61,8 @@ import {
 import { TokenType } from '@/types/objects/token.type'
 import { IByteArkRepository } from '@/repositories/byte-ark/repository.interface'
 import { RequestContext } from '@/providers/request-context.provider'
+import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
+import { UpdatePlaybackStatusRequest } from '@/repositories/playback/update-playback-status.request'
 
 @Injectable()
 export class AuthService {
@@ -71,7 +73,9 @@ export class AuthService {
         @Inject(ProviderName.BYTE_ARK_REPOSITORY)
         private readonly _byteArkRepository: IByteArkRepository,
         @Inject(ProviderName.REQUEST_CONTEXT)
-        private readonly _reqCtxt: RequestContext,
+        private readonly _reqCtx: RequestContext,
+        @Inject(ProviderName.PLAYBACK_REPOSITORY)
+        private readonly _playbackRepository: IPlaybackRepository,
     ) {
     }
 
@@ -401,8 +405,9 @@ export class AuthService {
     }
 
     public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>{
-        input.profileId = this._getCurrentProfileId(input.profileId)
-        return this._authRepository.updateContinueWatching(input)
+        const profileId = this._getCurrentProfileId(input.profileId)
+        const data: UpdatePlaybackStatusRequest = input
+        return this._playbackRepository.updatePlaybackStatus( profileId,data)
     }
 
     public switchProfile(profileId: string):Observable<ProfileType>{
@@ -410,7 +415,7 @@ export class AuthService {
     }
 
     private _getCurrentProfileId(profileIdInput?: string): string{
-        return !!profileIdInput ? profileIdInput : this._reqCtxt.profileId
+        return !!profileIdInput ? profileIdInput : this._reqCtx.profileId
     }
     
 }

@@ -14,6 +14,7 @@ import { authRepositoryProvider } from '@/providers/auth.provider'
 import { SearchModule } from './search.module'
 import { PresetSearchResolver } from '@/services/doofin-cms/preset-search.resolver'
 import { CacheRedisModule } from '@/modules/cache-redis.module'
+import { PlaybackModule } from '@/modules/playback.module'
 
 @Module({
     providers: [
@@ -31,6 +32,6 @@ import { CacheRedisModule } from '@/modules/cache-redis.module'
         PresetSearchResolver,
     ],
     exports: [ CmsService ],
-    imports: [ SearchModule, CacheRedisModule ],
+    imports: [ SearchModule, CacheRedisModule, PlaybackModule ],
 })
 export class CmsModule {}
