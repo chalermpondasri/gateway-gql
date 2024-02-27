@@ -63,7 +63,7 @@ export class CmsRepository implements ICmsRepository {
 
     }
 
-    public getMainPageSections(): Observable<ListResponse<BaseResponse<SectionResponse>>> {
+    public getMainPageSections(sectionId?: number): Observable<ListResponse<BaseResponse<SectionResponse>>> {
         const populate = [
             'title',
             'subtitle',
@@ -89,7 +89,10 @@ export class CmsRepository implements ICmsRepository {
             'items.directors',
             'items.directors.portrait',
         ]
-        const queryString = querystring.encode({populate})
+        let queryString = querystring.encode({populate})
+        if(!isNil(sectionId)) {
+            queryString += `&filters[id][$eq]=${sectionId}`
+        }
         const promise = this._axiosInstance.get(`/page-sections?${queryString}&sort=order:asc`)
         return from(promise).pipe(
             map(result => result.data)

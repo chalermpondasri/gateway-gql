@@ -204,11 +204,11 @@ export class CmsService {
         )
     }
 
-    public getMainPageSections(): Observable<SectionType[]> {
+    public getMainPageSections(sectionId?: number): Observable<SectionType[]> {
         const lang = this._requestContext.languages[0].code
-        return this._cmsRepository.getMainPageSections().pipe(
+        return this._cmsRepository.getMainPageSections(sectionId).pipe(
             concatMap(result => from(result.data)),
-            concatMap(sectionResponse => {
+            map(sectionResponse => {
                 const { attributes } = sectionResponse
                 const section = new SectionType()
                 section.id = sectionResponse?.id ?? 0
@@ -226,10 +226,10 @@ export class CmsService {
                 const rawSectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? [])
                 if (rawSectionItems.length === 0) {
                     section.sectionItems = []
-                    return of(section)
+                    return section
                 }
                 section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
-                return of(section)
+                return section
             }),
             toArray(),
         )
