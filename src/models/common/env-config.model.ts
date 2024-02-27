@@ -71,4 +71,7 @@ export class EnvironmentConfig {
     @IsString()
     public declare readonly BYTE_ARK_SIGN_URL_DOMAIN: string
 
+    @IsNotEmpty()
+    public declare readonly PLAYBACK_ENDPOINT: string
+
 }
