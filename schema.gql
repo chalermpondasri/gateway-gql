@@ -398,7 +398,7 @@ type PresetSearchType {
   order: Float!
   title: String!
   expanded: Boolean!
-  url: String!
+  url: String
   coverImage: CmsImageType!
   includeTags: [LocalizedLabelType!]!
   excludeTags: [LocalizedLabelType!]!
@@ -426,7 +426,7 @@ type Query {
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
-  getMainPage(profileId: String): [SectionType!]!
+  getMainPage(profileId: String, sectionId: Float): [SectionType!]!
   getKidFin(profileId: String): [SectionItemType!]!
   getNewFin: [SectionItemType!]!
   getMediaContent(id: String!, profileId: String): MediaContentDetailType!

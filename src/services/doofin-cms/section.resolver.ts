@@ -16,21 +16,8 @@ import {
     SectionItemType,
     SectionType,
 } from '@/types/objects'
-import {
-    mergeMap,
-    of,
-    tap,
-    map,
-} from 'rxjs'
-import {
-    isEmpty,
-    isNil,
-   
-} from 'lodash'
 import { ProviderName } from '@/constants/provider-name.const'
 import { CacheService } from '@/services/cache/cache.service'
-import { CacheName } from '@/services/cache/interface/service.interface'
-import { plainToInstance } from 'class-transformer'
 
 @Resolver(() => SectionType)
 export class SectionResolver {
@@ -40,39 +27,26 @@ export class SectionResolver {
         @Inject(CmsService)
         private readonly _cmsService: CmsService,
         @Inject(ProviderName.CACHE_SERVICE)
-        private readonly _cacheService: CacheService
+        private readonly _cacheService: CacheService,
     ) {
         this._logger = new Logger(SectionResolver.name)
     }
 
     @Query(() => [SectionType])
-    public getMainPage(@Args({name: 'profileId', nullable: true}) profileId: string, @Context() context: any) {
+    public getMainPage(
+        @Args({ name: 'profileId', nullable: true }) profileId: string,
+        @Args({name: 'sectionId', nullable: true}) sectionId: number,
+        @Context() context: any,
+
+        ) {
         context.req.profileId = profileId
-        return this._cacheService.getCache(CacheName.MAIN_PAGE).pipe(
-            mergeMap(resultCache => {
-                if(isNil(resultCache)) {
-                    return this._cmsService.getMainPageSections().pipe(
-                        tap(resp => {
-                            if(!isEmpty(resp)) {
-                                this._logger.debug(`NEW CACHE`)
-                                this._cacheService.setCache(CacheName.MAIN_PAGE, JSON.stringify(resp), 3600)
-                            }
-                        })
-                    )
-                }
-                this._logger.debug(`CACHE DATA`) 
-                return of(JSON.parse(resultCache as string)).pipe(
-                    map(datas=>{  
-                       return  plainToInstance(SectionType, datas as Array<object>)
-                    })
-                )
-            })
-        )
+
+        return this._cmsService.getMainPageSections(sectionId)
 
     }
 
     @Query(() => [SectionItemType])
-    public getKidFin(@Args({name: 'profileId', nullable: true}) profileId: string, @Context() context: any) {
+    public getKidFin(@Args({ name: 'profileId', nullable: true }) profileId: string, @Context() context: any) {
         context.req.profileId = profileId
         return this._cmsService.getKidFin()
     }
@@ -87,12 +61,13 @@ export class SectionResolver {
 export class SectionItemResolver {
     public constructor(
         @Inject(CmsService)
-        private readonly _cmsService: CmsService
+        private readonly _cmsService: CmsService,
     ) {
     }
+
     @ResolveField('recentlyPublished', () => Boolean)
     public recentlyPublished(
-        @Parent() parent: SectionItemType
+        @Parent() parent: SectionItemType,
     ) {
         return false
     }
