@@ -74,6 +74,7 @@ import {
     Locale,
 } from '@/types/enums'
 import { ICacheService } from '@/services/cache/interface/service.interface'
+import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
 
 @Injectable()
 export class CmsService {
@@ -91,6 +92,8 @@ export class CmsService {
         private readonly _ratingValidation: ContentRatingValidation,
         @Inject(ProviderName.CACHE_SERVICE)
         private readonly _cacheService: ICacheService,
+        @Inject(ProviderName.PLAYBACK_REPOSITORY)
+        private readonly _playbackRepository: IPlaybackRepository
     ) {
         this._logger = new Logger(this.constructor.name)
     }
@@ -550,7 +553,7 @@ export class CmsService {
 
     public getContinueWatching(profileId: string, mediaContentId: string, epId: string): Observable<number> {
         const currentProfileId = !!profileId ? profileId : this._requestContext.profileId
-        return this._authRepository.getContinueWatching(currentProfileId, mediaContentId).pipe(
+        return this._playbackRepository.getPlaybackStatus(currentProfileId, mediaContentId).pipe(
             map(watchingDetail => {
                 return watchingDetail[epId] ?? 0
             }),

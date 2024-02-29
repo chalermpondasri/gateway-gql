@@ -33,8 +33,7 @@ import { VerifyOtpResponse } from '@/repositories/auth/verify-otp.response'
 import { 
     CreateProfileInput,
     CreateProfilePinInput, 
-    UpdateContinueWatchingInput, 
-    UpdateProfileInput, 
+    UpdateProfileInput,
     UpdateProfilePinInput,
     UserChangePasswordInput,
     UserVerifyOtpInput,
@@ -83,8 +82,6 @@ export interface IAuthRepository {
     requestOtpToResetPassword(userId: string, sendVia: string): Observable<OtpChangePhoneResponse>
     verifyOtpToResetPassword( input: VerifyOtpInput ): Observable<{resetPasswordToken: string}>
     resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}>
-    getContinueWatching(profileId: string, mediaContentId: string): Observable<{ [episodeId: string]: number }>
-    updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>
     newKMSVideoKey(videoId: string, hash: string): Observable<boolean>
     getKMSVideoKey(videoId: string): Observable<string | null>
 }
