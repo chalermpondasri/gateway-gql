@@ -74,6 +74,15 @@ type AvatarType {
   color: String!
 }
 
+type CoinPackageType {
+  id: ID!
+  price: Float!
+  coinGain: Float!
+  coinBonusIndicator: Float
+  tier: Float!
+  tag: [String!]!
+}
+
 type LocalizedLabelType {
   label: String!
   id: String!
@@ -433,6 +442,7 @@ type Query {
   searchContentByKeyword(SearchInput: SearchInput!): [MediaContentDetailType!]!
   searchContentByTags(profileId: String, tags: [String!]!): [MediaContentDetailType!]!
   presetSearches(presetId: Float): [PresetSearchType!]!
+  getCoinPackages: [CoinPackageType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!

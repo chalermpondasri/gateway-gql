@@ -113,3 +113,18 @@ export class AvatarType extends IdType {
     @Field()
     public color: string
 }
+
+
+@ObjectType()
+export class CoinPackageType extends IdType {
+    @Field()
+    public price: number
+    @Field()
+    public coinGain: number
+    @Field({ nullable: true })
+    public coinBonusIndicator?: number
+    @Field()
+    public tier: number
+    @Field(() => [String])
+    public tag: string[]
+}
