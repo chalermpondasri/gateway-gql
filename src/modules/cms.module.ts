@@ -14,6 +14,7 @@ import { authRepositoryProvider } from '@/providers/auth.provider'
 import { SearchModule } from './search.module'
 import { PresetSearchResolver } from '@/services/doofin-cms/preset-search.resolver'
 import { CacheRedisModule } from '@/modules/cache-redis.module'
+import { CoinPackageResolver } from '@/services/doofin-cms/coin-package.resolver'
 
 @Module({
     providers: [
@@ -29,6 +30,7 @@ import { CacheRedisModule } from '@/modules/cache-redis.module'
         authRepositoryProvider,
         MediaEpisodeResolver,
         PresetSearchResolver,
+        CoinPackageResolver,
     ],
     exports: [ CmsService ],
     imports: [ SearchModule, CacheRedisModule ],

@@ -40,6 +40,7 @@ import {
     CmsPromotionalContentType,
     CmsRoleType,
     CmsUserType,
+    CoinPackageType,
     ExternalContentType,
     MediaContentDetailType,
     MediaEpisodeType,
@@ -554,6 +555,24 @@ export class CmsService {
                 return watchingDetail[epId] ?? 0
             }),
         )
+    }
+
+    public getCoinPackages(): Observable<CoinPackageType[]> {
+        return this._cmsRepository.getCoinPackages()
+            .pipe(
+                concatMap(response => from(response.data)),
+                map(data => {
+                    const coin = new CoinPackageType()
+                    coin.id = data.id
+                    coin.price = data.attributes.price
+                    coin.coinGain = data.attributes.coinGain
+                    coin.coinBonusIndicator = data.attributes.coinBonusIndicator
+                    coin.tier = data.attributes.tier
+                    coin.tag = data.attributes.tag.map( t => t.label)
+                    return coin
+                }),
+                toArray(),
+            )
     }
 
     private _getCurrentProfileId(profileIdInput?: string): string {

@@ -36,12 +36,28 @@ import {
 import { Cache } from 'cache-manager'
 import { NotFoundException } from '@nestjs/common'
 import { ContentRating } from '@/types/enums'
+import { CoinPackageResponse } from './coin-package.response'
 
 export class CmsRepository implements ICmsRepository {
     public constructor(
         private readonly _axiosInstance: AxiosInstance,
         private readonly _cacheManager: Cache,
     ) {
+    }
+
+    public getCoinPackages(): Observable<ListResponse<BaseResponse<CoinPackageResponse>>> {
+
+        const baseRequest = new BaseRequest()
+        baseRequest.sortMeta = { 'price': 'asc'}
+        baseRequest.populate = ['tag']
+
+        const queryString = baseRequest.build()
+
+        const promise = this._axiosInstance.get(`/coin-packages?${queryString}`)
+
+        return from(promise).pipe(
+            map(response => response.data),
+        )
     }
 
     public getPredefinedSearches(): Observable<ListResponse<BaseResponse<PredefinedSearchResponse>>> {
@@ -100,7 +116,7 @@ export class CmsRepository implements ICmsRepository {
     }
 
     public getTermsAndConditions(request: BaseRequest): Observable<ListResponse<TermResponse>> {
-        const queryString = querystring.encode(request.build())
+        const queryString = request.build()
         const promise = this._axiosInstance.get(`/terms-and-conditions?${queryString}`)
         return from(promise).pipe(
             map(result => {
@@ -144,7 +160,7 @@ export class CmsRepository implements ICmsRepository {
     }
 
     public getFaqs(request: BaseRequest): Observable<ListResponse<BaseResponse<FaqResponse>>> {
-        const queryString = querystring.encode({...request.build(),populate:"*"})
+        const queryString = request.build()
         const path = `/faqs?${queryString}`
         const findCache = this._cacheManager.get(path)
         return from(findCache).pipe(
