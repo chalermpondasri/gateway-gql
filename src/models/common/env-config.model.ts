@@ -73,5 +73,7 @@ export class EnvironmentConfig {
 
     @IsNotEmpty()
     public declare readonly PLAYBACK_ENDPOINT: string
+    @IsNotEmpty()
+    public declare readonly PAYMENT_ENDPOINT: string
 
 }

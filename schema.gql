@@ -528,6 +528,7 @@ type Mutation {
   revokeSession(sessionId: String!): DeviceSessionType!
   markAllNotiAsRead(profileId: String): ReadAllNotificationType!
   markNotiAsRead(notificationId: String!): NotificationType!
+  createPaymentTransactionToken: String!
 }
 
 input CreateUserInput {

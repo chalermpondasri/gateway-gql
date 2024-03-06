@@ -9,6 +9,7 @@ import { CmsModule } from '@/modules/cms.module'
 import { AuthModule } from '@/modules/auth.module'
 import { KmsModule } from '@/modules/kms.module'
 import { SearchModule } from '@/modules/search.module'
+import { PaymentModule } from '@/modules/payment.module'
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { SearchModule } from '@/modules/search.module'
         CmsModule,
         AuthModule,
         SearchModule,
+        PaymentModule,
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             autoSchemaFile: 'schema.gql',
@@ -33,7 +35,7 @@ import { SearchModule } from '@/modules/search.module'
                 })
             }
         }),
-        KmsModule
+        KmsModule,
     ],
 })
 export class AppModule {
