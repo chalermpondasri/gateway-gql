@@ -76,9 +76,9 @@ export class MediaContentType extends IdType{
     public isSeries: boolean
     @Field()
     public totalEpisode: number
-    @Field()
+    @Field({nullable: true})
     public totalSeason: number
-    @Field()
+    @Field({nullable: true})
     public totalDuration: number
     @Field()
     public slug: string

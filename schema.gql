@@ -141,7 +141,8 @@ type MediaContentDetailType {
   episodes: [EpisodeItemType!] @deprecated(reason: "move to season in mediaContentDetail")
   isSeries: Boolean!
   totalEpisode: Float!
-  totalSeason: Float!
+  totalSeason: Float
+  totalDuration: Float
   slug: String!
   captions: [String!]!
   audios: [String!]!
@@ -163,7 +164,8 @@ type SectionItemType {
   episodes: [EpisodeItemType!] @deprecated(reason: "move to season in mediaContentDetail")
   isSeries: Boolean!
   totalEpisode: Float!
-  totalSeason: Float!
+  totalSeason: Float
+  totalDuration: Float
   slug: String!
   recentlyPublished: Boolean!
   mediaContentDetail: MediaContentDetailType!
