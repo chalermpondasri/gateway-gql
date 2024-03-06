@@ -595,4 +595,7 @@ export class CmsService {
         )
     }
 
+    public getTotalDuration(media: MediaContentDetailType): Observable<number> {
+        return iif( () => media.tags.some(t => t.id === 'series'), of(null), of(Number(media.seasons[0].mediaEpisodes[0].duration)))
+    }
 }

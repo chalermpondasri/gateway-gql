@@ -18,9 +18,9 @@ export const encryptionData = (secret: string, data: string): string => {
 
 export const decryptionData = (secret: string, hash: string): string => {
     let enc = Buffer.from(hash, 'base64')
-    const iv = enc.slice(enc.length - 28, enc.length - 16)
-    const tag = enc.slice(enc.length - 16)
-    enc = enc.slice(0, enc.length - 28)
+    const iv = enc.subarray(enc.length - 28, enc.length - 16)
+    const tag = enc.subarray(enc.length - 16)
+    enc = enc.subarray(0, enc.length - 28)
     const decipher = crypto.createDecipheriv(ALGORITHM_CIPHER, Buffer.from(secret), iv)
     decipher.setAuthTag(tag)
     let str = decipher.update(enc, null, 'utf8')

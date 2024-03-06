@@ -79,6 +79,8 @@ export class MediaContentType extends IdType{
     @Field()
     public totalSeason: number
     @Field()
+    public totalDuration: number
+    @Field()
     public slug: string
 }
 
