@@ -55,6 +55,7 @@ export class SearchService {
                     seasons: null,
                     totalEpisode: null,
                     totalSeason: null,
+                    totalDuration: null,
                 }
                 return media
             }),

@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 import {
     concatMap,
+    EMPTY,
     filter,
     from,
     iif,
@@ -595,4 +596,16 @@ export class CmsService {
         )
     }
 
+    public getTotalDuration(media: MediaContentDetailType): Observable<number> {
+        return this.getMediaContentById(String(media.id)).pipe(
+            map(detail => {
+                if(this.isSeries(media.tags)) {
+                    return null
+                }
+
+                const duration =media.seasons[0]?.mediaEpisodes[0]?.duration
+                return !!duration ? Number(duration) : null
+            })
+        )
+    }
 }

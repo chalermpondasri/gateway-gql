@@ -56,6 +56,13 @@ export class MediaContentDetailResolver {
         return this._cmsService.getCaptionAudioOrTotalEp(parent, 'totalEp')
     }
 
+    @ResolveField('totalDuration')
+    public totalDuration(
+        @Parent() parent: MediaContentDetailType,
+    ) {
+        return this._cmsService.getTotalDuration(parent)
+    }
+
     @ResolveField('captions')
     public captions(
         @Parent() parent: MediaContentDetailType

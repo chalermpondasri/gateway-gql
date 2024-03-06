@@ -207,7 +207,7 @@ export class CmsRepository implements ICmsRepository {
     public getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
         const queryString = querystring.encode({populate: this._mediaContentPopulate})
         return from(this._axiosInstance.get(`/media-contents/${id}/?${queryString}`)).pipe(
-            map(res=> plainToClass(CmsDataResponse<MediaContentDetailResponse>, res.data))
+            map(res=> plainToInstance(CmsDataResponse<MediaContentDetailResponse>, res.data))
         )
     }
 
