@@ -17,4 +17,9 @@ export class PaymentRepository implements IPaymentRepository {
             map( response => response.data)
         )
     }
+
+    public checkoutPackage(packageId: number, transactionToken: string): Observable<{ packageId: number; total: number }> {
+        const promise = this._axiosInstance.patch(`/payments/transaction`, {packageId, transactionToken})
+        return from(promise).pipe(map( ({data}) => data))
+    }
 }

@@ -432,6 +432,11 @@ type BytearkPlayerType {
   signUrl: String!
 }
 
+type CheckoutPackageType {
+  total: Float!
+  packageId: Float!
+}
+
 type Query {
   getLatestTerm: TermType!
   localeManagerLogin(username: String!, password: String!): CmsUserType!
@@ -529,6 +534,7 @@ type Mutation {
   markAllNotiAsRead(profileId: String): ReadAllNotificationType!
   markNotiAsRead(notificationId: String!): NotificationType!
   createPaymentTransactionToken: String!
+  checkoutPackage(CheckoutPackageInput: CheckoutPackageInput!): CheckoutPackageType!
 }
 
 input CreateUserInput {
@@ -658,3 +664,8 @@ input ContactSupportInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input CheckoutPackageInput {
+  transactionToken: String!
+  packageId: Float!
+}
