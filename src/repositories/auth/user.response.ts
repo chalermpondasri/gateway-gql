@@ -51,6 +51,7 @@ export class UserResponse {
     public status: string
     public emailVerificationStatus: string
     public verifiedPhoneNumber: string
+    public remainingCoin: number
 
     @Type(()=>DeviceSettingResponse)
     public setting: DeviceSettingResponse

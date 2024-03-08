@@ -106,6 +106,9 @@ export class UserType extends IdStringType {
 
     @Field(() => UserSettingType)
     public setting: UserSettingType
+
+    @Field(() => Number)
+    public remainingCoin: number
 }
 
 @ObjectType()
