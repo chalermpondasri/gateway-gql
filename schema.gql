@@ -305,6 +305,7 @@ type UserType {
   profiles: [ProfileType!]!
   deviceSessions: [DeviceSessionType!]!
   setting: UserSettingType!
+  remainingCoin: Float!
 }
 
 type UserRequestOtpType {
