@@ -100,6 +100,8 @@ export class CmsRepository implements ICmsRepository {
             'items.mediaSeasons.mediaEpisodes.subtitle',
             'items.mediaSeasons.mediaEpisodes.coverImage',
             'items.mediaSeasons.mediaEpisodes.name',
+            'items.mediaSeasons.mediaEpisodes.duration',
+            'items.mediaSeasons.mediaEpisodes.price',
             'items.casts',
             'items.casts.portrait',
             'items.directors',
@@ -206,6 +208,7 @@ export class CmsRepository implements ICmsRepository {
 
     public getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
         const queryString = querystring.encode({populate: this._mediaContentPopulate})
+        console.log('queryString', queryString)
         return from(this._axiosInstance.get(`/media-contents/${id}/?${queryString}`)).pipe(
             map(res=> plainToInstance(CmsDataResponse<MediaContentDetailResponse>, res.data))
         )
@@ -231,6 +234,8 @@ export class CmsRepository implements ICmsRepository {
         'mediaSeasons.mediaEpisodes.subtitle',  
         'mediaSeasons.mediaEpisodes.coverImage',
         'mediaSeasons.mediaEpisodes.name',
+        'mediaSeasons.mediaEpisodes.duration',
+        'mediaSeasons.mediaEpisodes.price',
     ]
 
     public getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {

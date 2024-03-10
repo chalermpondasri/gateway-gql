@@ -6,10 +6,13 @@ import {
 import {
     CmsImageType,
     IdType,
+    MediaDurationType,
+    MediaPriceType,
 } from '@/types/objects/cms.type'
 import { LocalizedLabelType } from '@/types/objects/label.type'
 import { MediaSeasonType } from '@/types/objects/media-season.type'
 import { Transform } from 'class-transformer'
+import { MediaDurationResponse } from '@/repositories/cms/media-duration.response'
 
 @ObjectType()
 export class ExternalContentType {
@@ -25,14 +28,16 @@ export class ExternalContentType {
 export class BaseEpisodeType extends IdType {
     @Field()
     public order: number
-    @Field({nullable: true})
-    public duration: string
+    @Field(() => MediaDurationType)
+    public duration: MediaDurationType
     @Field({nullable: true})
     public episodeName: string
     @Field(() => CmsImageType)
     public coverImage: CmsImageType
     @Field()
     public continueWatchingAt: number
+    @Field(() => MediaPriceType)
+    public price: MediaPriceType
 
 }
 @ObjectType()
@@ -50,6 +55,7 @@ export class MediaEpisodeType extends BaseEpisodeType {
     public mediaContentId?: number
     @Field(() => String)
     public videoId: string
+
 }
 
 @ObjectType()

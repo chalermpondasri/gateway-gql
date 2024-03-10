@@ -44,6 +44,7 @@ import {
     CoinPackageType,
     ExternalContentType,
     MediaContentDetailType,
+    MediaDurationType,
     MediaEpisodeType,
     MediaSeasonType,
     PresetSearchType,
@@ -76,6 +77,7 @@ import {
 } from '@/types/enums'
 import { ICacheService } from '@/services/cache/interface/service.interface'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
+import { MediaPriceDetail } from '@/repositories/cms/media-price.response'
 
 @Injectable()
 export class CmsService {
@@ -526,11 +528,13 @@ export class CmsService {
             if (img) {
                 img.id = get(ep, 'attributes.coverImage.data.id', 0)
             }
+            const duration: MediaDurationType = get(ep, 'attributes.duration', null)
+            const price: MediaPriceDetail = get(ep, 'attributes.price.data.attributes', null)
             const newEp: MediaEpisodeType = {
                 audio: (get(ep, 'attributes.audio', []) as KeyValueResponse[]).map(e => e.key),
                 captions: (get(ep, 'attributes.subtitle', []) as KeyValueResponse[]).map(e => e.key),
                 order: get(ep, 'attributes.ordering', 0),
-                duration: get(ep, 'attributes.duration', 0).toString(),
+                duration,
                 episodeName: get(ep, `attributes.name.${lang}`, get(ep, 'attributes.name.en', '')),
                 coverImage: img,
                 id: ep.id,
@@ -538,6 +542,7 @@ export class CmsService {
                 videoId: get(ep, 'attributes.videoId', ''),
                 //* resolve field
                 continueWatchingAt: 0,
+                price
             }
             return newEp
         }

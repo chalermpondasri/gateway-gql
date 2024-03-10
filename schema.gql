@@ -83,6 +83,21 @@ type CoinPackageType {
   tag: [String!]!
 }
 
+type MediaDurationType {
+  duration: Float!
+  startIntro: Float
+  endIntro: Float
+  freeDuration: Float
+  nextEpDuration: Float
+}
+
+type MediaPriceType {
+  hasDiscount: Boolean
+  price: Float!
+  discountPercent: Float
+  priceDiscount: Float
+}
+
 type LocalizedLabelType {
   label: String!
   id: String!
@@ -104,19 +119,21 @@ type ExternalContentType {
 type EpisodeItemType {
   id: ID!
   order: Float!
-  duration: String
+  duration: MediaDurationType!
   episodeName: String
   coverImage: CmsImageType!
   continueWatchingAt: Float!
+  price: MediaPriceType!
 }
 
 type MediaEpisodeType {
   id: ID!
   order: Float!
-  duration: String
+  duration: MediaDurationType!
   episodeName: String
   coverImage: CmsImageType!
   continueWatchingAt: Float!
+  price: MediaPriceType!
   audio: [String!]!
   captions: [String!]!
   videoId: String!
