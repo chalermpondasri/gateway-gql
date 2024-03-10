@@ -14,9 +14,13 @@ import { CacheRedisModule } from '@/modules/cache-redis.module'
 import { ConfigModule } from '@nestjs/config'
 import { byteArkRepositoryProvider } from '@/providers/byte-ark.provider'
 import { contentRatingValidationProvider } from '@/providers/content-rating-validation.provider'
+import { HealthCheckController } from '@/services/health-check/health-check.controller'
 
 @Global()
 @Module({
+    controllers: [
+        HealthCheckController
+    ],
     providers: [
         envConfigProvider,
         requestContextProvider,

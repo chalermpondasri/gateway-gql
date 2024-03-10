@@ -128,3 +128,29 @@ export class CoinPackageType extends IdType {
     @Field(() => [String])
     public tag: string[]
 }
+
+@ObjectType()
+export class MediaDurationType {
+    @Field()
+    public duration: number
+    @Field({ nullable: true })
+    public startIntro: number
+    @Field({ nullable: true })
+    public endIntro: number
+    @Field({ nullable: true })
+    public freeDuration: number
+    @Field({ nullable: true })
+    public nextEpDuration: number
+}
+
+@ObjectType()
+export class MediaPriceType {
+    @Field({ nullable: true })
+    public hasDiscount: boolean
+    @Field()
+    public price: number
+    @Field({ nullable: true })
+    public discountPercent: number
+    @Field({ nullable: true })
+    public priceDiscount: number
+}
