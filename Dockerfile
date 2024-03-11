@@ -9,7 +9,8 @@ RUN npm run build
 USER node
 
 FROM node:16-alpine as runner
-
+RUN apk add --no-cache bash
+RUN apk --no-cache add curl
 USER node
 WORKDIR /app
 

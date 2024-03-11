@@ -45,14 +45,14 @@ export class KmsByteArkService implements IKMSByteArkService {
 
     }
 
-    private _validateSecretAndToken(secret: string, jwtToken: string, mode?: string): Promise<IByteArkTokenPayload> {
+    private async _validateSecretAndToken(secret: string, jwtToken: string, mode?: string): Promise<IByteArkTokenPayload> {
         if (isNil(mode)) {
             if (this._config.BYTE_ARK_VIDEO_SECRET_ENCODE !== secret) {
                 this._logger.log(`[GetKey-Encode] secret not match income : ${secret}`)
                 throw new ForbiddenException('Secret not match')
             }
         }
-        return new Promise((resolve, reject) => {
+        return new Promise<IByteArkTokenPayload>((resolve, reject) => {
             verify(jwtToken, this._config.BYTE_ARK_VIDEO_SECRET_JWT, {
                 algorithms: ['HS256'],
                 complete: true,
@@ -63,7 +63,6 @@ export class KmsByteArkService implements IKMSByteArkService {
                 resolve(decoded.payload as IByteArkTokenPayload)
             })
         })
-
     }
 
     public getKeyEncode(secret: string, jwtToken: string): Observable<string> {

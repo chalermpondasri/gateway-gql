@@ -36,8 +36,8 @@ export class BaseEpisodeType extends IdType {
     public coverImage: CmsImageType
     @Field()
     public continueWatchingAt: number
-    @Field(() => MediaPriceType)
-    public price: MediaPriceType
+    @Field()
+    public price: number
 
 }
 @ObjectType()

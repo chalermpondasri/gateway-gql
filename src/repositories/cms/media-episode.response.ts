@@ -5,7 +5,6 @@ import {
     KeyValueResponse,
 } from '@/repositories/cms/base.response'
 import { MediaDurationResponse } from '@/repositories/cms/media-duration.response'
-import { MediaPriceDetail } from '@/repositories/cms/media-price.response'
 
 export class MediaEpisodeResponse {
     public slug: string
@@ -16,5 +15,5 @@ export class MediaEpisodeResponse {
     public audio: KeyValueResponse[]
     public subtitle: KeyValueResponse[]
     public videoId: string
-    public price: CmsDataResponse<MediaPriceDetail>
+    public price: number
 }

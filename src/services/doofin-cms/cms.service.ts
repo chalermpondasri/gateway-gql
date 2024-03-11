@@ -529,7 +529,6 @@ export class CmsService {
                 img.id = get(ep, 'attributes.coverImage.data.id', 0)
             }
             const duration: MediaDurationType = get(ep, 'attributes.duration', null)
-            const price: MediaPriceDetail = get(ep, 'attributes.price.data.attributes', null)
             const newEp: MediaEpisodeType = {
                 audio: (get(ep, 'attributes.audio', []) as KeyValueResponse[]).map(e => e.key),
                 captions: (get(ep, 'attributes.subtitle', []) as KeyValueResponse[]).map(e => e.key),
@@ -542,7 +541,7 @@ export class CmsService {
                 videoId: get(ep, 'attributes.videoId', ''),
                 //* resolve field
                 continueWatchingAt: 0,
-                price
+                price: get(ep, 'attributes.price', 0),
             }
             return newEp
         }
