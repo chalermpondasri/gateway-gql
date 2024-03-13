@@ -607,7 +607,7 @@ export class CmsService {
                     return null
                 }
 
-                const duration =media.seasons[0]?.mediaEpisodes[0]?.duration
+                const duration =media.seasons[0]?.mediaEpisodes[0]?.duration.duration
                 return !!duration ? Number(duration) : null
             })
         )
