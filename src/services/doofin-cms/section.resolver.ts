@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import {
+    MediaContentDetailType,
     SectionItemType,
     SectionType,
 } from '@/types/objects'
@@ -72,4 +73,10 @@ export class SectionItemResolver {
         return false
     }
 
+    @ResolveField('totalDuration')
+    public totalDuration(
+        @Parent() parent: SectionItemType,
+    ) {
+        return this._cmsService.getTotalDuration(parent.mediaContentDetail)
+    }
 }

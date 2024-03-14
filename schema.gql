@@ -91,13 +91,6 @@ type MediaDurationType {
   nextEpDuration: Float
 }
 
-type MediaPriceType {
-  hasDiscount: Boolean
-  price: Float!
-  discountPercent: Float
-  priceDiscount: Float
-}
-
 type LocalizedLabelType {
   label: String!
   id: String!
@@ -123,7 +116,7 @@ type EpisodeItemType {
   episodeName: String
   coverImage: CmsImageType!
   continueWatchingAt: Float!
-  price: MediaPriceType!
+  price: Float
 }
 
 type MediaEpisodeType {
@@ -133,7 +126,7 @@ type MediaEpisodeType {
   episodeName: String
   coverImage: CmsImageType!
   continueWatchingAt: Float!
-  price: MediaPriceType!
+  price: Float
   audio: [String!]!
   captions: [String!]!
   videoId: String!
