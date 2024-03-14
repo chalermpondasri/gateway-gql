@@ -27,12 +27,17 @@ import {
     UserVerifyOtpInput,
     VerifyOtpInput,
 } from '@/types/inputs'
+import { rethrow } from '@nestjs/core/helpers/rethrow'
+import { PaginationInput } from '@/types/inputs/pagination.input'
+import { PaymentService } from '@/services/payment/payment.service'
 
 @Resolver( () => UserType)
 export class UserResolver {
     public constructor(
         @Inject(AuthService)
         private readonly _authService: AuthService,
+        @Inject(PaymentService)
+        private readonly _paymentService: PaymentService,
     ) {}
 
     @Query(() => UserRequestOtpType)
@@ -153,6 +158,14 @@ export class UserResolver {
         @Args({name: 'newPassword', type:()=> String}) newPassword: string,
     ){
         return this._authService.resetPassword(resetPasswordToken, newPassword)
+    }
+
+    @ResolveField()
+    public paymentHistory(
+        @Parent() parent: UserType,
+        @Args(PaginationInput.name, {nullable: true}) pagination: PaginationInput,
+    ) {
+        return this._paymentService.getPaymentHistory(pagination.page, pagination.limit)
     }
 
 }

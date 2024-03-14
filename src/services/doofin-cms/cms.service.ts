@@ -6,8 +6,8 @@ import {
     UnauthorizedException,
 } from '@nestjs/common'
 import {
+    catchError,
     concatMap,
-    EMPTY,
     filter,
     from,
     iif,
@@ -59,6 +59,7 @@ import {
 import { capitalize } from 'lodash/fp'
 import {
     get,
+    isNil,
     reduce,
     size,
     some,
@@ -77,7 +78,6 @@ import {
 } from '@/types/enums'
 import { ICacheService } from '@/services/cache/interface/service.interface'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
-import { MediaPriceDetail } from '@/repositories/cms/media-price.response'
 
 @Injectable()
 export class CmsService {
@@ -529,6 +529,7 @@ export class CmsService {
                 img.id = get(ep, 'attributes.coverImage.data.id', 0)
             }
             const duration: MediaDurationType = get(ep, 'attributes.duration', null)
+            const price = get(ep, 'attributes.price', 0)
             const newEp: MediaEpisodeType = {
                 audio: (get(ep, 'attributes.audio', []) as KeyValueResponse[]).map(e => e.key),
                 captions: (get(ep, 'attributes.subtitle', []) as KeyValueResponse[]).map(e => e.key),
@@ -541,7 +542,7 @@ export class CmsService {
                 videoId: get(ep, 'attributes.videoId', ''),
                 //* resolve field
                 continueWatchingAt: 0,
-                price: get(ep, 'attributes.price', 0),
+                price: isNil(price) ? 0 : price,
             }
             return newEp
         }
@@ -602,13 +603,16 @@ export class CmsService {
 
     public getTotalDuration(media: MediaContentDetailType): Observable<number> {
         return this.getMediaContentById(String(media.id)).pipe(
-            map(detail => {
+            map(() => {
                 if(this.isSeries(media.tags)) {
                     return null
                 }
-
-                const duration =media.seasons[0]?.mediaEpisodes[0]?.duration.duration
+                const duration = media.seasons[0]?.mediaEpisodes[0]?.duration?.duration
                 return !!duration ? Number(duration) : null
+            }),
+            catchError(err => {
+                this._logger.error(`[TotalDuration] : ${err.message}`)
+                return of(null)
             })
         )
     }

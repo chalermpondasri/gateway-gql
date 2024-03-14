@@ -36,7 +36,7 @@ export class BaseEpisodeType extends IdType {
     public coverImage: CmsImageType
     @Field()
     public continueWatchingAt: number
-    @Field()
+    @Field({nullable: true})
     public price: number
 
 }

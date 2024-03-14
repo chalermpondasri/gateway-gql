@@ -18,6 +18,7 @@ import {
 import { LocaleResolver } from '@/services/doofin-auth/locale.resolver'
 import { CmsModule } from './cms.module'
 import { PlaybackModule } from '@/modules/playback.module'
+import { PaymentModule } from '@/modules/payment.module'
 
 @Module({
     providers: [
@@ -35,6 +36,6 @@ import { PlaybackModule } from '@/modules/playback.module'
         NotificationResolver,
         MyListResolver
     ],
-    imports: [ CmsModule, PlaybackModule ],
+    imports: [ CmsModule, PlaybackModule, PaymentModule ],
 })
 export class AuthModule {}
