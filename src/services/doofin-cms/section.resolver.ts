@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common'
 import { CmsService } from '@/services/doofin-cms/cms.service'
 import {
-    MediaContentDetailType,
     SectionItemType,
     SectionType,
 } from '@/types/objects'

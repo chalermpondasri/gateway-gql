@@ -7,12 +7,10 @@ import {
     CmsImageType,
     IdType,
     MediaDurationType,
-    MediaPriceType,
 } from '@/types/objects/cms.type'
 import { LocalizedLabelType } from '@/types/objects/label.type'
 import { MediaSeasonType } from '@/types/objects/media-season.type'
 import { Transform } from 'class-transformer'
-import { MediaDurationResponse } from '@/repositories/cms/media-duration.response'
 
 @ObjectType()
 export class ExternalContentType {

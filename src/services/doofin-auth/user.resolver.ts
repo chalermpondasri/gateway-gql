@@ -27,7 +27,6 @@ import {
     UserVerifyOtpInput,
     VerifyOtpInput,
 } from '@/types/inputs'
-import { rethrow } from '@nestjs/core/helpers/rethrow'
 import { PaginationInput } from '@/types/inputs/pagination.input'
 import { PaymentService } from '@/services/payment/payment.service'
 
