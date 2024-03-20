@@ -8,6 +8,7 @@ import { AxiosInstance } from 'axios'
 import { ListResponse } from '@/models/common'
 import { PaymentResponse } from '@/repositories/payment/payment.response'
 import { plainToInstance } from 'class-transformer'
+import { SubscriptionResponse } from '@/repositories/payment/subscriptions.response'
 
 export class PaymentRepository implements IPaymentRepository {
     public constructor(
@@ -42,9 +43,17 @@ export class PaymentRepository implements IPaymentRepository {
     }
 
     public rent(mediaId: number, episodeId: number): Observable<{ success: boolean, remainCoin: number }> {
-        return from(this._axiosInstance.post(`/payments/rent`, {mediaId, episodeId})).pipe(
+        return from(this._axiosInstance.post(`/subscriptions/content`, {mediaId, episodeId})).pipe(
             map( response => response.data)
         )
 
     }
+
+
+    public getSubscribeContents(): Observable<SubscriptionResponse[]> {
+        return from(this._axiosInstance.get<unknown[]>(`/subscriptions/contents`)).pipe(
+            map( response => plainToInstance(SubscriptionResponse,  response.data as Array<unknown>))
+        )
+    }
+
 }

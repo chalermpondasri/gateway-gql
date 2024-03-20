@@ -14,6 +14,8 @@ import { CmsService } from '@/services/doofin-cms/cms.service'
 import { Inject } from '@nestjs/common'
 import { SearchInput } from '@/types/inputs/search.input'
 import { SearchService } from '../search/services/search.service'
+import { RentalStatus } from '@/types/enums/rental-status.enum'
+import { PaymentService } from '@/services/payment/payment.service'
 @Resolver(() => MediaContentDetailType)
 export class MediaContentDetailResolver {
     public constructor(
@@ -105,6 +107,8 @@ export class MediaEpisodeResolver {
     public constructor(
         @Inject(CmsService)
         private readonly _cmsService: CmsService,
+        @Inject(PaymentService)
+        private readonly _paymentService: PaymentService
     ){}
     @ResolveField("continueWatchingAt", ()=> Number)
     public continueWatchingAt(@Parent() parent: MediaEpisodeType, @Context() context: any){
@@ -113,5 +117,10 @@ export class MediaEpisodeResolver {
             parent.mediaContentId.toString(), 
             parent.id.toString()
         )
+    }
+
+    @ResolveField('rentalStatus', () => RentalStatus)
+    public rentalStatus(@Parent() parent: MediaEpisodeType) {
+        return this._paymentService.getRentalStatus(parent)
     }
 }
