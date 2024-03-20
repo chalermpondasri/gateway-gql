@@ -16,6 +16,7 @@ import { PresetSearchResolver } from '@/services/doofin-cms/preset-search.resolv
 import { CacheRedisModule } from '@/modules/cache-redis.module'
 import { CoinPackageResolver } from '@/services/doofin-cms/coin-package.resolver'
 import { PlaybackModule } from '@/modules/playback.module'
+import { PaymentModule } from '@/modules/payment.module'
 
 @Module({
     providers: [
@@ -34,6 +35,6 @@ import { PlaybackModule } from '@/modules/playback.module'
         CoinPackageResolver,
     ],
     exports: [ CmsService ],
-    imports: [ SearchModule, CacheRedisModule, PlaybackModule ],
+    imports: [ SearchModule, CacheRedisModule, PlaybackModule, PaymentModule ],
 })
 export class CmsModule {}

@@ -117,6 +117,15 @@ type EpisodeItemType {
   coverImage: CmsImageType!
   continueWatchingAt: Float!
   price: Float
+  rentalStatus: RentalStatus!
+}
+
+"""media episode rental status"""
+enum RentalStatus {
+  FREE_TRIAL
+  FREE_TO_WATCH
+  SUBSCRIPTION_NEEDED
+  SUBSCRIBED
 }
 
 type MediaEpisodeType {
@@ -127,6 +136,7 @@ type MediaEpisodeType {
   coverImage: CmsImageType!
   continueWatchingAt: Float!
   price: Float
+  rentalStatus: RentalStatus!
   audio: [String!]!
   captions: [String!]!
   videoId: String!
@@ -476,6 +486,7 @@ type Query {
   searchContentByTags(profileId: String, tags: [String!]!): [MediaContentDetailType!]!
   presetSearches(presetId: Float): [PresetSearchType!]!
   getCoinPackages: [CoinPackageType!]!
+  getPaymentHistory(PaginationInput: PaginationInput): [PaymentTransactionType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
@@ -493,7 +504,6 @@ type Query {
   getAvatars(id: Int): [AvatarType!]!
   getUserSessions: [DeviceSessionType!]!
   getNotification(NotificationInput: NotificationInput): NotificationListType!
-  getPaymentHistory(PaginationInput: PaginationInput): [PaymentTransactionType!]!
   getPreSignPlayer(vid: String!): BytearkPlayerType!
 }
 
@@ -516,6 +526,9 @@ input NotificationInput {
 }
 
 type Mutation {
+  createPaymentTransactionToken: String!
+  checkoutPackage(CheckoutPackageInput: CheckoutPackageInput!): CheckoutPackageType!
+  rentContent(contentId: Float!, episodeId: Float!): Boolean!
   createUser(CreateUserInput: CreateUserInput!): CreateUserResponseType!
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
@@ -555,8 +568,11 @@ type Mutation {
   revokeSession(sessionId: String!): DeviceSessionType!
   markAllNotiAsRead(profileId: String): ReadAllNotificationType!
   markNotiAsRead(notificationId: String!): NotificationType!
-  createPaymentTransactionToken: String!
-  checkoutPackage(CheckoutPackageInput: CheckoutPackageInput!): CheckoutPackageType!
+}
+
+input CheckoutPackageInput {
+  transactionToken: String!
+  packageId: Float!
 }
 
 input CreateUserInput {
@@ -686,8 +702,3 @@ input ContactSupportInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
-
-input CheckoutPackageInput {
-  transactionToken: String!
-  packageId: Float!
-}

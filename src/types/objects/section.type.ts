@@ -11,6 +11,7 @@ import {
 import { LocalizedLabelType } from '@/types/objects/label.type'
 import { MediaSeasonType } from '@/types/objects/media-season.type'
 import { Transform } from 'class-transformer'
+import { RentalStatus } from '@/types/enums/rental-status.enum'
 
 @ObjectType()
 export class ExternalContentType {
@@ -36,6 +37,8 @@ export class BaseEpisodeType extends IdType {
     public continueWatchingAt: number
     @Field({nullable: true})
     public price: number
+    @Field(() => RentalStatus)
+    public rentalStatus: RentalStatus
 
 }
 @ObjectType()
@@ -53,7 +56,6 @@ export class MediaEpisodeType extends BaseEpisodeType {
     public mediaContentId?: number
     @Field(() => String)
     public videoId: string
-
 }
 
 @ObjectType()

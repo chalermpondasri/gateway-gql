@@ -59,7 +59,6 @@ import {
 import { capitalize } from 'lodash/fp'
 import {
     get,
-    isNil,
     reduce,
     size,
     some,
@@ -78,6 +77,7 @@ import {
 } from '@/types/enums'
 import { ICacheService } from '@/services/cache/interface/service.interface'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
+import { RentalStatus } from '@/types/enums/rental-status.enum'
 
 @Injectable()
 export class CmsService {
@@ -523,6 +523,7 @@ export class CmsService {
     }
 
     private _seasonMapper(mediaContentId: number, season: BaseResponse<MediaSeasonResponse>, lang: string) {
+
         const episodeMapper = (ep: BaseResponse<MediaEpisodeResponse>) => {
             const img: CmsImageType = get(ep, 'attributes.coverImage.data.attributes', null)
             if (img) {
@@ -530,6 +531,16 @@ export class CmsService {
             }
             const duration: MediaDurationType = get(ep, 'attributes.duration', null)
             const price = get(ep, 'attributes.price', 0)
+
+            let rentalStatus: RentalStatus
+            if(price === 0) {
+                rentalStatus =RentalStatus.FREE_TO_WATCH
+            } else
+            if(price > 0 && !!duration?.freeDuration && duration?.freeDuration > 0) {
+                rentalStatus = RentalStatus.FREE_TRIAL
+            } else {
+                rentalStatus = RentalStatus.SUBSCRIPTION_NEEDED
+            }
             const newEp: MediaEpisodeType = {
                 audio: (get(ep, 'attributes.audio', []) as KeyValueResponse[]).map(e => e.key),
                 captions: (get(ep, 'attributes.subtitle', []) as KeyValueResponse[]).map(e => e.key),
@@ -542,7 +553,8 @@ export class CmsService {
                 videoId: get(ep, 'attributes.videoId', ''),
                 //* resolve field
                 continueWatchingAt: 0,
-                price: isNil(price) ? 0 : price,
+                price,
+                rentalStatus,
             }
             return newEp
         }
