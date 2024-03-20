@@ -29,4 +29,12 @@ export class PaymentResolver {
         return this._paymentService.checkoutCoinPackage(input.packageId, input.transactionToken)
     }
 
+    @Mutation(() => Boolean)
+    public rentContent(
+        @Args('contentId') contentId: number,
+        @Args('episodeId') episodeId: number,
+        ): Observable<boolean> {
+        return this._paymentService.rentContent(contentId, episodeId)
+    }
+
 }

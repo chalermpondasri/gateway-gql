@@ -26,4 +26,10 @@ export class PaymentService {
             map( data => plainToInstance(CheckoutPackageType, {packageId, total: data.total }))
         )
     }
+
+    public rentContent(mediaId: number, episodeId: number): Observable<boolean> {
+        return this._paymentRepository.rent(mediaId, episodeId).pipe(
+            map(result => result.success)
+        )
+    }
 }
