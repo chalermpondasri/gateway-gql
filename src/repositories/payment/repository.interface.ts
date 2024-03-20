@@ -6,4 +6,5 @@ export interface IPaymentRepository {
     getPaymentHistory(page: number, limit: number): Observable<ListResponse<PaymentResponse>>
     createPaymentToken(): Observable<{ transactionToken: string }>
     checkoutPackage(packageId: number, transactionToken: string): Observable<{ packageId: number, total: number }>
+    rent(mediaId: number, episodeId: number): Observable<{ success: boolean, remainCoin: number }>
 }

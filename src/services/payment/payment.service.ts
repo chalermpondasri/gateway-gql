@@ -38,4 +38,10 @@ export class PaymentService {
             })
         )
     }
+
+    public rentContent(mediaId: number, episodeId: number): Observable<boolean> {
+        return this._paymentRepository.rent(mediaId, episodeId).pipe(
+            map(result => result.success)
+        )
+    }
 }

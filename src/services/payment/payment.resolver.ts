@@ -42,4 +42,12 @@ export class PaymentResolver {
         return this._paymentService.getPaymentHistory(pagination.page,pagination.limit)
     }
 
+    @Mutation(() => Boolean)
+    public rentContent(
+        @Args('contentId') contentId: number,
+        @Args('episodeId') episodeId: number,
+        ): Observable<boolean> {
+        return this._paymentService.rentContent(contentId, episodeId)
+    }
+
 }

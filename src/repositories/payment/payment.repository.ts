@@ -40,4 +40,11 @@ export class PaymentRepository implements IPaymentRepository {
         const promise = this._axiosInstance.patch(`/payments/transaction`, { packageId, transactionToken })
         return from(promise).pipe(map(({ data }) => data))
     }
+
+    public rent(mediaId: number, episodeId: number): Observable<{ success: boolean, remainCoin: number }> {
+        return from(this._axiosInstance.post(`/payments/rent`, {mediaId, episodeId})).pipe(
+            map( response => response.data)
+        )
+
+    }
 }
