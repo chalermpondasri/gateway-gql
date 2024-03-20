@@ -241,6 +241,15 @@ type DeviceSessionType {
   deviceType: String!
 }
 
+type PaymentTransactionType {
+  transactionId: String!
+  total: Float!
+  coinGain: Float!
+  paymentStatus: String!
+  paymentType: String!
+  updatedAt: DateTime!
+}
+
 type CreateUserResponseType {
   userId: ID!
   status: String!
@@ -316,6 +325,12 @@ type UserType {
   deviceSessions: [DeviceSessionType!]!
   setting: UserSettingType!
   remainingCoin: Float!
+  paymentHistory(PaginationInput: PaginationInput): [PaymentTransactionType!]!
+}
+
+input PaginationInput {
+  limit: Float = 20
+  page: Float = 1
 }
 
 type UserRequestOtpType {
@@ -439,13 +454,13 @@ type SubFaqType {
   content: String!
 }
 
-type BytearkPlayerType {
-  signUrl: String!
-}
-
 type CheckoutPackageType {
   total: Float!
   packageId: Float!
+}
+
+type BytearkPlayerType {
+  signUrl: String!
 }
 
 type Query {
@@ -478,6 +493,7 @@ type Query {
   getAvatars(id: Int): [AvatarType!]!
   getUserSessions: [DeviceSessionType!]!
   getNotification(NotificationInput: NotificationInput): NotificationListType!
+  getPaymentHistory(PaginationInput: PaginationInput): [PaymentTransactionType!]!
   getPreSignPlayer(vid: String!): BytearkPlayerType!
 }
 
@@ -485,11 +501,6 @@ input SearchInput {
   limit: Float = 20
   page: Float = 1
   query: String!
-}
-
-input PaginationInput {
-  limit: Float = 20
-  page: Float = 1
 }
 
 input ValidateProfilePinInputType {

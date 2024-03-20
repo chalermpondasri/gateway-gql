@@ -14,6 +14,7 @@ import {
     Locale,
     SubtitleSelection,
 } from '@/types/enums/locales.enum'
+import { PaymentTransactionType } from '@/types/objects/payment.type'
 
 @ObjectType()
 export class BaseUserType {
@@ -109,6 +110,9 @@ export class UserType extends IdStringType {
 
     @Field(() => Number)
     public remainingCoin: number
+
+    @Field(() => [PaymentTransactionType])
+    public paymentHistory: PaymentTransactionType[] = []
 }
 
 @ObjectType()
