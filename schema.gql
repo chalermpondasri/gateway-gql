@@ -469,6 +469,16 @@ type CheckoutPackageType {
   packageId: Float!
 }
 
+type CoinConsumptionHistoryType {
+  id: String!
+  contentId: Float!
+  episodeId: Float!
+  coinSpent: Float!
+  rentAt: DateTime!
+  contentTitle: String!
+  episodeTitle: String!
+}
+
 type BytearkPlayerType {
   signUrl: String!
 }
@@ -487,6 +497,7 @@ type Query {
   presetSearches(presetId: Float): [PresetSearchType!]!
   getCoinPackages: [CoinPackageType!]!
   getPaymentHistory(PaginationInput: PaginationInput): [PaymentTransactionType!]!
+  getCoinConsumptionHistory(PaginationInput: PaginationInput): [CoinConsumptionHistoryType!]!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!

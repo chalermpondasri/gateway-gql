@@ -20,6 +20,21 @@ import { ICacheService } from '@/services/cache/interface/service.interface'
 import { RequestContext } from '@/providers/request-context.provider'
 import { MediaEpisodeType } from '@/types/objects'
 import { SubscriptionResponse } from '@/repositories/payment/subscriptions.response'
+import { CoinConsumptionHistoryType } from '@/types/objects/coin-consumption-history.type'
+import {
+    BaseResponse,
+    ICmsRepository,
+    LocaleTextResponse,
+    MediaContentDetailResponse,
+    MediaEpisodeResponse,
+    MediaSeasonResponse,
+} from '@/repositories/cms'
+import * as console from 'console'
+import { Locale } from '@/types/enums'
+import {
+    flatMap,
+    get,
+} from 'lodash'
 
 export class PaymentService {
     public constructor(
@@ -29,6 +44,8 @@ export class PaymentService {
         private readonly _cacheService: ICacheService,
         @Inject(ProviderName.REQUEST_CONTEXT)
         private readonly _requestContext: RequestContext,
+        @Inject(ProviderName.CMS_REPOSITORY)
+        private readonly _cmsRepository: ICmsRepository
     ) {
     }
 
@@ -75,4 +92,52 @@ export class PaymentService {
             tap(console.log)
         )
     }
+
+    public coinConsumptionHistory(page:number, limit: number): Observable<CoinConsumptionHistoryType[]> {
+        return this._paymentRepository.getSubscribeContents().pipe(
+            map(result => {
+                const start = (page - 1) * limit
+                const lim = (limit * page) - 1
+                return result.slice(start, lim)
+            }),
+            mergeMap(subscribed => {
+                const contentId =subscribed.map(v => v.mediaContentId)
+                return this._cmsRepository.getMediaContentsByIds(contentId).pipe(
+                    map(media => ({media,subscribed}))
+                )
+            }),
+            map( ({media, subscribed}) => {
+                const lang = this._requestContext.languages[0].code as keyof Locale
+                const result = (< BaseResponse<MediaContentDetailResponse>[]>media.data).reduce(([content,episode],v) => {
+                    content[v.id] = v
+
+                    const ep  = flatMap((<BaseResponse<MediaSeasonResponse>[]>v.attributes.mediaSeasons.data).map(v => v.attributes.mediaEpisodes.data))
+                        .reduce((a, e) => {
+                            a[e.id] = e
+                            return a}, {})
+
+                    return [content, Object.assign({...episode, ...ep})]
+                }, [{}, {}])
+
+                const contents = result[0]
+                const episodes = result[1]
+                return subscribed.map(sub => {
+                    const cc = new CoinConsumptionHistoryType()
+                    cc.id = sub.id
+                    cc.coinSpent = sub.coinSpent
+                    cc.rentAt = sub.rentAt
+                    cc.contentId = sub.mediaContentId
+                    cc.episodeId = sub.episodeId
+                    cc.contentTitle = this._resolveLocaleText((<BaseResponse<MediaContentDetailResponse>>contents[sub.mediaContentId]).attributes.title, lang)
+                    cc.episodeTitle = this._resolveLocaleText((<BaseResponse<MediaEpisodeResponse>>episodes[sub.episodeId]).attributes.name, lang)
+                    return cc
+                })
+            })
+        )
+
+    }
+    private _resolveLocaleText(localeText: LocaleTextResponse, lang: keyof Locale) {
+        return get(localeText, lang) ?? get(localeText, 'en', '')
+    }
+
 }

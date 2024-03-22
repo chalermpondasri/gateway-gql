@@ -38,4 +38,5 @@ export interface ICmsRepository {
     getLatestContent(contentRatings: ContentRating[]) :Observable<CmsDataResponse<MediaContentDetailResponse>>
     getPredefinedSearches(): Observable<ListResponse<BaseResponse<PredefinedSearchResponse>>>
     getCoinPackages(): Observable<ListResponse<BaseResponse<CoinPackageResponse>>>
+    getMediaContentsByIds(multipleId: number[]): Observable<CmsDataResponse<MediaContentDetailResponse>>
 }

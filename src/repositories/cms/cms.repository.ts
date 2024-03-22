@@ -213,6 +213,19 @@ export class CmsRepository implements ICmsRepository {
         )
     }
 
+
+    public getMediaContentsByIds(multipleId: number[]): Observable<CmsDataResponse<MediaContentDetailResponse>> {
+        const filters = {
+            id: {
+                $in: multipleId,
+            }
+        }
+        return from(this._axiosInstance.get(`/media-contents`, {params: {filters, populate: this._mediaContentPopulate}} )).pipe(
+            map(res=> plainToInstance(CmsDataResponse<MediaContentDetailResponse>, res.data)),
+        )
+    }
+
+
     private readonly _mediaContentPopulate = [
         'title',
         'subtitle',
