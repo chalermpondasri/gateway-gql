@@ -13,6 +13,9 @@ import { CheckoutPackageType } from '@/types/objects/checkout-package.type'
 import { CheckoutPackageInput } from '@/types/inputs/checkout-package.input'
 import { PaymentTransactionType } from '@/types/objects/payment.type'
 import { PaginationInput } from '@/types/inputs/pagination.input'
+import {
+    PaginatedCoinConsumptionHistory,
+} from '@/types/objects/coin-consumption-history.type'
 
 @Resolver(() => PaymentTransactionType)
 export class PaymentResolver {
@@ -48,6 +51,13 @@ export class PaymentResolver {
         @Args('episodeId') episodeId: number,
         ): Observable<boolean> {
         return this._paymentService.rentContent(contentId, episodeId)
+    }
+
+    @Query(() => PaginatedCoinConsumptionHistory)
+    public getCoinConsumptionHistory(
+        @Args(PaginationInput.name, {nullable: true}) pagination: PaginationInput
+    ): Observable<PaginatedCoinConsumptionHistory>{
+        return this._paymentService.coinConsumptionHistory(pagination.page, pagination.limit)
     }
 
 }

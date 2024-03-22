@@ -52,7 +52,7 @@ export class PaymentRepository implements IPaymentRepository {
 
     public getSubscribeContents(): Observable<SubscriptionResponse[]> {
         return from(this._axiosInstance.get<unknown[]>(`/subscriptions/contents`)).pipe(
-            map( response => plainToInstance(SubscriptionResponse,  response.data as Array<unknown>))
+            map( response => plainToInstance(SubscriptionResponse,  response.data as Array<unknown>)),
         )
     }
 

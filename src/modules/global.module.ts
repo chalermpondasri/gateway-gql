@@ -15,6 +15,8 @@ import { ConfigModule } from '@nestjs/config'
 import { byteArkRepositoryProvider } from '@/providers/byte-ark.provider'
 import { contentRatingValidationProvider } from '@/providers/content-rating-validation.provider'
 import { HealthCheckController } from '@/services/health-check/health-check.controller'
+import { paymentRepositoryProvider } from '@/providers/payment.provider'
+import { cmsRepositoryProvider } from '@/providers/cms.provider'
 
 @Global()
 @Module({
@@ -27,6 +29,8 @@ import { HealthCheckController } from '@/services/health-check/health-check.cont
         httpClientProvider,
         byteArkRepositoryProvider,
         contentRatingValidationProvider,
+        paymentRepositoryProvider,
+        cmsRepositoryProvider,
     ],
     exports: [
         envConfigProvider,
@@ -34,6 +38,8 @@ import { HealthCheckController } from '@/services/health-check/health-check.cont
         httpClientProvider,
         byteArkRepositoryProvider,
         contentRatingValidationProvider,
+        paymentRepositoryProvider,
+        cmsRepositoryProvider,
     ],
     imports: [
         ConfigModule.forRoot(),
