@@ -479,6 +479,13 @@ type CoinConsumptionHistoryType {
   episodeTitle: String!
 }
 
+type PaginatedCoinConsumptionHistory {
+  data: [CoinConsumptionHistoryType!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+}
+
 type BytearkPlayerType {
   signUrl: String!
 }
@@ -497,7 +504,7 @@ type Query {
   presetSearches(presetId: Float): [PresetSearchType!]!
   getCoinPackages: [CoinPackageType!]!
   getPaymentHistory(PaginationInput: PaginationInput): [PaymentTransactionType!]!
-  getCoinConsumptionHistory(PaginationInput: PaginationInput): [CoinConsumptionHistoryType!]!
+  getCoinConsumptionHistory(PaginationInput: PaginationInput): PaginatedCoinConsumptionHistory!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!

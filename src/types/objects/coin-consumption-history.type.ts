@@ -3,6 +3,7 @@ import {
     GraphQLISODateTime,
     ObjectType,
 } from '@nestjs/graphql'
+import { Paginated } from '@/types/objects/abstract.type'
 
 @ObjectType()
 export class CoinConsumptionHistoryType {
@@ -23,3 +24,7 @@ export class CoinConsumptionHistoryType {
     public episodeTitle: string
 
 }
+
+
+@ObjectType({})
+export class PaginatedCoinConsumptionHistory extends Paginated(CoinConsumptionHistoryType) {}

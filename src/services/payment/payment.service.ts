@@ -20,7 +20,10 @@ import { ICacheService } from '@/services/cache/interface/service.interface'
 import { RequestContext } from '@/providers/request-context.provider'
 import { MediaEpisodeType } from '@/types/objects'
 import { SubscriptionResponse } from '@/repositories/payment/subscriptions.response'
-import { CoinConsumptionHistoryType } from '@/types/objects/coin-consumption-history.type'
+import {
+    CoinConsumptionHistoryType,
+    PaginatedCoinConsumptionHistory,
+} from '@/types/objects/coin-consumption-history.type'
 import {
     BaseResponse,
     ICmsRepository,
@@ -93,20 +96,23 @@ export class PaymentService {
         )
     }
 
-    public coinConsumptionHistory(page:number, limit: number): Observable<CoinConsumptionHistoryType[]> {
+    public coinConsumptionHistory(page:number, limit: number): Observable<PaginatedCoinConsumptionHistory> {
         return this._paymentRepository.getSubscribeContents().pipe(
             map(result => {
                 const start = (page - 1) * limit
                 const lim = (limit * page) - 1
-                return result.slice(start, lim)
+                return {
+                    total: result.length,
+                    subscribed:result.slice(start, lim)
+                }
             }),
-            mergeMap(subscribed => {
+            mergeMap(({ subscribed, total }) => {
                 const contentId =subscribed.map(v => v.mediaContentId)
                 return this._cmsRepository.getMediaContentsByIds(contentId).pipe(
-                    map(media => ({media,subscribed}))
+                    map(media => ({media,subscribed, total}))
                 )
             }),
-            map( ({media, subscribed}) => {
+            map( ({media, subscribed, total}) => {
                 const lang = this._requestContext.languages[0].code as keyof Locale
                 const result = (< BaseResponse<MediaContentDetailResponse>[]>media.data).reduce(([content,episode],v) => {
                     content[v.id] = v
@@ -121,7 +127,12 @@ export class PaymentService {
 
                 const contents = result[0]
                 const episodes = result[1]
-                return subscribed.map(sub => {
+
+                const paginationResult =  new PaginatedCoinConsumptionHistory()
+                paginationResult.total = total
+                paginationResult.page = page
+                paginationResult.limit = limit
+                paginationResult.data =subscribed.map(sub => {
                     const cc = new CoinConsumptionHistoryType()
                     cc.id = sub.id
                     cc.coinSpent = sub.coinSpent
@@ -132,6 +143,7 @@ export class PaymentService {
                     cc.episodeTitle = this._resolveLocaleText((<BaseResponse<MediaEpisodeResponse>>episodes[sub.episodeId]).attributes.name, lang)
                     return cc
                 })
+                return paginationResult
             })
         )
 
