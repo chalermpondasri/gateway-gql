@@ -11,7 +11,10 @@ import {
 import { Observable } from 'rxjs'
 import { CheckoutPackageType } from '@/types/objects/checkout-package.type'
 import { CheckoutPackageInput } from '@/types/inputs/checkout-package.input'
-import { PaymentTransactionType } from '@/types/objects/payment.type'
+import {
+    PaginatedPaymentTransactionType,
+    PaymentTransactionType,
+} from '@/types/objects/payment.type'
 import { PaginationInput } from '@/types/inputs/pagination.input'
 import {
     PaginatedCoinConsumptionHistory,
@@ -37,10 +40,10 @@ export class PaymentResolver {
         return this._paymentService.checkoutCoinPackage(input.packageId, input.transactionToken)
     }
 
-    @Query(() => [PaymentTransactionType])
+    @Query(() => PaginatedPaymentTransactionType)
     public getPaymentHistory(
         @Args(PaginationInput.name, {nullable: true}) pagination?: PaginationInput
-    ) {
+    ): Observable<PaginatedPaymentTransactionType> {
 
         return this._paymentService.getPaymentHistory(pagination.page,pagination.limit)
     }

@@ -260,6 +260,13 @@ type PaymentTransactionType {
   updatedAt: DateTime!
 }
 
+type PaginatedPaymentTransactionType {
+  data: [PaymentTransactionType!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+}
+
 type CreateUserResponseType {
   userId: ID!
   status: String!
@@ -503,7 +510,7 @@ type Query {
   searchContentByTags(profileId: String, tags: [String!]!): [MediaContentDetailType!]!
   presetSearches(presetId: Float): [PresetSearchType!]!
   getCoinPackages: [CoinPackageType!]!
-  getPaymentHistory(PaginationInput: PaginationInput): [PaymentTransactionType!]!
+  getPaymentHistory(PaginationInput: PaginationInput): PaginatedPaymentTransactionType!
   getCoinConsumptionHistory(PaginationInput: PaginationInput): PaginatedCoinConsumptionHistory!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
