@@ -3,6 +3,7 @@ import {
     GraphQLISODateTime,
     ObjectType,
 } from '@nestjs/graphql'
+import { Paginated } from '@/types/objects/abstract.type'
 
 @ObjectType()
 export class PaymentTransactionType {
@@ -19,5 +20,10 @@ export class PaymentTransactionType {
     @Field( () => GraphQLISODateTime)
     public updatedAt: Date
 
+
+}
+
+@ObjectType({})
+export class PaginatedPaymentTransactionType extends Paginated(PaymentTransactionType) {
 
 }

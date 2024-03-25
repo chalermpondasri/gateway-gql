@@ -12,9 +12,13 @@ import { ProviderName } from '@/constants/provider-name.const'
 import { CheckoutPackageType } from '@/types/objects/checkout-package.type'
 import {
     instanceToPlain,
+    plainToClassFromExist,
     plainToInstance,
 } from 'class-transformer'
-import { PaymentTransactionType } from '@/types/objects/payment.type'
+import {
+    PaginatedPaymentTransactionType,
+    PaymentTransactionType,
+} from '@/types/objects/payment.type'
 import { RentalStatus } from '@/types/enums/rental-status.enum'
 import { ICacheService } from '@/services/cache/interface/service.interface'
 import { RequestContext } from '@/providers/request-context.provider'
@@ -64,10 +68,16 @@ export class PaymentService {
         )
     }
 
-    public getPaymentHistory(page: number, limit: number): Observable<PaymentTransactionType[]> {
+    public getPaymentHistory(page: number, limit: number): Observable<PaginatedPaymentTransactionType> {
         return this._paymentRepository.getPaymentHistory(page, limit).pipe(
-            map(result => {
-                return plainToInstance(Array<PaymentTransactionType>, instanceToPlain(result.data))
+            map(response => {
+
+                const result = plainToClassFromExist(new PaginatedPaymentTransactionType(), response)
+
+                result.data = plainToInstance(Array<PaymentTransactionType>, instanceToPlain(result.data))
+
+                return result
+
             }),
         )
     }

@@ -17,10 +17,13 @@ export class PaymentRepository implements IPaymentRepository {
     }
 
     public getPaymentHistory(page: number, limit: number): Observable<ListResponse<PaymentResponse>> {
-        return from(this._axiosInstance.get(`/payments`, { data: { page, limit } })).pipe(
+        return from(this._axiosInstance.get(`/payments`, { params: { page, limit } })).pipe(
             map(response => response.data),
             map(responsePayload => {
                 const result = plainToInstance(ListResponse<PaymentResponse>, responsePayload)
+                result.total = responsePayload.total
+                result.limit = responsePayload.limit
+                result.page = responsePayload.page
                 result.data = plainToInstance(PaymentResponse, result.data)
                 return result
             }),
