@@ -110,7 +110,7 @@ export class PaymentService {
         return this._paymentRepository.getSubscribeContents().pipe(
             map(result => {
                 const start = (page - 1) * limit
-                const lim = (limit * page) - 1
+                const lim = (limit * page)
                 return {
                     total: result.length,
                     subscribed:result.slice(start, lim)
