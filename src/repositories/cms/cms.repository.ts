@@ -22,6 +22,7 @@ import {
     mergeMap,
     Observable,
     of,
+    tap,
 } from 'rxjs'
 import { AxiosInstance } from 'axios'
 import * as querystring from 'querystring'
@@ -37,11 +38,13 @@ import { Cache } from 'cache-manager'
 import { NotFoundException } from '@nestjs/common'
 import { ContentRating } from '@/types/enums'
 import { CoinPackageResponse } from './coin-package.response'
+import { ICacheService } from '@/services/cache/interface/service.interface'
 
 export class CmsRepository implements ICmsRepository {
     public constructor(
         private readonly _axiosInstance: AxiosInstance,
         private readonly _cacheManager: Cache,
+        private readonly _cacheService: ICacheService
     ) {
     }
 
@@ -207,10 +210,23 @@ export class CmsRepository implements ICmsRepository {
     }
 
     public getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
-        const queryString = querystring.encode({populate: this._mediaContentPopulate})
-        return from(this._axiosInstance.get(`/media-contents/${id}/?${queryString}`)).pipe(
-            map(res=> plainToInstance(CmsDataResponse<MediaContentDetailResponse>, res.data))
+        const cacheKey = `${this.getMediaContentById.name}_${id}`
+        return this._cacheService.getCache(cacheKey).pipe(
+            mergeMap(cacheResult => {
+                if(!!cacheResult) {
+                    return of(JSON.parse(cacheResult))
+                }
+                const queryString = querystring.encode({populate: this._mediaContentPopulate})
+                return from(this._axiosInstance.get(`/media-contents/${id}/?${queryString}`)).pipe(
+                    map(res => res.data),
+                    tap(data => {
+                        this._cacheService.setCache(cacheKey, JSON.stringify(data), 300)
+                    })
+                )
+            }),
+            map(data => plainToInstance(CmsDataResponse<MediaContentDetailResponse>, data))
         )
+
     }
 
 

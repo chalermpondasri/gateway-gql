@@ -142,6 +142,24 @@ type MediaEpisodeType {
   videoId: String!
 }
 
+type MediaContentType {
+  id: ID!
+  title: String
+  subtitle: String!
+  contentRating: String!
+  shortVideos: [ExternalContentType!]!
+  trailers: [ExternalContentType!]!
+  coverImage: CmsImageType
+  link: ExternalContentType
+  tags: [LocalizedLabelType!]!
+  episodes: [EpisodeItemType!] @deprecated(reason: "move to season in mediaContentDetail")
+  isSeries: Boolean!
+  totalEpisode: Float!
+  totalSeason: Float
+  totalDuration: Float
+  slug: String!
+}
+
 type PersonType {
   id: ID!
   name: String!
@@ -493,6 +511,18 @@ type PaginatedCoinConsumptionHistory {
   total: Int!
 }
 
+type LatestSubscriptionType {
+  mediaContent: MediaContentType!
+  totalSubscribedEpisodes: Float!
+}
+
+type PaginatedLatestSubscriptionType {
+  data: [LatestSubscriptionType!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+}
+
 type BytearkPlayerType {
   signUrl: String!
 }
@@ -512,6 +542,7 @@ type Query {
   getCoinPackages: [CoinPackageType!]!
   getPaymentHistory(PaginationInput: PaginationInput): PaginatedPaymentTransactionType!
   getCoinConsumptionHistory(PaginationInput: PaginationInput): PaginatedCoinConsumptionHistory!
+  latestSubscriptions(PaginationInput: PaginationInput): PaginatedLatestSubscriptionType!
   userLogin(identity: String!, password: String!): TokenType!
   userRefreshToken: TokenType!
   getCategories: [CategoryType!]!
