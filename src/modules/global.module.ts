@@ -18,6 +18,7 @@ import { HealthCheckController } from '@/services/health-check/health-check.cont
 import { paymentRepositoryProvider } from '@/providers/payment.provider'
 import { cmsRepositoryProvider } from '@/providers/cms.provider'
 
+
 @Global()
 @Module({
     controllers: [
@@ -43,7 +44,8 @@ import { cmsRepositoryProvider } from '@/providers/cms.provider'
     ],
     imports: [
         ConfigModule.forRoot(),
-        CacheRedisModule.register()
+        CacheRedisModule.register(),
+        CacheRedisModule,
     ]
 })
 export class GlobalModule implements NestModule{

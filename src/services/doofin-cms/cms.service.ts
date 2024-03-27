@@ -251,7 +251,7 @@ export class CmsService {
         )
             .pipe(
                 map(res => (res.data) as BaseResponse<MediaContentDetailResponse>),
-                map((res) => this._toMediaContentDetailType(res, lang)),
+                map((res) => CmsService.toMediaContentDetailType(res, lang)),
             )
     }
 
@@ -272,13 +272,13 @@ export class CmsService {
                 if (data.meta.pagination.total === 0) {
                     return want === 'audio' || want === 'caption' ? [] : 0
                 }
-                const { captions, audio, totalEp } = this._countAudioSubtitleAndTotalEp(data.data, media.id, lang)
+                const { captions, audio, totalEp } = CmsService.countAudioSubtitleAndTotalEp(data.data, media.id, lang)
                 return want === 'audio' ? audio : want === 'caption' ? captions : totalEp
             }),
         )
     }
 
-    private _toMediaContentDetailType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType {
+    public static toMediaContentDetailType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType {
         const { attributes } = resp
         const result = new MediaContentDetailType()
         result.id = resp.id
@@ -327,7 +327,7 @@ export class CmsService {
             audio,
             totalEp,
             newSeasons,
-        } = this._countAudioSubtitleAndTotalEp(get(attributes, 'mediaSeasons.data', []) as BaseResponse<MediaSeasonResponse>[], resp.id, lang)
+        } = this.countAudioSubtitleAndTotalEp(get(attributes, 'mediaSeasons.data', []) as BaseResponse<MediaSeasonResponse>[], resp.id, lang)
 
         result.totalEpisode = totalEp
         result.captions = captions
@@ -378,7 +378,7 @@ export class CmsService {
             },
             0,
         )
-        item.mediaContentDetail = this._toMediaContentDetailType(mediaContent, lang)
+        item.mediaContentDetail = CmsService.toMediaContentDetailType(mediaContent, lang)
         return item
 
     }
@@ -400,7 +400,7 @@ export class CmsService {
             mergeMap((ratings) => this._cmsRepository.getMediaContentByTags(tags, ratings)),
             map(res => (res.data) as Array<BaseResponse<MediaContentResponse>>),
             concatMap((datas) => from(datas)),
-            map((res) => this._toMediaContentDetailType(res, lang)),
+            map((res) => CmsService.toMediaContentDetailType(res, lang)),
             toArray(),
         )
     }
@@ -409,7 +409,7 @@ export class CmsService {
         const lang = this._requestContext.languages[0].code ?? 'en'
         return this._cmsRepository.getSeason(media.id.toString()).pipe(
             concatMap(data => from(data.data)),
-            map(season => this._seasonMapper(media.id, season, lang)),
+            map(season => CmsService.seasonMapper(media.id, season, lang)),
             toArray(),
         )
     }
@@ -468,7 +468,7 @@ export class CmsService {
                             const tagSlugs = tagResponse.map(v => v.attributes.slug)
                             return !tagSlugs.some(cursor => excludeTags.includes(cursor))
                         }),
-                        map(result => this._toMediaContentDetailType(result, lang)),
+                        map(result => CmsService.toMediaContentDetailType(result, lang)),
                         toArray(),
                         tap(data => this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600))
                     ),
@@ -481,7 +481,7 @@ export class CmsService {
         return get(localeText, lang) ?? get(localeText, 'en', '')
     }
 
-    private _countAudioSubtitleAndTotalEp(
+    public static countAudioSubtitleAndTotalEp(
         seasons: BaseResponse<MediaSeasonResponse>[],
         mediaContentId: number,
         lang: string,
@@ -505,7 +505,7 @@ export class CmsService {
                 a.captions = a.captions.concat(cap)
                 a.audio = a.audio.concat(audi)
                 a.totalEp += total
-                a.newSeasons.push(this._seasonMapper(mediaContentId, c, lang))
+                a.newSeasons.push(CmsService.seasonMapper(mediaContentId, c, lang))
                 return a
             },
             { captions: [], audio: [], totalEp: 0, newSeasons: [] },
@@ -522,7 +522,7 @@ export class CmsService {
         )
     }
 
-    private _seasonMapper(mediaContentId: number, season: BaseResponse<MediaSeasonResponse>, lang: string) {
+    public static seasonMapper(mediaContentId: number, season: BaseResponse<MediaSeasonResponse>, lang: string) {
 
         const episodeMapper = (ep: BaseResponse<MediaEpisodeResponse>) => {
             const img: CmsImageType = get(ep, 'attributes.coverImage.data.attributes', null)

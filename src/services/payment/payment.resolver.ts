@@ -1,7 +1,5 @@
 import { PaymentService } from '@/services/payment/payment.service'
-import {
-    Inject,
-} from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import {
     Args,
     Mutation,
@@ -16,9 +14,8 @@ import {
     PaymentTransactionType,
 } from '@/types/objects/payment.type'
 import { PaginationInput } from '@/types/inputs/pagination.input'
-import {
-    PaginatedCoinConsumptionHistory,
-} from '@/types/objects/coin-consumption-history.type'
+import { PaginatedCoinConsumptionHistory } from '@/types/objects/coin-consumption-history.type'
+import { PaginatedLatestSubscriptionType } from '@/types/objects/latest-subscription.type'
 
 @Resolver(() => PaymentTransactionType)
 export class PaymentResolver {
@@ -61,6 +58,13 @@ export class PaymentResolver {
         @Args(PaginationInput.name, {nullable: true}) pagination: PaginationInput
     ): Observable<PaginatedCoinConsumptionHistory>{
         return this._paymentService.coinConsumptionHistory(pagination.page, pagination.limit)
+    }
+
+    @Query(() => PaginatedLatestSubscriptionType)
+    public latestSubscriptions(
+        @Args(PaginationInput.name, {nullable: true}) pagination: PaginationInput
+    ) {
+        return this._paymentService.latestSubscriptions(pagination)
     }
 
 }

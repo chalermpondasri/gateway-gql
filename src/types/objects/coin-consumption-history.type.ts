@@ -26,5 +26,5 @@ export class CoinConsumptionHistoryType {
 }
 
 
-@ObjectType({})
+@ObjectType()
 export class PaginatedCoinConsumptionHistory extends Paginated(CoinConsumptionHistoryType) {}
