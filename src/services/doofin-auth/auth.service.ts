@@ -21,7 +21,7 @@ import {
 import {
     CategoryType,
     CreateUserResponseType,
-    DeviceSessionType,  
+    DeviceSessionType,
     NotificationListType,
     NotificationType,
     MyListType,
@@ -37,6 +37,7 @@ import {
     UserWhoForgotPasswordType,
     VerifyOtpToResetPasswordType,
     TicketType,
+    JwtTokenType,
 } from '@/types/objects'
 import {
     ContactSupportInput,
@@ -58,7 +59,7 @@ import {
     instanceToPlain,
     plainToInstance,
 } from 'class-transformer'
-import { TokenType } from '@/types/objects/token.type'
+
 import { IByteArkRepository } from '@/repositories/byte-ark/repository.interface'
 import { RequestContext } from '@/providers/request-context.provider'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
@@ -135,10 +136,10 @@ export class AuthService {
         )
     }
 
-    public doLogin(identity: string, password: string): Observable<TokenType> {
+    public doLogin(identity: string, password: string): Observable<JwtTokenType> {
         return this._authRepository.login(identity,password).pipe(
             map( response => {
-                return plainToInstance(TokenType, response)
+                return plainToInstance(JwtTokenType, response)
             })
         )
     }
@@ -180,10 +181,10 @@ export class AuthService {
         )
     }
 
-    public doRefreshToken(refreshToken: string): Observable<TokenType>{
+    public doRefreshToken(refreshToken: string): Observable<JwtTokenType>{
         return this._authRepository.refreshToken(this._extractJwt(refreshToken)).pipe(
             map(value =>{
-                return plainToInstance(TokenType, value)
+                return plainToInstance(JwtTokenType, value)
             })
         )
     }
@@ -412,6 +413,10 @@ export class AuthService {
 
     public switchProfile(profileId: string):Observable<ProfileType>{
         return this.getProfileInformation(profileId)
+    }
+
+    public requestOtpTokenToConfirmPhoneNumber() {
+        return this._authRepository.requestOtpTokenToConfirmPhoneNumber()
     }
 
     private _getCurrentProfileId(profileIdInput?: string): string{

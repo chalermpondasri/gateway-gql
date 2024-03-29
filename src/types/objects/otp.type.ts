@@ -6,19 +6,20 @@ import {
     Int,
     ObjectType,
 } from '@nestjs/graphql'
-import { TokenType } from './token.type'
+import { JwtTokenType } from '@/types/objects/token.type'
+
 
 @ObjectType()
 export class RequestOtpType {
     @Field()
     public referenceNumber: string
-    @Field( type => Int)
+    @Field( () => Int)
     public remaining: number
-    @Field(type => GraphQLISODateTime)
+    @Field(() => GraphQLISODateTime)
     public expiredAt: Date
 }
 @ObjectType()
 export class VerifyOtpType extends BaseUserType {
-    @Field(()=> TokenType)
-    public tokens: TokenType
+    @Field(()=> JwtTokenType)
+    public tokens: JwtTokenType
 }
