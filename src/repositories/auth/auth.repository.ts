@@ -71,7 +71,7 @@ export class AuthRepository implements IAuthRepository {
     }
 
     public requestOtpTokenToConfirmPhoneNumber(): Observable<{ token: string }> {
-        return from(this._axiosInstance('/user/request/otp/verify-phone')).pipe(
+        return from(this._axiosInstance.post('/user/request/otp/verify-phone')).pipe(
             map( result => result.data)
         )
     }

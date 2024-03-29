@@ -400,9 +400,13 @@ type TicketType {
   ticketId: String!
 }
 
-type TokenType {
+type JwtTokenType {
   accessToken: String!
   refreshToken: String!
+}
+
+type GenericTokenType {
+  token: String!
 }
 
 type RequestOtpType {
@@ -414,7 +418,7 @@ type RequestOtpType {
 type VerifyOtpType {
   userId: ID!
   status: String!
-  tokens: TokenType!
+  tokens: JwtTokenType!
 }
 
 type LabelType {
@@ -543,8 +547,8 @@ type Query {
   getPaymentHistory(PaginationInput: PaginationInput): PaginatedPaymentTransactionType!
   getCoinConsumptionHistory(PaginationInput: PaginationInput): PaginatedCoinConsumptionHistory!
   latestSubscriptions(PaginationInput: PaginationInput): PaginatedLatestSubscriptionType!
-  userLogin(identity: String!, password: String!): TokenType!
-  userRefreshToken: TokenType!
+  userLogin(identity: String!, password: String!): JwtTokenType!
+  userRefreshToken: JwtTokenType!
   getCategories: [CategoryType!]!
   locale(id: String!): LocaleType!
   locales(PaginationInput: PaginationInput, query: String): LocaleListType!
@@ -589,6 +593,11 @@ type Mutation {
   requestOtp(RequestOtpInput: RequestOtpInput!): RequestOtpType!
   verifyOtp(VerifyOtpInput: VerifyOtpInput!): VerifyOtpType!
   verifyEmail(VerifyEmailInput: VerifyEmailInput!): UserType!
+
+  """
+  request otp token for unverified user to restore phone verification flow
+  """
+  requestOtpTokenToVerifyPhoneNumber: GenericTokenType!
   updateProfilePreferences(categoryIds: [String!]!, profileId: String): [CategoryType!]!
   createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
   deleteLocale(id: String!): LocaleType!
