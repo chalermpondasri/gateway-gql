@@ -70,6 +70,12 @@ export class AuthRepository implements IAuthRepository {
         this._logger = new Logger(AuthRepository.name)
     }
 
+    public requestOtpTokenToConfirmPhoneNumber(): Observable<{ token: string }> {
+        return from(this._axiosInstance('/user/request/otp/verify-phone')).pipe(
+            map( result => result.data)
+        )
+    }
+
     public createNewUser(request: CreateUserRequest): Observable<CreateUserResponse> {
         return from(this._axiosInstance.post<CreateUserResponse>(`/user`, request)).pipe(
             map((result: AxiosResponse<CreateUserResponse>) => {

@@ -84,6 +84,7 @@ export interface IAuthRepository {
     resetPassword(resetPasswordToken: string, newPassword: string): Observable<{status: boolean}>
     newKMSVideoKey(videoId: string, hash: string): Observable<boolean>
     getKMSVideoKey(videoId: string): Observable<string | null>
+    requestOtpTokenToConfirmPhoneNumber(): Observable<{ token: string }>
 }
 
 export interface ILocaleRepository {

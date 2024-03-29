@@ -13,9 +13,10 @@ import { Observable } from 'rxjs'
 import {
     CreateUserResponseType,
     RequestOtpType,
-    TokenType,
+    JwtTokenType,
     UserType,
     VerifyOtpType,
+    GenericTokenType,
 } from '@/types/objects'
 
 import {
@@ -55,7 +56,7 @@ export class AuthResolver {
         return this._authService.verifyOtp(input)
     }
 
-    @Query(() => TokenType)
+    @Query(() => JwtTokenType)
     public userLogin(
         @Args('identity')
         identity: string,
@@ -72,8 +73,15 @@ export class AuthResolver {
         return this._authService.verifyEmail(input)
     }
 
-    @Query(() => TokenType)
+    @Query(() => JwtTokenType)
     public userRefreshToken(@Context() ctx: any) {
         return this._authService.doRefreshToken(ctx.req.headers.authorization)
+    }
+
+    @Mutation(() => GenericTokenType, {
+        description: 'request otp token for unverified user to restore phone verification flow'
+    })
+    public requestOtpTokenToVerifyPhoneNumber() {
+        return this._authService.requestOtpTokenToConfirmPhoneNumber()
     }
 }

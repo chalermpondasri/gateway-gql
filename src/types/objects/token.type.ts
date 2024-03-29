@@ -4,9 +4,15 @@ import {
 } from '@nestjs/graphql'
 
 @ObjectType()
-export class TokenType {
+export class JwtTokenType {
     @Field()
     public accessToken: string
     @Field()
     public refreshToken: string
+}
+
+@ObjectType()
+export class GenericTokenType {
+    @Field()
+    public token: string
 }
