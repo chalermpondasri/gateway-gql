@@ -6,13 +6,12 @@ import {
     PipeTransform,
     ValidationPipe,
 } from '@nestjs/common'
+import * as process from 'process'
 async function bootstrap() {
 
     const app = await NestFactory.create(AppModule)
     app.enableCors({
-        origin: (requestOrigin, callback) => {
-            callback(null, requestOrigin)
-        },
+        origin: process.env.NODE_ENV !== 'production' ? ["http://localhost", /\.doofin\.rest$/] : true,
         credentials: true,
     })
     const nestValidationPipes: PipeTransform[] = [
