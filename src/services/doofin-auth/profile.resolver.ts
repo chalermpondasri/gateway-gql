@@ -168,7 +168,7 @@ export class ProfileResolver {
         return this._authService.switchProfile(profileId).pipe(
             tap(result=> {
 
-                context.res.cookie('profileId', result.id, {sameSite: 'none',secure: true})
+                context.res.cookie('profileId', result.id, {sameSite: 'none'})
 
             })
         )
