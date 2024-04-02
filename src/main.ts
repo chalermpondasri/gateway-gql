@@ -7,11 +7,14 @@ import {
     ValidationPipe,
 } from '@nestjs/common'
 import * as process from 'process'
+
 async function bootstrap() {
 
     const app = await NestFactory.create(AppModule)
     app.enableCors({
-        origin: process.env.NODE_ENV !== 'production' ? ["http://localhost", /\.doofin\.rest$/] : true,
+        origin: (requestOrigin, callback) => {
+            return callback(null, requestOrigin)
+        },
         credentials: true,
     })
     const nestValidationPipes: PipeTransform[] = [
@@ -22,7 +25,7 @@ async function bootstrap() {
     app.useGlobalPipes(...nestValidationPipes)
 
     app.use(cookieParser())
-    app.use(graphqlUploadExpress());
+    app.use(graphqlUploadExpress())
 
     await app.listen(process.env.PORT || 3000)
 }

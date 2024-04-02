@@ -8,7 +8,10 @@ import {
     UserType,
     ValidateProfilePinType,
 } from '@/types/objects'
-import { Inject} from '@nestjs/common'
+import {
+    Inject,
+    Res,
+} from '@nestjs/common'
 import {
     Args,
     Context,
@@ -160,10 +163,14 @@ export class ProfileResolver {
     @Mutation(()=> ProfileType)
     public switchProfile(
         @Args("profileId") profileId: string,
-        @Context() context: any
+        @Res() context: any
     ){
         return this._authService.switchProfile(profileId).pipe(
-            tap(res=> context.res.cookie('profileId', res.id))
+            tap(result=> {
+
+                context.res.cookie('profileId', result.id, {sameSite: 'none',secure: true})
+
+            })
         )
     }
 
