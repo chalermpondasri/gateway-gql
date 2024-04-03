@@ -6,6 +6,7 @@ export class PaymentResponse {
     public coinGain: number
     public paymentStatus: string
     public paymentType: string
+    public coinBonus: number
     @Transform(({value}) => !!value ? new Date(value) : null)
     public updatedAt: Date
 }

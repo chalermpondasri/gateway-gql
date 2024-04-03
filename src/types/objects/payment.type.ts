@@ -14,6 +14,8 @@ export class PaymentTransactionType {
     @Field()
     public coinGain: number
     @Field()
+    public coinBonus: number
+    @Field()
     public paymentStatus: string
     @Field()
     public paymentType: string
