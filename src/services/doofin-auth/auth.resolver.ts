@@ -84,4 +84,9 @@ export class AuthResolver {
     public requestOtpTokenToVerifyPhoneNumber() {
         return this._authService.requestOtpTokenToConfirmPhoneNumber()
     }
+
+    @Mutation(() => Boolean)
+    public resendVerificationEmail(): Observable<boolean> {
+        return this._authService.resendVerificationEmail()
+    }
 }

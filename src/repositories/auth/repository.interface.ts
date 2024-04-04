@@ -85,6 +85,7 @@ export interface IAuthRepository {
     newKMSVideoKey(videoId: string, hash: string): Observable<boolean>
     getKMSVideoKey(videoId: string): Observable<string | null>
     requestOtpTokenToConfirmPhoneNumber(): Observable<{ token: string }>
+    resendVerificationEmail(): Observable<boolean>
 }
 
 export interface ILocaleRepository {

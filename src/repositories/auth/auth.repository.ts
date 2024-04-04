@@ -463,4 +463,10 @@ export class AuthRepository implements IAuthRepository {
         )
     }
 
+    public resendVerificationEmail(): Observable<boolean> {
+        return from(this._axiosInstance.patch(`/user/me/verify/email/resend`)).pipe(
+            map(res => res.data.status)
+        )
+    }
+
 }

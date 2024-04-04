@@ -419,6 +419,10 @@ export class AuthService {
         return this._authRepository.requestOtpTokenToConfirmPhoneNumber()
     }
 
+    public resendVerificationEmail():Observable<boolean> {
+        return this._authRepository.resendVerificationEmail()
+    }
+
     private _getCurrentProfileId(profileIdInput?: string): string{
         return !!profileIdInput ? profileIdInput : this._reqCtx.profileId
     }

@@ -273,6 +273,7 @@ type PaymentTransactionType {
   transactionId: String!
   total: Float!
   coinGain: Float!
+  coinBonus: Float!
   paymentStatus: String!
   paymentType: String!
   updatedAt: DateTime!
@@ -598,6 +599,7 @@ type Mutation {
   request otp token for unverified user to restore phone verification flow
   """
   requestOtpTokenToVerifyPhoneNumber: GenericTokenType!
+  resendVerificationEmail: Boolean!
   updateProfilePreferences(categoryIds: [String!]!, profileId: String): [CategoryType!]!
   createLocale(CreateLocaleLabelInput: CreateLocaleLabelInput!): IdStringType!
   deleteLocale(id: String!): LocaleType!
