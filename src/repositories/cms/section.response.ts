@@ -25,5 +25,6 @@ export class SectionResponse {
     public order: number
     public items: CmsDataResponse<MediaContentResponse>
     public coverImage: CmsDataResponse<CmsImageContent>
+    public internalResourcePath: string
 
 }
