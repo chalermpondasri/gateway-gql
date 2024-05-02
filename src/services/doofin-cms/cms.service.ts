@@ -62,6 +62,7 @@ import {
 import { capitalize } from 'lodash/fp'
 import {
     get,
+    isNil,
     reduce,
     size,
     some,
@@ -81,6 +82,7 @@ import {
 import { ICacheService } from '@/services/cache/interface/service.interface'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
 import { RentalStatus } from '@/types/enums/rental-status.enum'
+import { LatestPlayedContentResponse } from '@/repositories/playback/latest-played-content.response'
 
 @Injectable()
 export class CmsService {
@@ -633,9 +635,20 @@ export class CmsService {
     }
 
     public getLatestPlayed(mediaContentId: number): Observable<LatestPlayedType> {
-
-        return this._playbackRepository.getLatestPlayedContent(this._requestContext.profileId).pipe(
-            map(v => v.find( element => mediaContentId === element.contentId)),
+        const cacheKey = `${this._playbackRepository.getLatestPlayedContent.name}_P:${this._requestContext.profileId}`
+        return this._cacheService.getCache(cacheKey).pipe(
+            mergeMap( dataString => {
+                if(!isNil(dataString)) {
+                    const json: unknown[] = JSON.parse(dataString)
+                    const result = plainToInstance(LatestPlayedContentResponse,json)
+                   return  of(result )
+                }
+                return this._playbackRepository.getLatestPlayedContent(this._requestContext.profileId).pipe(
+                    tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 15))
+                )
+            }),
+        ).pipe(
+            map((v) => v.find( element => mediaContentId === element.contentId)),
             defaultIfEmpty(null),
             map(v => {
                 if(!v) {
