@@ -82,6 +82,7 @@ import {
 import { ICacheService } from '@/services/cache/interface/service.interface'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
 import { RentalStatus } from '@/types/enums/rental-status.enum'
+import { SearchService } from '@/services/search/services/search.service'
 import { LatestPlayedContentResponse } from '@/repositories/playback/latest-played-content.response'
 
 @Injectable()
@@ -101,7 +102,9 @@ export class CmsService {
         @Inject(ProviderName.CACHE_SERVICE)
         private readonly _cacheService: ICacheService,
         @Inject(ProviderName.PLAYBACK_REPOSITORY)
-        private readonly _playbackRepository: IPlaybackRepository
+        private readonly _playbackRepository: IPlaybackRepository,
+        @Inject(SearchService)
+        private readonly _searchService: SearchService,
     ) {
         this._logger = new Logger(this.constructor.name)
     }
@@ -220,7 +223,7 @@ export class CmsService {
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMainPageSections(sectionId).pipe(
             concatMap(result => from(result.data)),
-            map(sectionResponse => {
+            mergeMap(sectionResponse => {
                 const { attributes } = sectionResponse
                 const section = new SectionType()
                 section.id = sectionResponse?.id ?? 0
@@ -232,16 +235,33 @@ export class CmsService {
                 section.createdAt = new Date(attributes.createdAt)
                 section.updatedAt = new Date(attributes.updatedAt)
                 section.coverImage = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.attributes
+
                 if (section.coverImage) {
                     section.coverImage.id = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.id
                 }
+
+                section.sectionItems = []
                 const rawSectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? [])
-                if (rawSectionItems.length === 0) {
-                    section.sectionItems = []
-                    return section
+
+                if(section.sectionType === 'top') {
+                    return of(section).pipe(
+                        mergeMap((section) => (this._searchService[attributes.internalResourcePath]() as Observable<BaseResponse<MediaContentDetailResponse>[]>).pipe(
+                            defaultIfEmpty([]),
+                            map(result => result.map((v: BaseResponse<MediaContentResponse>) => this._toSectionItemType(v, lang))),
+                            map(items => {
+                                section.sectionItems = items
+                                return section
+                            })
+                        ))
+                    )
                 }
-                section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
-                return section
+
+                return of(section).pipe(
+                    map(section => {
+                        section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
+                        return section
+                    })
+                )
             }),
             toArray(),
         )
