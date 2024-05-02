@@ -79,6 +79,7 @@ export class SearchService {
                     totalEpisode: null,
                     totalSeason: null,
                     totalDuration: null,
+                    latestPlayed: null,
                 }
                 return media
             }),

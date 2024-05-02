@@ -142,6 +142,11 @@ type MediaEpisodeType {
   videoId: String!
 }
 
+type LatestPlayedType {
+  latestPlayedEpisodeId: Float!
+  latestPlayedPosition: Float!
+}
+
 type MediaContentType {
   id: ID!
   title: String
@@ -158,6 +163,7 @@ type MediaContentType {
   totalSeason: Float
   totalDuration: Float
   slug: String!
+  latestPlayed: LatestPlayedType
 }
 
 type PersonType {
@@ -182,6 +188,7 @@ type MediaContentDetailType {
   totalSeason: Float
   totalDuration: Float
   slug: String!
+  latestPlayed: LatestPlayedType
   captions: [String!]!
   audios: [String!]!
   seasons: [MediaSeasonType!]!
@@ -205,6 +212,7 @@ type SectionItemType {
   totalSeason: Float
   totalDuration: Float
   slug: String!
+  latestPlayed: LatestPlayedType
   recentlyPublished: Boolean!
   mediaContentDetail: MediaContentDetailType!
 }
