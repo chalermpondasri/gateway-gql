@@ -57,6 +57,13 @@ export class MediaEpisodeType extends BaseEpisodeType {
     @Field(() => String)
     public videoId: string
 }
+@ObjectType()
+export class LatestPlayedType {
+    @Field()
+    public latestPlayedEpisodeId: number
+    @Field()
+    public latestPlayedPosition: number
+}
 
 @ObjectType()
 export class MediaContentType extends IdType{
@@ -88,7 +95,13 @@ export class MediaContentType extends IdType{
     public totalDuration: number
     @Field()
     public slug: string
+
+    @Field(() => LatestPlayedType, {nullable: true})
+    public latestPlayed: LatestPlayedType
+
 }
+
+
 
 @ObjectType()
 export class PersonType extends IdType {

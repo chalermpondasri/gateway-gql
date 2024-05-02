@@ -6,6 +6,8 @@ import {
 } from 'rxjs'
 import { UpdatePlaybackStatusRequest } from './update-playback-status.request';
 import { AxiosInstance } from 'axios'
+import { LatestPlayedContentResponse } from '@/repositories/playback/latest-played-content.response'
+import { plainToInstance } from 'class-transformer'
 
 export class PlaybackRepository implements IPlaybackRepository {
     public constructor(
@@ -24,6 +26,13 @@ export class PlaybackRepository implements IPlaybackRepository {
         const promise = this._axiosInstance.patch(`/playback/progress/${profileId}`, body)
         return from(promise).pipe(
             map( res => res.data)
+        )
+    }
+
+    public getLatestPlayedContent(profileId: string): Observable<LatestPlayedContentResponse[]> {
+        return from(this._axiosInstance.get(`/playback/latest/${profileId}`)).pipe(
+            map( res => <unknown[]>res.data),
+            map((data: unknown[]) => plainToInstance(LatestPlayedContentResponse, data)),
         )
     }
 }

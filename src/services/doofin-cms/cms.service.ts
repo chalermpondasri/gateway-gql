@@ -8,6 +8,7 @@ import {
 import {
     catchError,
     concatMap,
+    defaultIfEmpty,
     filter,
     from,
     iif,
@@ -43,6 +44,7 @@ import {
     CmsUserType,
     CoinPackageType,
     ExternalContentType,
+    LatestPlayedType,
     MediaContentDetailType,
     MediaDurationType,
     MediaEpisodeType,
@@ -54,6 +56,7 @@ import {
 } from '@/types/objects'
 import {
     instanceToPlain,
+    plainToClassFromExist,
     plainToInstance,
 } from 'class-transformer'
 import { capitalize } from 'lodash/fp'
@@ -626,6 +629,24 @@ export class CmsService {
                 this._logger.error(`[TotalDuration] : ${err.message}`)
                 return of(null)
             })
+        )
+    }
+
+    public getLatestPlayed(mediaContentId: number): Observable<LatestPlayedType> {
+
+        return this._playbackRepository.getLatestPlayedContent(this._requestContext.profileId).pipe(
+            map(v => v.find( element => mediaContentId === element.contentId)),
+            defaultIfEmpty(null),
+            map(v => {
+                if(!v) {
+                    return  null
+                }
+               return  plainToClassFromExist(new LatestPlayedType, {
+                   latestPlayedEpisodeId: v.episodeId,
+                   latestPlayedPosition: v.latestPosition,
+               })
+            }),
+
         )
     }
 }
