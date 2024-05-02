@@ -86,4 +86,11 @@ export class SectionItemResolver {
         return this._cmsService.getLatestPlayed(parent.id)
     }
 
+    @ResolveField('addedToMyList', () => Boolean)
+    public isAddedToMyList(
+        @Parent() parent: SectionItemType,
+    ) {
+        return this._cmsService.isAddedToMyList(parent.id)
+    }
+
 }

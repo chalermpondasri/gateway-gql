@@ -100,6 +100,13 @@ export class MediaContentDetailResolver {
         return this._cmsService.getSeason(parent)
     }
 
+    @ResolveField('addedToMyList', () => Boolean)
+    public addedToMyList(
+        @Parent() parent: MediaContentDetailType
+    ) {
+        return this._cmsService.isAddedToMyList(parent.id)
+    }
+
 }
 
 @Resolver(() => MediaEpisodeType)

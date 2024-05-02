@@ -6,7 +6,6 @@ import { ProviderName } from '@/constants/provider-name.const'
 import { ISearchRepository } from '@/repositories/search'
 import {
     concatMap,
-    EMPTY,
     from,
     iif,
     map,
@@ -30,7 +29,6 @@ import {
     ICmsRepository,
     MediaContentDetailResponse,
 } from '@/repositories/cms'
-import { CmsService } from '@/services/doofin-cms/cms.service'
 import { ICacheService } from '@/services/cache/interface/service.interface'
 
 @Injectable()
@@ -80,6 +78,7 @@ export class SearchService {
                     totalSeason: null,
                     totalDuration: null,
                     latestPlayed: null,
+                    addedToMyList: false,
                 }
                 return media
             }),
