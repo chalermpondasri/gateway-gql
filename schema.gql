@@ -164,6 +164,7 @@ type MediaContentType {
   totalDuration: Float
   slug: String!
   latestPlayed: LatestPlayedType
+  addedToMyList: Boolean!
 }
 
 type PersonType {
@@ -189,6 +190,7 @@ type MediaContentDetailType {
   totalDuration: Float
   slug: String!
   latestPlayed: LatestPlayedType
+  addedToMyList: Boolean!
   captions: [String!]!
   audios: [String!]!
   seasons: [MediaSeasonType!]!
@@ -213,6 +215,7 @@ type SectionItemType {
   totalDuration: Float
   slug: String!
   latestPlayed: LatestPlayedType
+  addedToMyList: Boolean!
   recentlyPublished: Boolean!
   mediaContentDetail: MediaContentDetailType!
 }

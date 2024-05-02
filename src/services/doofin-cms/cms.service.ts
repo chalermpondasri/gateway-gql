@@ -683,4 +683,16 @@ export class CmsService {
 
         )
     }
+
+    public isAddedToMyList(mediaContentId: number): Observable<boolean> {
+        const profileId = this._requestContext.profileId
+        if(isNil(profileId)) {
+            return of(false)
+        }
+        return this._authRepository.getMyList(profileId).pipe(
+            map( result => {
+                return result.some(value => String(value.programId) === String(mediaContentId))
+            })
+        )
+    }
 }

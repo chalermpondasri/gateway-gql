@@ -99,9 +99,10 @@ export class MediaContentType extends IdType{
     @Field(() => LatestPlayedType, {nullable: true})
     public latestPlayed: LatestPlayedType
 
+    @Field(() => Boolean)
+    public addedToMyList: boolean
+
 }
-
-
 
 @ObjectType()
 export class PersonType extends IdType {
