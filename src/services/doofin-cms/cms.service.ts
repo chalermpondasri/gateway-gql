@@ -664,6 +664,7 @@ export class CmsService {
                    return  of(result )
                 }
                 return this._playbackRepository.getLatestPlayedContent(this._requestContext.profileId).pipe(
+                    catchError(() => []),
                     tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 15))
                 )
             }),
