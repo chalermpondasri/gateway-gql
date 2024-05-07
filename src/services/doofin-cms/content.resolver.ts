@@ -16,6 +16,10 @@ import { SearchInput } from '@/types/inputs/search.input'
 import { SearchService } from '../search/services/search.service'
 import { RentalStatus } from '@/types/enums/rental-status.enum'
 import { PaymentService } from '@/services/payment/payment.service'
+import {
+    catchError,
+    of,
+} from 'rxjs'
 @Resolver(() => MediaContentDetailType)
 export class MediaContentDetailResolver {
     public constructor(
@@ -117,13 +121,15 @@ export class MediaEpisodeResolver {
         @Inject(PaymentService)
         private readonly _paymentService: PaymentService
     ){}
-    @ResolveField("continueWatchingAt", ()=> Number)
+    @ResolveField()
     public continueWatchingAt(@Parent() parent: MediaEpisodeType, @Context() context: any){
          return this._cmsService.getContinueWatching(
             context.req.profileId, 
             parent.mediaContentId.toString(), 
             parent.id.toString()
-        )
+        ).pipe(
+            catchError(() => of(0))
+         )
     }
 
     @ResolveField('rentalStatus', () => RentalStatus)
