@@ -598,7 +598,8 @@ export class CmsService {
         const currentProfileId = !!profileId ? profileId : this._requestContext.profileId
         return this._playbackRepository.getPlaybackStatus(currentProfileId, mediaContentId).pipe(
             map(watchingDetail => {
-                return watchingDetail[epId] ?? 0
+                console.log({ watchingDetail })
+                return watchingDetail[String(epId)] ?? 0
             }),
         )
     }
