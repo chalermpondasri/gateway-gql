@@ -111,6 +111,13 @@ export class MediaContentDetailResolver {
         return this._cmsService.isAddedToMyList(parent.id)
     }
 
+    @ResolveField('latestPlayed')
+    public latestPlayed(
+        @Parent() parent: MediaContentDetailType,
+    ) {
+        return this._cmsService.getLatestPlayed(parent.id)
+    }
+
 }
 
 @Resolver(() => MediaEpisodeType)
