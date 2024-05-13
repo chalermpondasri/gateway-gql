@@ -133,7 +133,7 @@ export class MediaEpisodeResolver {
          return this._cmsService.getContinueWatching(
             context.req.profileId, 
             parent.mediaContentId.toString(), 
-            parent.id.toString()
+            String(parent.id),
         ).pipe(
             catchError(() => of(0))
          )

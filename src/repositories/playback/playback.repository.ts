@@ -4,7 +4,7 @@ import {
     map,
     Observable,
 } from 'rxjs'
-import { UpdatePlaybackStatusRequest } from './update-playback-status.request';
+import { UpdatePlaybackStatusRequest } from './update-playback-status.request'
 import { AxiosInstance } from 'axios'
 import { LatestPlayedContentResponse } from '@/repositories/playback/latest-played-content.response'
 import { plainToInstance } from 'class-transformer'
