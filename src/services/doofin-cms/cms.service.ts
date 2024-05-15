@@ -10,6 +10,7 @@ import {
     concatMap,
     defaultIfEmpty,
     filter,
+    find,
     from,
     iif,
     map,
@@ -672,14 +673,23 @@ export class CmsService {
         ).pipe(
             map((v) => v.find( element => mediaContentId === element.contentId)),
             defaultIfEmpty(null),
-            map(v => {
+            mergeMap(v => {
                 if(!v) {
-                    return  null
+                    return  of(null)
                 }
-               return  plainToClassFromExist(new LatestPlayedType, {
-                   latestPlayedEpisodeId: v.episodeId,
-                   latestPlayedPosition: v.latestPosition,
-               })
+                return this.getMediaContentById(mediaContentId.toString()).pipe(
+                    concatMap(contentDetail => {
+                        return contentDetail.episodes
+                    }),
+                    find(ep => ep.id === v.episodeId),
+                    map(findResult => {
+                        return  plainToClassFromExist(new LatestPlayedType, {
+                            latestPlayedEpisodeId: v.episodeId,
+                            latestPlayedPosition: v.latestPosition,
+                            latestPlayedFullDuration: isNil(findResult) ? 0 : findResult
+                        })
+                    })
+                )
             }),
 
         )
