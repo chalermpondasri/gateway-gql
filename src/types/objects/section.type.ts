@@ -63,6 +63,8 @@ export class LatestPlayedType {
     public latestPlayedEpisodeId: number
     @Field()
     public latestPlayedPosition: number
+    @Field()
+    public latestPlayedFullDuration: number
 }
 
 @ObjectType()
