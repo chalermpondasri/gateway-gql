@@ -245,7 +245,7 @@ export class CmsService {
                 section.sectionItems = []
                 const rawSectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? [])
 
-                if(section.sectionType === 'top') {
+                if (section.sectionType === 'top') {
                     return of(section).pipe(
                         mergeMap((section) => (this._searchService[attributes.internalResourcePath]() as Observable<BaseResponse<MediaContentDetailResponse>[]>).pipe(
                             defaultIfEmpty([]),
@@ -253,26 +253,25 @@ export class CmsService {
                             map(items => {
                                 section.sectionItems = items
                                 return section
-                            })
-                        ))
+                            }),
+                        )),
                     )
                 }
 
-                if(section.sectionType === 'continue-watching') {
+                if (section.sectionType === 'continue-watching') {
                     return this.getContinueWatchingSectionItems().pipe(
-                        map(result=> {
+                        map(result => {
                             section.sectionItems = result
                             return section
-                        })
+                        }),
                     )
                 }
-
 
                 return of(section).pipe(
                     map(section => {
                         section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
                         return section
-                    })
+                    }),
                 )
             }),
             filter(v => !isEmpty(v.sectionItems)),
@@ -284,18 +283,18 @@ export class CmsService {
         const cacheKey = `${this._playbackRepository.getLatestPlayedContent.name}_P:${this._requestContext.profileId}`
 
         return this._cacheService.getCache(cacheKey).pipe(
-            mergeMap( dataString => {
-                if(!isNil(dataString)) {
+            mergeMap(dataString => {
+                if (!isNil(dataString)) {
                     const json: unknown[] = JSON.parse(dataString)
-                    const result = plainToInstance(LatestPlayedContentResponse,json)
+                    const result = plainToInstance(LatestPlayedContentResponse, json)
                     return of(result)
                 }
                 return this._playbackRepository.getLatestPlayedContent(this._requestContext.profileId).pipe(
                     catchError((err, caught) => {
-                        console.error({err, caught})
+                        console.error({ err, caught })
                         return []
                     }),
-                    tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 15))
+                    tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 15)),
                 )
             }),
         )
@@ -309,8 +308,8 @@ export class CmsService {
 
                 return this._cmsRepository.getMediaContentById(String(v.contentId)).pipe(
                     map(content => {
-                        const d= < BaseResponse<MediaContentDetailResponse> > content.data
-                        return this._toSectionItemType( d, this._requestContext.languages[0].code)
+                        const d = <BaseResponse<MediaContentDetailResponse>>content.data
+                        return this._toSectionItemType(d, this._requestContext.languages[0].code)
                     }),
                     toArray(),
                 )
@@ -460,6 +459,14 @@ export class CmsService {
 
     }
 
+    private _getEpisodeDetailById(seasons: MediaSeasonType[], epId: number): Observable<MediaEpisodeType> {
+        return of(seasons).pipe(
+            concatMap(seasons => seasons),
+            concatMap(ep => ep.mediaEpisodes),
+            find(r => r.id === epId),
+        )
+    }
+
     public getKidFin(): Observable<SectionItemType[]> {
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMediaContentByTags(['kids']).pipe(
@@ -547,7 +554,7 @@ export class CmsService {
                         }),
                         map(result => CmsService.toMediaContentDetailType(result, lang)),
                         toArray(),
-                        tap(data => this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600))
+                        tap(data => this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600)),
                     ),
                 )
             }),
@@ -610,10 +617,9 @@ export class CmsService {
             const price = get(ep, 'attributes.price', 0)
 
             let rentalStatus: RentalStatus
-            if(price === 0) {
-                rentalStatus =RentalStatus.FREE_TO_WATCH
-            } else
-            if(price > 0 && !!duration?.freeDuration && duration?.freeDuration > 0) {
+            if (price === 0) {
+                rentalStatus = RentalStatus.FREE_TO_WATCH
+            } else if (price > 0 && !!duration?.freeDuration && duration?.freeDuration > 0) {
                 rentalStatus = RentalStatus.FREE_TRIAL
             } else {
                 rentalStatus = RentalStatus.SUBSCRIPTION_NEEDED
@@ -650,7 +656,6 @@ export class CmsService {
         const currentProfileId = !!profileId ? profileId : this._requestContext.profileId
         return this._playbackRepository.getPlaybackStatus(currentProfileId, mediaContentId).pipe(
             map(watchingDetail => {
-                console.log({ watchingDetail })
                 return watchingDetail[String(epId)] ?? 0
             }),
         )
@@ -667,7 +672,7 @@ export class CmsService {
                     coin.coinGain = data.attributes.coinGain
                     coin.coinBonusIndicator = data.attributes.coinBonusIndicator
                     coin.tier = data.attributes.tier
-                    coin.tag = data.attributes.tag.map( t => t.label)
+                    coin.tag = data.attributes.tag.map(t => t.label)
                     return coin
                 }),
                 toArray(),
@@ -694,7 +699,7 @@ export class CmsService {
     public getTotalDuration(media: MediaContentDetailType): Observable<number> {
         return this.getMediaContentById(String(media.id)).pipe(
             map(() => {
-                if(this.isSeries(media.tags)) {
+                if (this.isSeries(media.tags)) {
                     return null
                 }
                 const duration = media.seasons[0]?.mediaEpisodes[0]?.duration?.duration
@@ -703,45 +708,43 @@ export class CmsService {
             catchError(err => {
                 this._logger.error(`[TotalDuration] : ${err.message}`)
                 return of(null)
-            })
+            }),
         )
     }
 
     public getLatestPlayed(mediaContentId: number): Observable<LatestPlayedType> {
         return this._getLatestPlayedContentFromCache().pipe(
-            map((v) => v.find( element => mediaContentId === element.contentId)),
+            map((v) => v.find(element => mediaContentId === element.contentId)),
             defaultIfEmpty(null),
-            mergeMap(v => {
-                if(!v) {
-                    return  of(null)
+            mergeMap((v: LatestPlayedContentResponse) => {
+                if (!v) {
+                    return of(null)
                 }
                 return this.getMediaContentById(mediaContentId.toString()).pipe(
-                    concatMap(contentDetail => {
-                        return contentDetail.episodes
+                    mergeMap(contentDetail => {
+                        return this._getEpisodeDetailById(contentDetail.seasons, v.episodeId)
                     }),
-                    find(ep => ep.id === v.episodeId),
                     map(findResult => {
-                        return  plainToClassFromExist(new LatestPlayedType, {
+                        return plainToClassFromExist(new LatestPlayedType, {
                             latestPlayedEpisodeId: v.episodeId,
                             latestPlayedPosition: v.latestPosition,
-                            latestPlayedFullDuration: isNil(findResult) ? 0 : findResult
+                            latestPlayedFullDuration: isNil(findResult) ? 0 : findResult.duration.duration,
                         })
-                    })
+                    }),
                 )
             }),
-
         )
     }
 
     public isAddedToMyList(mediaContentId: number): Observable<boolean> {
         const profileId = this._requestContext.profileId
-        if(isNil(profileId)) {
+        if (isNil(profileId)) {
             return of(false)
         }
         return this._authRepository.getMyList(profileId).pipe(
-            map( result => {
+            map(result => {
                 return result.some(value => String(value.programId) === String(mediaContentId))
-            })
+            }),
         )
     }
 }
