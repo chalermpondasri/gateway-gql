@@ -457,10 +457,9 @@ export class CmsService {
     }
 
     private _getEpisodeDetailById(seasons: MediaSeasonType[], epId: number): Observable<MediaEpisodeType> {
-        return of(seasons).pipe(
-            concatMap(seasons => seasons),
-            concatMap(ep => ep.mediaEpisodes),
-            find(r => r.id === epId),
+        return from(seasons).pipe(
+            concatMap(season => from(season.mediaEpisodes)),
+            find(ep => ep.id === epId),
         )
     }
 
