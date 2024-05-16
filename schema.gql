@@ -145,6 +145,7 @@ type MediaEpisodeType {
 type LatestPlayedType {
   latestPlayedEpisodeId: Float!
   latestPlayedPosition: Float!
+  latestPlayedFullDuration: Float!
 }
 
 type MediaContentType {
