@@ -289,7 +289,7 @@ export class CmsService {
                     const result = plainToInstance(LatestPlayedContentResponse, json)
                     return of(result)
                 }
-                return this._playbackRepository.getLatestPlayedContent('651f0cd72c28d1cec05a8a11').pipe(
+                return this._playbackRepository.getLatestPlayedContent(this._requestContext.profileId).pipe(
                     catchError((err, caught) => {
                         console.error({ err, caught })
                         return []
