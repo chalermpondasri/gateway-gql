@@ -62,6 +62,7 @@ import {
 import { capitalize } from 'lodash/fp'
 import {
     get,
+    isEmpty,
     isNil,
     reduce,
     size,
@@ -256,6 +257,16 @@ export class CmsService {
                     )
                 }
 
+                if(section.sectionType === 'continue-watching') {
+                    return this.getContinueWatchingSectionItems().pipe(
+                        map(result=> {
+                            section.sectionItems = result
+                            return section
+                        })
+                    )
+                }
+
+
                 return of(section).pipe(
                     map(section => {
                         section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
@@ -263,7 +274,47 @@ export class CmsService {
                     })
                 )
             }),
+            filter(v => !isEmpty(v.sectionItems)),
             toArray(),
+        )
+    }
+
+    private _getLatestPlayedContentFromCache(): Observable<LatestPlayedContentResponse[]> {
+        const cacheKey = `${this._playbackRepository.getLatestPlayedContent.name}_P:${this._requestContext.profileId}`
+
+        return this._cacheService.getCache(cacheKey).pipe(
+            mergeMap( dataString => {
+                if(!isNil(dataString)) {
+                    const json: unknown[] = JSON.parse(dataString)
+                    const result = plainToInstance(LatestPlayedContentResponse,json)
+                    return of(result)
+                }
+                return this._playbackRepository.getLatestPlayedContent(this._requestContext.profileId).pipe(
+                    catchError((err, caught) => {
+                        console.error({err, caught})
+                        return []
+                    }),
+                    tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 15))
+                )
+            }),
+        )
+    }
+
+    public getContinueWatchingSectionItems(): Observable<SectionItemType[]> {
+        return this._getLatestPlayedContentFromCache().pipe(
+            tap(v => console.log(v)),
+            concatMap(v => from(v)),
+            mergeMap(v => {
+
+                return this._cmsRepository.getMediaContentById(String(v.contentId)).pipe(
+                    map(content => {
+                        const d= < BaseResponse<MediaContentDetailResponse> > content.data
+                        return this._toSectionItemType( d, this._requestContext.languages[0].code)
+                    }),
+                    toArray(),
+                )
+
+            }),
         )
     }
 
@@ -656,20 +707,7 @@ export class CmsService {
     }
 
     public getLatestPlayed(mediaContentId: number): Observable<LatestPlayedType> {
-        const cacheKey = `${this._playbackRepository.getLatestPlayedContent.name}_P:${this._requestContext.profileId}`
-        return this._cacheService.getCache(cacheKey).pipe(
-            mergeMap( dataString => {
-                if(!isNil(dataString)) {
-                    const json: unknown[] = JSON.parse(dataString)
-                    const result = plainToInstance(LatestPlayedContentResponse,json)
-                   return  of(result )
-                }
-                return this._playbackRepository.getLatestPlayedContent(this._requestContext.profileId).pipe(
-                    catchError(() => []),
-                    tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 15))
-                )
-            }),
-        ).pipe(
+        return this._getLatestPlayedContentFromCache().pipe(
             map((v) => v.find( element => mediaContentId === element.contentId)),
             defaultIfEmpty(null),
             map(v => {
