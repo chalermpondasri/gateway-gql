@@ -302,19 +302,16 @@ export class CmsService {
 
     public getContinueWatchingSectionItems(): Observable<SectionItemType[]> {
         return this._getLatestPlayedContentFromCache().pipe(
-            tap(v => console.log(v)),
             concatMap(v => from(v)),
             mergeMap(v => {
-
                 return this._cmsRepository.getMediaContentById(String(v.contentId)).pipe(
                     map(content => {
                         const d = <BaseResponse<MediaContentDetailResponse>>content.data
                         return this._toSectionItemType(d, this._requestContext.languages[0].code)
                     }),
-                    toArray(),
                 )
-
             }),
+            toArray(),
         )
     }
 
