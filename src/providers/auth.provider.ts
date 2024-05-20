@@ -1,4 +1,8 @@
-import { BadRequestException, Provider } from '@nestjs/common'
+import {
+    BadRequestException,
+    Logger,
+    Provider,
+} from '@nestjs/common'
 import { ProviderName } from '@/constants/provider-name.const'
 import { AuthRepository } from '@/repositories/auth/auth.repository'
 import { LocaleRepository } from '@/repositories/auth/locale.repository'
@@ -16,6 +20,7 @@ export const authRepositoryProvider: Provider = {
     useFactory: (config: EnvironmentConfig, client: AxiosInstance, cache: ICacheService) => {
         client.defaults.baseURL = config.AUTH_ENDPOINT
         client.interceptors.response.use(null, error => {
+            Logger.error(error, ProviderName.AUTH_REPOSITORY)
             throw new BadRequestException(error?.response?.data)
         })
         return new AuthRepository(client, cache)
