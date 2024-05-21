@@ -86,6 +86,7 @@ import { IPlaybackRepository } from '@/repositories/playback/repository.interfac
 import { RentalStatus } from '@/types/enums/rental-status.enum'
 import { SearchService } from '@/services/search/services/search.service'
 import { LatestPlayedContentResponse } from '@/repositories/playback/latest-played-content.response'
+import * as console from 'console'
 
 @Injectable()
 export class CmsService {
@@ -222,10 +223,12 @@ export class CmsService {
     }
 
     public getMainPageSections(sectionId?: number): Observable<SectionType[]> {
+        console.time('getMainPageSections')
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMainPageSections(sectionId).pipe(
             concatMap(result => from(result.data)),
             mergeMap(sectionResponse => {
+                console.time(`getMainPageSections_${sectionResponse.id}`)
                 const { attributes } = sectionResponse
                 const section = new SectionType()
                 section.id = sectionResponse?.id ?? 0
@@ -275,7 +278,9 @@ export class CmsService {
                 )
             }),
             filter(v => !isEmpty(v.sectionItems)),
+            tap(result => console.timeEnd(`getMainPageSections_${result.id}`)),
             toArray(),
+            tap(() => console.timeEnd('getMainPageSections'))
         )
     }
 
