@@ -1,4 +1,5 @@
 import {
+    Logger,
     Provider,
     Scope,
 } from '@nestjs/common'
@@ -25,7 +26,15 @@ export const httpClientProvider: Provider = {
         })
 
         axiosInstance.interceptors.request.use( (conf) => {
+            Logger.log(conf.url, ProviderName.HTTP_CLIENT)
             return conf
+        })
+
+        axiosInstance.interceptors.response.use((value) => {
+            Logger.log(value.data, ProviderName.HTTP_CLIENT)
+            return value
+        }, (error) => {
+            Logger.error(error, ProviderName.HTTP_CLIENT)
         })
 
         return axiosInstance
