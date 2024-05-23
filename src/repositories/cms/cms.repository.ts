@@ -109,6 +109,9 @@ export class CmsRepository implements ICmsRepository {
             'items.casts.portrait',
             'items.directors',
             'items.directors.portrait',
+            'items.imageHeroBanner',
+            'items.imageCard',
+            'items.imageTopSection'
         ]
         let queryString = querystring.encode({populate})
         if(!isNil(sectionId)) {

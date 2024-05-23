@@ -166,6 +166,9 @@ type MediaContentType {
   slug: String!
   latestPlayed: LatestPlayedType
   addedToMyList: Boolean!
+  imageHeroBanner: CmsImageType!
+  imageCard: CmsImageType!
+  imageTopSection: CmsImageType
 }
 
 type PersonType {
@@ -192,6 +195,9 @@ type MediaContentDetailType {
   slug: String!
   latestPlayed: LatestPlayedType
   addedToMyList: Boolean!
+  imageHeroBanner: CmsImageType!
+  imageCard: CmsImageType!
+  imageTopSection: CmsImageType
   captions: [String!]!
   audios: [String!]!
   seasons: [MediaSeasonType!]!
@@ -217,6 +223,9 @@ type SectionItemType {
   slug: String!
   latestPlayed: LatestPlayedType
   addedToMyList: Boolean!
+  imageHeroBanner: CmsImageType!
+  imageCard: CmsImageType!
+  imageTopSection: CmsImageType
   recentlyPublished: Boolean!
   mediaContentDetail: MediaContentDetailType!
 }

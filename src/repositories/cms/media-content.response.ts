@@ -26,6 +26,9 @@ export class BaseMediaContentResponse {
     public mediaSeasons: CmsDataResponse<MediaSeasonResponse>
     public rating: CmsDataResponse<ContentRatingResponse>
     public slug: string
+    public imageHeroBanner: CmsDataResponse<CmsImageContent>
+    public imageTopSection?: CmsDataResponse<CmsImageContent>
+    public imageCard: CmsDataResponse<CmsImageContent>
 }
 export class MediaContentResponse extends BaseMediaContentResponse {
 
