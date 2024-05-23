@@ -20,4 +20,7 @@ export class SearchMediaContentResonse {
     public directors: PersonType[]
     public casts: PersonType[]
     public link: ExternalContent
+    public imageHeroBanner: CmsImageContent
+    public imageCard: CmsImageContent
+    public imageTopSection?: CmsImageContent
 }

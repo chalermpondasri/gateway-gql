@@ -79,6 +79,9 @@ export class SearchService {
                     totalDuration: null,
                     latestPlayed: null,
                     addedToMyList: false,
+                    imageHeroBanner: null,
+                    imageCard: null,
+                    imageTopSection: null
                 }
                 return media
             }),
