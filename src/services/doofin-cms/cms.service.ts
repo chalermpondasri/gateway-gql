@@ -466,14 +466,15 @@ export class CmsService {
 
         const imageCard = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageCard?.data)
         if(!!imageCard) {
-
             item.imageCard = imageCard.attributes
             item.imageCard.id = imageCard.id
         }
 
         const imageHeroBanner = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageHeroBanner?.data)
-        item.imageHeroBanner = imageHeroBanner.attributes
-        item.imageHeroBanner.id = imageHeroBanner.id
+        if(!!imageHeroBanner) {
+            item.imageHeroBanner = imageHeroBanner.attributes
+            item.imageHeroBanner.id = imageHeroBanner.id
+        }
 
         item.mediaContentDetail = CmsService.toMediaContentDetailType(mediaContent, lang)
         return item
