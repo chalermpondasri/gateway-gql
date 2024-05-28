@@ -267,6 +267,9 @@ export class CmsRepository implements ICmsRepository {
         'mediaSeasons.mediaEpisodes.name',
         'mediaSeasons.mediaEpisodes.duration',
         'mediaSeasons.mediaEpisodes.price',
+        'imageHeroBanner',
+        'imageCard',
+        'imageTopSection'
     ]
 
     public getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>> {
