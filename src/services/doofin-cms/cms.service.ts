@@ -456,6 +456,22 @@ export class CmsService {
             },
             0,
         )
+        const topSection = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageTopSection?.data)
+
+        item.imageTopSection = topSection?.attributes
+
+        if(!!topSection) {
+            item.imageTopSection.id = topSection?.id
+        }
+
+        const imageCard = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageCard?.data)
+        item.imageCard = imageCard.attributes
+        item.imageCard.id = imageCard.id
+
+        const imageHeroBanner = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageHeroBanner?.data)
+        item.imageHeroBanner = imageHeroBanner.attributes
+        item.imageHeroBanner.id = imageHeroBanner.id
+
         item.mediaContentDetail = CmsService.toMediaContentDetailType(mediaContent, lang)
         return item
 
