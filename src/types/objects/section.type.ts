@@ -104,10 +104,10 @@ export class MediaContentType extends IdType{
     @Field(() => Boolean)
     public addedToMyList: boolean
 
-    @Field(() => CmsImageType)
+    @Field(() => CmsImageType, {nullable: true})
     public imageHeroBanner: CmsImageType
 
-    @Field(() => CmsImageType)
+    @Field(() => CmsImageType, {nullable: true})
     public imageCard: CmsImageType
 
     @Field(() => CmsImageType, {nullable: true})
