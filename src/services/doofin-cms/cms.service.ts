@@ -47,6 +47,7 @@ import {
     ExternalContentType,
     LatestPlayedType,
     MediaContentDetailType,
+    MediaContentType,
     MediaDurationType,
     MediaEpisodeType,
     MediaSeasonType,
@@ -355,6 +356,24 @@ export class CmsService {
             }),
         )
     }
+    
+    private static _mappingImageSection(result: MediaContentType, attributes: MediaContentDetailResponse): MediaContentType {
+        const topSection = (<BaseResponse<CmsImageContent>>attributes.imageTopSection?.data)
+        result.imageTopSection = topSection?.attributes
+        if(!!topSection) {
+            result.imageTopSection.id = topSection?.id
+        }
+
+        const imageCard = (<BaseResponse<CmsImageContent>>attributes.imageCard?.data)
+        result.imageCard = imageCard.attributes
+        result.imageCard.id = imageCard.id
+
+        const imageHeroBanner = (<BaseResponse<CmsImageContent>>attributes.imageHeroBanner?.data)
+        result.imageHeroBanner = imageHeroBanner.attributes
+        result.imageHeroBanner.id = imageHeroBanner.id
+        
+        return result
+    }
 
     public static toMediaContentDetailType(resp: BaseResponse<MediaContentDetailResponse>, lang: string): MediaContentDetailType {
         const { attributes } = resp
@@ -414,6 +433,7 @@ export class CmsService {
         result.episodes = []
 
         result.seasons = newSeasons
+        this._mappingImageSection(result, resp.attributes)
         return result
 
     }
@@ -456,23 +476,10 @@ export class CmsService {
             },
             0,
         )
-        const topSection = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageTopSection?.data)
-
-        item.imageTopSection = topSection?.attributes
-
-        if(!!topSection) {
-            item.imageTopSection.id = topSection?.id
-        }
-
-        const imageCard = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageCard?.data)
-        item.imageCard = imageCard.attributes
-        item.imageCard.id = imageCard.id
-
-        const imageHeroBanner = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageHeroBanner?.data)
-        item.imageHeroBanner = imageHeroBanner.attributes
-        item.imageHeroBanner.id = imageHeroBanner.id
 
         item.mediaContentDetail = CmsService.toMediaContentDetailType(mediaContent, lang)
+        // CmsService._mappingImageSection(item, mediaContent.attributes)
+        CmsService._mappingImageSection(item, mediaContent.attributes)
         return item
 
     }
