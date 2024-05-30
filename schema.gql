@@ -166,8 +166,8 @@ type MediaContentType {
   slug: String!
   latestPlayed: LatestPlayedType
   addedToMyList: Boolean!
-  imageHeroBanner: CmsImageType!
-  imageCard: CmsImageType!
+  imageHeroBanner: CmsImageType
+  imageCard: CmsImageType
   imageTopSection: CmsImageType
 }
 
@@ -195,8 +195,8 @@ type MediaContentDetailType {
   slug: String!
   latestPlayed: LatestPlayedType
   addedToMyList: Boolean!
-  imageHeroBanner: CmsImageType!
-  imageCard: CmsImageType!
+  imageHeroBanner: CmsImageType
+  imageCard: CmsImageType
   imageTopSection: CmsImageType
   captions: [String!]!
   audios: [String!]!
@@ -223,8 +223,8 @@ type SectionItemType {
   slug: String!
   latestPlayed: LatestPlayedType
   addedToMyList: Boolean!
-  imageHeroBanner: CmsImageType!
-  imageCard: CmsImageType!
+  imageHeroBanner: CmsImageType
+  imageCard: CmsImageType
   imageTopSection: CmsImageType
   recentlyPublished: Boolean!
   mediaContentDetail: MediaContentDetailType!

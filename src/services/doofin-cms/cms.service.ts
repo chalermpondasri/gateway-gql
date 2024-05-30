@@ -271,6 +271,25 @@ export class CmsService {
                     )
                 }
 
+                if(section.sectionType === 'my-list') {
+                    if(!this._requestContext.profileId) {
+                        return of(section)
+                    }
+                    return this._authRepository.getMyList(this._requestContext.profileId).pipe(
+                        concatMap(list => from(list)),
+                        concatMap(item => this._cmsRepository.getMediaContentById(item.programId)),
+                        map(result => {
+                            const casted: BaseResponse<MediaContentResponse> = <BaseResponse<MediaContentDetailResponse>> result.data
+                            return this._toSectionItemType(casted, lang)
+                        }),
+                        toArray(),
+                        map( items => {
+                            section.sectionItems = items
+                            return section
+                        })
+                    )
+                }
+
                 return of(section).pipe(
                     map(section => {
                         section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
