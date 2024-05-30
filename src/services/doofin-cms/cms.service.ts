@@ -326,6 +326,9 @@ export class CmsService {
     }
 
     public getContinueWatchingSectionItems(): Observable<SectionItemType[]> {
+        if(!this._requestContext.profileId) {
+            return of([])
+        }
         return this._getLatestPlayedContentFromCache().pipe(
             concatMap(v => from(v)),
             mergeMap(v => {

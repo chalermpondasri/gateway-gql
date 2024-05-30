@@ -30,6 +30,11 @@ export class MediaContentDetailResolver {
     ) {
     }
 
+    @Query(() => [MediaContentDetailType])
+    public getContinueWatchingList() {
+        return this._cmsService.getContinueWatchingSectionItems()
+    }
+
     @Query( () => MediaContentDetailType)
     public getMediaContent(
         @Args({name: 'id'}) id: string,
