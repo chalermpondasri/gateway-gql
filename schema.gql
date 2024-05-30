@@ -561,6 +561,7 @@ type Query {
   getMainPage(profileId: String, sectionId: Float): [SectionType!]!
   getKidFin(profileId: String): [SectionItemType!]!
   getNewFin: [SectionItemType!]!
+  getContinueWatchingList: [MediaContentDetailType!]!
   getMediaContent(id: String!, profileId: String): MediaContentDetailType!
   searchContentByKeyword(SearchInput: SearchInput!): [MediaContentDetailType!]!
   searchContentByTags(profileId: String, tags: [String!]!): [MediaContentDetailType!]!
