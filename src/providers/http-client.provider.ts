@@ -33,6 +33,7 @@ export const httpClientProvider: Provider = {
             return value
         }, (error) => {
             Logger.error(error, ProviderName.HTTP_CLIENT)
+            throw error
         })
 
         return axiosInstance
