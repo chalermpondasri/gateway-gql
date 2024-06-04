@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Logger,
     Provider,
     Scope,
@@ -33,7 +34,7 @@ export const httpClientProvider: Provider = {
             return value
         }, (error) => {
             Logger.error(error, ProviderName.HTTP_CLIENT)
-            throw error
+            throw new BadRequestException(error?.response?.data || error)
         })
 
         return axiosInstance
