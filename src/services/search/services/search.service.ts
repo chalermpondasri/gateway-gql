@@ -79,9 +79,9 @@ export class SearchService {
                     totalDuration: null,
                     latestPlayed: null,
                     addedToMyList: false,
-                    imageHeroBanner: null,
-                    imageCard: null,
-                    imageTopSection: null
+                    imageHeroBanner: content.imageHeroBanner as any,
+                    imageCard: content.imageCard as any,
+                    imageTopSection: content.imageTopSection as any,
                 }
                 return media
             }),
@@ -97,7 +97,7 @@ export class SearchService {
                     of(JSON.parse(data)),
                     this._getGeneralTopViewsCacheWrapper()
                         .pipe(
-                            tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result),3600)),
+                            tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 3600)),
                         ),
                 )
             }),
@@ -105,20 +105,8 @@ export class SearchService {
     }
 
     private _getGeneralTopViewsCacheWrapper() {
-        const yesterday = dayjs()
-            .add(-1, 'd')
-            .set('hour', 0)
-            .set('minute', 0)
-            .set('seconds', 0)
-            .set('milliseconds', 0)
-            .toISOString()
-        const aWeekAgo = dayjs()
-            .set('days', -8)
-            .set('hour', 0)
-            .set('minute', 0)
-            .set('seconds', 0)
-            .set('milliseconds', 0)
-            .toISOString()
+        const yesterday = dayjs().subtract(1, 'day').startOf('day').toISOString()
+        const aWeekAgo = dayjs().subtract(8, 'day').startOf('day').toISOString()
 
         const lang = this._requestContext.languages[0].code
 
