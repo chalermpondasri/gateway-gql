@@ -2,6 +2,7 @@ import {
     DeviceSessionType,
     ProfileType,
     TicketType,
+    UserAvailabilityCheckType,
     UserRequestEmailType,
     UserRequestOtpType,
     UserType,
@@ -29,6 +30,7 @@ import {
 } from '@/types/inputs'
 import { PaginationInput } from '@/types/inputs/pagination.input'
 import { PaymentService } from '@/services/payment/payment.service'
+import { Observable } from 'rxjs'
 
 @Resolver( () => UserType)
 export class UserResolver {
@@ -158,6 +160,12 @@ export class UserResolver {
     ){
         return this._authService.resetPassword(resetPasswordToken, newPassword)
     }
+
+    @Query(() => UserAvailabilityCheckType)
+    public getUserAvailabilityCheck(): Observable<UserAvailabilityCheckType> {
+        return this._authService.getUserAvailability()
+    }
+
 
     @ResolveField()
     public paymentHistory(

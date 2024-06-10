@@ -58,6 +58,7 @@ import {
     Logger,
     LoggerService,
 } from '@nestjs/common'
+import { UserAvailabilityCheckResponse } from '@/repositories/auth/UserAvailabilityCheckResponse'
 
 export class AuthRepository implements IAuthRepository {
     private readonly _prefixVideoCache = 'video-id'
@@ -467,6 +468,13 @@ export class AuthRepository implements IAuthRepository {
         return from(this._axiosInstance.patch(`/user/me/verify/email/resend`)).pipe(
             map(res => res.data.status)
         )
+    }
+
+    public getUserAvailability(): Observable<UserAvailabilityCheckResponse> {
+        return from(this._axiosInstance.get(`/user/me/availability`)).pipe(
+            map(res => res.data)
+        )
+
     }
 
 }

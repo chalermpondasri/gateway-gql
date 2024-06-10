@@ -173,3 +173,9 @@ export class TicketType {
     @Field()
     public ticketId: string
 }
+
+@ObjectType()
+export class UserAvailabilityCheckType {
+    @Field(() => Boolean)
+    public changePhoneNumber: boolean
+}

@@ -422,6 +422,10 @@ type TicketType {
   ticketId: String!
 }
 
+type UserAvailabilityCheckType {
+  changePhoneNumber: Boolean!
+}
+
 type JwtTokenType {
   accessToken: String!
   refreshToken: String!
@@ -584,6 +588,7 @@ type Query {
   requestToChangePhoneNumber(phoneNumber: String!): UserRequestOtpType!
   getUser: UserType!
   findUserWhoForgotPassword(emailOrPhone: String!): UserWhoForgotPasswordType!
+  getUserAvailabilityCheck: UserAvailabilityCheckType!
   getContentRating: [String!]!
   getAvatars(id: Int): [AvatarType!]!
   getUserSessions: [DeviceSessionType!]!

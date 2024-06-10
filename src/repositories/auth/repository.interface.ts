@@ -40,6 +40,7 @@ import {
     VerifyOtpInput,
     VerifyResetProfilePin,
 } from '@/types/inputs'
+import { UserAvailabilityCheckResponse } from '@/repositories/auth/UserAvailabilityCheckResponse'
 
 export interface IAuthRepository {
     createNewUser(request: CreateUserRequest): Observable<CreateUserResponse>
@@ -86,6 +87,7 @@ export interface IAuthRepository {
     getKMSVideoKey(videoId: string): Observable<string | null>
     requestOtpTokenToConfirmPhoneNumber(): Observable<{ token: string }>
     resendVerificationEmail(): Observable<boolean>
+    getUserAvailability(): Observable<UserAvailabilityCheckResponse>
 }
 
 export interface ILocaleRepository {

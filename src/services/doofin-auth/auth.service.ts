@@ -38,6 +38,7 @@ import {
     VerifyOtpToResetPasswordType,
     TicketType,
     JwtTokenType,
+    UserAvailabilityCheckType,
 } from '@/types/objects'
 import {
     ContactSupportInput,
@@ -417,6 +418,14 @@ export class AuthService {
 
     public requestOtpTokenToConfirmPhoneNumber() {
         return this._authRepository.requestOtpTokenToConfirmPhoneNumber()
+    }
+
+    public getUserAvailability(): Observable<UserAvailabilityCheckType> {
+        return this._authRepository.getUserAvailability().pipe(
+            map(result => {
+                return plainToInstance(UserAvailabilityCheckType, result)
+            })
+        )
     }
 
     public resendVerificationEmail():Observable<boolean> {
