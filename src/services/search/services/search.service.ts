@@ -53,8 +53,8 @@ export class SearchService {
                 const link = get(content, 'link', {})
                 const media: MediaContentDetailType = {
                     id: content.id,
-                    title: get(content, `title.${lang}`),
-                    subtitle: get(content, `title.${lang}`),
+                    title: get(content, `title.${lang}`, ''),
+                    subtitle: get(content, `title.${lang}`, ''),
                     contentRating: get(content, 'rating', ''),
                     trailers: get(content, 'trailers', []).map(e => plainToInstance(ExternalContentType, e)),
                     coverImage: content.coverImage as any,
