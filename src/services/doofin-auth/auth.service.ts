@@ -11,7 +11,7 @@ import {
 } from '@/repositories/auth'
 import { ProviderName } from '@/constants/provider-name.const'
 import {
-    concatMap, 
+    concatMap,
     from,
     map,
     mergeMap,
@@ -22,23 +22,23 @@ import {
     CategoryType,
     CreateUserResponseType,
     DeviceSessionType,
+    JwtTokenType,
+    MyListType,
     NotificationListType,
     NotificationType,
-    MyListType,
     ProfileRequestResetPinType,
     ProfileType,
     RequestOtpType,
+    TicketType,
+    UserAvailabilityCheckType,
     UserRequestEmailType,
     UserRequestOtpType,
     UserType,
     UserVerifyOtpType,
-    ValidateProfilePinType,
-    VerifyOtpType,
     UserWhoForgotPasswordType,
+    ValidateProfilePinType,
     VerifyOtpToResetPasswordType,
-    TicketType,
-    JwtTokenType,
-    UserAvailabilityCheckType,
+    VerifyOtpType,
 } from '@/types/objects'
 import {
     ContactSupportInput,
@@ -65,6 +65,7 @@ import { IByteArkRepository } from '@/repositories/byte-ark/repository.interface
 import { RequestContext } from '@/providers/request-context.provider'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
 import { UpdatePlaybackStatusRequest } from '@/repositories/playback/update-playback-status.request'
+import { isEmpty } from 'lodash'
 
 @Injectable()
 export class AuthService {
@@ -125,156 +126,176 @@ export class AuthService {
 
     public updateUserPreferences(profileId: string, preferences: string[]): Observable<CategoryType[]> {
         return this._authRepository.updateProfilePreferences(this._getCurrentProfileId(profileId), preferences).pipe(
-            mergeMap(result=>this.mapCategoryIdWithLabel(result.categories)),
+            mergeMap(result => this.mapCategoryIdWithLabel(result.categories)),
         )
     }
 
     public getAllCategories(): Observable<CategoryType[]> {
         return this._authRepository.getCategories().pipe(
-            map( response => {
-                return plainToInstance(Array<CategoryType>,instanceToPlain(response.data))
-            })
+            map(response => {
+                return plainToInstance(Array<CategoryType>, instanceToPlain(response.data))
+            }),
         )
     }
 
     public doLogin(identity: string, password: string): Observable<JwtTokenType> {
-        return this._authRepository.login(identity,password).pipe(
-            map( response => {
+        return this._authRepository.login(identity, password).pipe(
+            map(response => {
                 return plainToInstance(JwtTokenType, response)
-            })
+            }),
         )
     }
 
     public verifyEmail(request: VerifyEmailInput): Observable<UserType> {
         return this._authRepository.verifyEmail(request).pipe(
-            map( response => {
+            map(response => {
                 return plainToInstance(UserType, response)
-            })
+            }),
         )
 
     }
 
-    private _extractJwt(token = ''){
-        return token.substring(token.indexOf(' ')+1)
+    private _extractJwt(token = '') {
+        return token.substring(token.indexOf(' ') + 1)
     }
 
-    public getProfiles(token: string): Observable<ProfileType[]>{
+    public getProfiles(token: string): Observable<ProfileType[]> {
         return this._authRepository.getProfiles(this._extractJwt(token)).pipe(
-            map((profile) =>{    
+            map((profile) => {
                 return plainToInstance(Array<ProfileType>, instanceToPlain(profile.data))
             }),
         )
     }
 
-    public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType>{
+    public createProfilePin(token: string, arg: CreateProfilePinInput): Observable<ProfileType> {
         return this._authRepository.createProfilePin(this._extractJwt(token), arg).pipe(
-            map(res =>{
+            map(res => {
                 return plainToInstance(ProfileType, res)
-            })
+            }),
         )
     }
 
-    public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileType>{
+    public changeProfilePin(token: string, arg: UpdateProfilePinInput): Observable<ProfileType> {
         return this._authRepository.changeProfilePin(this._extractJwt(token), arg).pipe(
-            map(res =>{
+            map(res => {
                 return plainToInstance(ProfileType, res)
-            })
+            }),
         )
     }
 
-    public doRefreshToken(refreshToken: string): Observable<JwtTokenType>{
+    public doRefreshToken(refreshToken: string): Observable<JwtTokenType> {
         return this._authRepository.refreshToken(this._extractJwt(refreshToken)).pipe(
-            map(value =>{
+            map(value => {
                 return plainToInstance(JwtTokenType, value)
-            })
+            }),
         )
     }
 
-    public requestToChangePhoneNumber(token: string, phoneNumber: string): Observable<UserRequestOtpType>{
+    public requestToChangePhoneNumber(token: string, phoneNumber: string): Observable<UserRequestOtpType> {
         return this._authRepository
-          .requestToChangePhoneNumber(this._extractJwt(token), phoneNumber)
-          .pipe(map((res) => plainToInstance(UserRequestOtpType, res)));
+            .requestToChangePhoneNumber(this._extractJwt(token), phoneNumber)
+            .pipe(map((res) => plainToInstance(UserRequestOtpType, res)))
     }
 
     public verifyToChangePhoneNumber(token: string, input: UserVerifyOtpInput): Observable<UserVerifyOtpType> {
         return this._authRepository
-          .verifyToChangePhoneNumber(this._extractJwt(token), input)
-          .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
+            .verifyToChangePhoneNumber(this._extractJwt(token), input)
+            .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)))
     }
 
     public changePassword(token: string, input: UserChangePasswordInput): Observable<UserVerifyOtpType> {
         return this._authRepository
-          .changePassword(this._extractJwt(token), input)
-          .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
+            .changePassword(this._extractJwt(token), input)
+            .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)))
     }
 
-    public getProfileInformation(profileId: string): Observable<ProfileType>{
+    public getProfileInformation(profileId: string): Observable<ProfileType> {
         return this._authRepository
-          .getProfileById(profileId)
-          .pipe(
-            map(data => plainToInstance(ProfileType, data))
-          )
+            .getProfileById(profileId)
+            .pipe(
+                map(data => plainToInstance(ProfileType, data)),
+            )
     }
 
     public getUser(token: string): Observable<UserType> {
         return this._authRepository.getCurrentUser(this._extractJwt(token)).pipe(
-            map(data => plainToInstance(UserType, data))
+            map(data => plainToInstance(UserType, data)),
         )
     }
 
     public revokeSessions(): Observable<string[]> {
         return this._authRepository.flushSessions().pipe(
-            map(data => data.ids)
+            map(data => data.ids),
         )
     }
 
     public revokeSession(session: string): Observable<DeviceSessionType> {
         return this._authRepository.revokeSingleSession(session).pipe(
-            map(data => plainToInstance(DeviceSessionType, data))
+            map(data => plainToInstance(DeviceSessionType, data)),
         )
     }
 
     public getContentRating(): Observable<string[]> {
         return this._authRepository.getContentRating()
     }
-    public getUserSessions(): Observable<DeviceSessionType[]> {
+
+    public getUserSessions(deviceId = ''): Observable<DeviceSessionType[]> {
         return this._authRepository.listUserSessions().pipe(
-            map( data => plainToInstance(DeviceSessionType, data))
+            concatMap(data => from(data)),
+            map(session => {
+                if (isEmpty(deviceId)) {
+                    Object.assign(session, {
+                        isCurrentDevice: false,
+                    })
+                } else {
+                    Object.assign(session, {
+                        isCurrentDevice: deviceId === session.deviceId,
+                    })
+                }
+                return plainToInstance(DeviceSessionType, session)
+            }),
+            toArray(),
+            map(result => {
+                if (isEmpty(deviceId)) {
+                    return result
+                }
+                return result.sort((a, b) => Number(b.isCurrentDevice) - Number(a.isCurrentDevice))
+            }),
         )
 
     }
 
-    public requestToChangeEmail(token: string, newEmail: string): Observable<UserRequestEmailType>{
+    public requestToChangeEmail(token: string, newEmail: string): Observable<UserRequestEmailType> {
         return this._authRepository.requestToChangeEmail(this._extractJwt(token), newEmail)
     }
 
     public verifyToChangeEmail(token: string, input: UserVerifyOtpInput): Observable<UserVerifyOtpType> {
         return this._authRepository
-          .verifyToChangeEmail(this._extractJwt(token), input)
-          .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)));
+            .verifyToChangeEmail(this._extractJwt(token), input)
+            .pipe(map((res) => plainToInstance(UserVerifyOtpType, res)))
     }
 
-    public validateProfilePin(profileId: string, pin: string): Observable<ValidateProfilePinType>{
+    public validateProfilePin(profileId: string, pin: string): Observable<ValidateProfilePinType> {
         return this._authRepository.validateProfilePin(this._getCurrentProfileId(profileId), pin).pipe(
-            map(data => plainToInstance(ValidateProfilePinType, data))
+            map(data => plainToInstance(ValidateProfilePinType, data)),
         )
     }
 
     public createProfile(body: CreateProfileInput): Observable<ProfileType> {
         return this._authRepository.createProfile(body).pipe(
-            map(data => plainToInstance(ProfileType, data))
+            map(data => plainToInstance(ProfileType, data)),
         )
     }
 
     public requestTokenToResetPin(profileId: string, password: string): Observable<ProfileRequestResetPinType> {
-       return this._authRepository.requestTokenToResetPin(profileId, password).pipe(
-            map(data => plainToInstance(ProfileRequestResetPinType, data))
-       ) 
+        return this._authRepository.requestTokenToResetPin(profileId, password).pipe(
+            map(data => plainToInstance(ProfileRequestResetPinType, data)),
+        )
     }
 
-    public verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileType>{
+    public verifyTokenToResetPin(input: VerifyResetProfilePin): Observable<ProfileType> {
         return this._authRepository.verifyTokenToResetPin(input).pipe(
-            map(data => plainToInstance(ProfileType, data))
+            map(data => plainToInstance(ProfileType, data)),
         )
     }
 
@@ -293,126 +314,125 @@ export class AuthService {
         payload.videoSubtitle = input.videoSubtitle
 
         return this._authRepository.updateUserSetting(payload).pipe(
-            map( data => plainToInstance(UserType, data))
+            map(data => plainToInstance(UserType, data)),
         )
     }
 
     public getNotification(notiQuery: NotificationQueryRequest): Observable<NotificationListType> {
         return this._authRepository.getNotification(plainToInstance(NotificationQueryRequest, notiQuery)).pipe(
-           map(res=> plainToInstance(NotificationListType, res))
+            map(res => plainToInstance(NotificationListType, res)),
         )
     }
 
-    public markAllNotiAsRead(profileId: string): Observable<{ status: boolean }>{
+    public markAllNotiAsRead(profileId: string): Observable<{ status: boolean }> {
         return this._authRepository.readAllNotification(profileId)
     }
 
-    public markNotiAsRead(notificationId: string): Observable<NotificationType>{
+    public markNotiAsRead(notificationId: string): Observable<NotificationType> {
         return this._authRepository.readNotificationById(notificationId).pipe(
-            map(res=> plainToInstance(NotificationType, res))
+            map(res => plainToInstance(NotificationType, res)),
         )
     }
 
-    public getMyList(profileId?: string): Observable<MyListType[]>{ 
+    public getMyList(profileId?: string): Observable<MyListType[]> {
         return this._authRepository.getMyList(this._getCurrentProfileId(profileId)).pipe(
-            concatMap(res=> from(res)),
-            map(res=>plainToInstance(MyListType, res)),
-            toArray()
+            concatMap(res => from(res)),
+            map(res => plainToInstance(MyListType, res)),
+            toArray(),
         )
     }
 
-    public addToMyList(profileId: string, programId: string): Observable<MyListType[]>{
+    public addToMyList(profileId: string, programId: string): Observable<MyListType[]> {
         return this._authRepository.addToMyList(this._getCurrentProfileId(profileId), programId).pipe(
-            concatMap(res=> from(res)),
-            map(res=>plainToInstance(MyListType, res)),
-            toArray()
+            concatMap(res => from(res)),
+            map(res => plainToInstance(MyListType, res)),
+            toArray(),
         )
     }
 
-    public removeFromMyList(profileId: string, programId: string): Observable<MyListType[]>{
+    public removeFromMyList(profileId: string, programId: string): Observable<MyListType[]> {
         return this._authRepository.removeFromMyList(this._getCurrentProfileId(profileId), programId).pipe(
-            concatMap(res=> from(res)),
-            map(res=>plainToInstance(MyListType, res)),
-            toArray()
+            concatMap(res => from(res)),
+            map(res => plainToInstance(MyListType, res)),
+            toArray(),
         )
     }
 
     public updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileType> {
         return this._authRepository.updateProfile(this._getCurrentProfileId(profileId), input).pipe(
-            map(res=> plainToInstance(ProfileType, res))
+            map(res => plainToInstance(ProfileType, res)),
         )
     }
 
-    public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinType>{
+    public requestTokenToResetPinByAdmin(profileId: string, adminPin: string): Observable<ProfileRequestResetPinType> {
         return this._authRepository.requestTokenToResetPinByAdmin(profileId, adminPin).pipe(
-            map(res=> plainToInstance(ProfileRequestResetPinType, res))
+            map(res => plainToInstance(ProfileRequestResetPinType, res)),
         )
     }
 
-    public mapCategoryIdWithLabel(categoryIds: string[]): Observable<CategoryType[]>{
+    public mapCategoryIdWithLabel(categoryIds: string[]): Observable<CategoryType[]> {
         return this.getAllCategories().pipe(
-            concatMap(allCategories=>{
+            concatMap(allCategories => {
                 return from(categoryIds).pipe(
-                    map(categoryId=>{
+                    map(categoryId => {
                         const c = new CategoryType()
                         c.id = categoryId
-                        c.label = allCategories.find(e=> e.id === categoryId)?.label ?? ""
+                        c.label = allCategories.find(e => e.id === categoryId)?.label ?? ''
                         return c
                     }),
-                    toArray()
+                    toArray(),
                 )
-            })
+            }),
         )
     }
-    
-    public sendTicketToSupport(input: ContactSupportInput):Observable<TicketType>{   
-        const requestBody = plainToInstance(ContactSupportRequest, input, {excludeExtraneousValues: true}) 
-        if(input.images.length === 0){
+
+    public sendTicketToSupport(input: ContactSupportInput): Observable<TicketType> {
+        const requestBody = plainToInstance(ContactSupportRequest, input, { excludeExtraneousValues: true })
+        if (input.images.length === 0) {
             return this._authRepository.sendTicketToSupport(requestBody).pipe(
-                map((ticketId) => ({ status: true, ticketId }))
-            )    
-        } 
+                map((ticketId) => ({ status: true, ticketId })),
+            )
+        }
         return this._byteArkRepository.generateOriginalUrlToSignedUrl(input.images, 180).pipe(
-        mergeMap(imgWithSign=> {
-            requestBody.signedImageUrls = imgWithSign
-            return this._authRepository.sendTicketToSupport(requestBody).pipe(
-                map((ticketId) => ({ status: true, ticketId }))
-            )   
-        })
+            mergeMap(imgWithSign => {
+                requestBody.signedImageUrls = imgWithSign
+                return this._authRepository.sendTicketToSupport(requestBody).pipe(
+                    map((ticketId) => ({ status: true, ticketId })),
+                )
+            }),
         )
-        
-        
+
     }
 
-    public findUserWhoForgotPassword(emailOrPhone: string):Observable<UserWhoForgotPasswordType>{
+    public findUserWhoForgotPassword(emailOrPhone: string): Observable<UserWhoForgotPasswordType> {
         return this._authRepository.findUserWhoForgotPassword(emailOrPhone).pipe(
-            map(res=>{
+            map(res => {
                 return plainToInstance(UserWhoForgotPasswordType, res)
-            })
+            }),
         )
     }
 
-    public requestOtpToResetPassword(userId: string, sendVia: string): Observable<UserRequestOtpType>{
+    public requestOtpToResetPassword(userId: string, sendVia: string): Observable<UserRequestOtpType> {
         return this._authRepository.requestOtpToResetPassword(userId, sendVia).pipe(
-            map(data => plainToInstance(UserRequestOtpType, data))
+            map(data => plainToInstance(UserRequestOtpType, data)),
         )
     }
 
-    public verifyOtpToResetPassword( input: VerifyOtpInput ): Observable<VerifyOtpToResetPasswordType>{
+    public verifyOtpToResetPassword(input: VerifyOtpInput): Observable<VerifyOtpToResetPasswordType> {
         return this._authRepository.verifyOtpToResetPassword(input)
     }
 
-    public resetPassword(resetPasswordToken: string, newPassword: string): Observable<UserVerifyOtpType>{
+    public resetPassword(resetPasswordToken: string, newPassword: string): Observable<UserVerifyOtpType> {
         return this._authRepository.resetPassword(resetPasswordToken, newPassword)
     }
 
-    public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string>{
+    public updateContinueWatching(input: UpdateContinueWatchingInput): Observable<string> {
         const profileId = this._getCurrentProfileId(input.profileId)
         const data: UpdatePlaybackStatusRequest = input
-        return this._playbackRepository.updatePlaybackStatus( profileId,data)
+        return this._playbackRepository.updatePlaybackStatus(profileId, data)
     }
 
-    public switchProfile(profileId: string):Observable<ProfileType>{
+    public switchProfile(profileId: string): Observable<ProfileType> {
         return this.getProfileInformation(profileId)
     }
 
@@ -424,16 +444,16 @@ export class AuthService {
         return this._authRepository.getUserAvailability().pipe(
             map(result => {
                 return plainToInstance(UserAvailabilityCheckType, result)
-            })
+            }),
         )
     }
 
-    public resendVerificationEmail():Observable<boolean> {
+    public resendVerificationEmail(): Observable<boolean> {
         return this._authRepository.resendVerificationEmail()
     }
 
-    private _getCurrentProfileId(profileIdInput?: string): string{
+    private _getCurrentProfileId(profileIdInput?: string): string {
         return !!profileIdInput ? profileIdInput : this._reqCtx.profileId
     }
-    
+
 }

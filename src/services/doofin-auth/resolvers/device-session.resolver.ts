@@ -1,9 +1,7 @@
 import {
     Args,
     Mutation,
-    Parent,
     Query,
-    ResolveField,
     Resolver,
 } from '@nestjs/graphql'
 import { DeviceSessionType } from '@/types/objects'
@@ -27,7 +25,7 @@ export class DeviceSessionResolver {
         return this._authService.revokeSessions()
     }
 
-    @Mutation(()=> DeviceSessionType)
+    @Mutation(() => DeviceSessionType)
     public revokeSession(
         @Args('sessionId') sessionId: string,
     ) {
@@ -36,13 +34,6 @@ export class DeviceSessionResolver {
 
     @Query(() => [DeviceSessionType])
     public getUserSessions() {
-        return this._authService.getUserSessions()
-    }
-
-    @ResolveField('isCurrentDevice', () => Boolean)
-    public isCurrentDevice(
-        @Parent() parent: DeviceSessionType,
-    ) {
-        return parent.deviceId === this._requestContext.deviceId
+        return this._authService.getUserSessions(this._requestContext.deviceId)
     }
 }
