@@ -138,6 +138,9 @@ export class MediaContentDetailType extends MediaContentType {
 
     @Field(()=> [PersonType])
     public director: PersonType[]
+
+    @Field(() => [MediaContentDetailType])
+    public relatedContents: MediaContentDetailType[]
 }
 @ObjectType()
 export class SectionItemType extends MediaContentType {

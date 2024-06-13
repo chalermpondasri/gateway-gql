@@ -10,8 +10,8 @@ import {
     PaginationQueryRequest,
     ListResponse,
 } from '../auth'
-import { SearchMediaContentResonse } from './search.response'
-import _, {
+import { SearchMediaContentResponse } from './search.response'
+import {
     isNil,
     omitBy,
 } from 'lodash'
@@ -20,6 +20,12 @@ export class SearchRepository implements ISearchRepository {
     public constructor(
         private readonly _axiosInstance: AxiosInstance,
     ) {
+    }
+
+    public getRelatedContentByContentId(contentId: string): Observable<ListResponse<SearchMediaContentResponse>> {
+        return from(this._axiosInstance.get(`/search/related/${contentId}`)).pipe(
+            map(response => response.data)
+        )
     }
 
     public getTopsViews(startDate: string, endDate: string, tagSlugs: string[]): Observable<{
@@ -36,7 +42,7 @@ export class SearchRepository implements ISearchRepository {
 
     }
 
-    public findMediaContentWithKeyword(query: PaginationQueryRequest, profileId: string): Observable<ListResponse<SearchMediaContentResonse>> {
+    public findMediaContentWithKeyword(query: PaginationQueryRequest, profileId: string): Observable<ListResponse<SearchMediaContentResponse>> {
         const data = {
             limit: query.limit,
             page: query.page,

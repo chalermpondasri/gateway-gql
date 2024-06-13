@@ -203,6 +203,7 @@ type MediaContentDetailType {
   seasons: [MediaSeasonType!]!
   casts: [PersonType!]!
   director: [PersonType!]!
+  relatedContents: [MediaContentDetailType!]!
 }
 
 type SectionItemType {

@@ -123,6 +123,13 @@ export class MediaContentDetailResolver {
         return this._cmsService.getLatestPlayed(parent.id)
     }
 
+    @ResolveField('relatedContents')
+    public relatedContents(
+        @Parent() parent: MediaContentDetailType
+    ){
+        return this._searchService.getRelatedContentsByContentId(String(parent.id))
+    }
+
 }
 
 @Resolver(() => MediaEpisodeType)

@@ -5,7 +5,7 @@ CmsImageContent,
 LocaleTextResponse,
 } from '../cms'
 
-export class SearchMediaContentResonse {
+export class SearchMediaContentResponse {
     public id: number
     public title: LocaleTextResponse
     public subtitle?: LocaleTextResponse
