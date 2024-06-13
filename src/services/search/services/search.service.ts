@@ -30,6 +30,7 @@ import {
     MediaContentDetailResponse,
 } from '@/repositories/cms'
 import { ICacheService } from '@/services/cache/interface/service.interface'
+import * as process from 'process'
 
 @Injectable()
 export class SearchService {
@@ -106,9 +107,7 @@ export class SearchService {
 
     private _getGeneralTopViewsCacheWrapper() {
         const yesterday = dayjs().subtract(1, 'day').startOf('day').toISOString()
-        const aWeekAgo = dayjs().subtract(8, 'day').startOf('day').toISOString()
-
-        const lang = this._requestContext.languages[0].code
+        const aWeekAgo = process.env.NODE_ENV !== 'production' ? dayjs().set('years', 1970).toISOString(): dayjs().subtract(8, 'day').startOf('day').toISOString()
 
         return this._searchRepository.getTopsViews(aWeekAgo, yesterday, []).pipe(
             concatMap(v => iif(() => v.length < 10, of([]), of(v))),
