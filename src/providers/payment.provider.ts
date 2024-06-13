@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     Provider,
 } from '@nestjs/common'
 import { ProviderName } from '@/constants/provider-name.const'
@@ -17,9 +16,6 @@ export const paymentRepositoryProvider: Provider = {
                  client: AxiosInstance,
     ) => {
         client.defaults.baseURL = config.PAYMENT_ENDPOINT
-        client.interceptors.response.use(null, error => {
-            throw new BadRequestException(error?.response?.data)
-        })
         return new PaymentRepository(client)
     },
 }
