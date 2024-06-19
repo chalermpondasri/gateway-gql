@@ -262,14 +262,14 @@ export class CmsService {
                     )
                 }
 
-                if(section.sectionType === 'suggestions') {
-                    return this._searchService.getSuggestedContents().pipe(
-                        map(result => {
-                            section.sectionItems = result.map(i => this._fromMediaContentDetailToSectionItemType(i, lang))
-                            return section
-                        }),
-                    )
-                }
+                // if(section.sectionType === 'suggestions') {
+                //     return this._searchService.getSuggestedContents().pipe(
+                //         map(result => {
+                //             section.sectionItems = result.map(i => this._fromMediaContentDetailToSectionItemType(i, lang))
+                //             return section
+                //         }),
+                //     )
+                // }
 
                 if (section.sectionType === 'continue-watching') {
                     return this.getContinueWatchingSectionItems().pipe(
