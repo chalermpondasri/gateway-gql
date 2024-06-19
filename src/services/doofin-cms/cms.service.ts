@@ -224,12 +224,12 @@ export class CmsService {
     }
 
     public getMainPageSections(sectionId?: number): Observable<SectionType[]> {
-        console.time('getMainPageSections')
+
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMainPageSections(sectionId).pipe(
             concatMap(result => from(result.data)),
             mergeMap(sectionResponse => {
-                console.time(`getMainPageSections_${sectionResponse.id}`)
+
                 const { attributes } = sectionResponse
                 const section = new SectionType()
                 section.id = sectionResponse?.id ?? 0
@@ -259,6 +259,15 @@ export class CmsService {
                                 return section
                             }),
                         )),
+                    )
+                }
+
+                if(section.sectionType === 'suggestions') {
+                    return this._searchService.getSuggestedContents().pipe(
+                        map(result => {
+                            section.sectionItems = result.map(i => this._fromMediaContentDetailToSectionItemType(i, lang))
+                            return section
+                        }),
                     )
                 }
 
@@ -298,9 +307,7 @@ export class CmsService {
                 )
             }),
             filter(v => !isEmpty(v.sectionItems)),
-            tap(result => console.timeEnd(`getMainPageSections_${result.id}`)),
             toArray(),
-            tap(() => console.timeEnd('getMainPageSections'))
         )
     }
 
@@ -458,6 +465,10 @@ export class CmsService {
         this._mappingImageSection(result, resp.attributes)
         return result
 
+    }
+
+    private _fromMediaContentDetailToSectionItemType(detail: MediaContentDetailType, lang: string): SectionItemType {
+        return plainToInstance(SectionItemType, detail)
     }
 
     private _toSectionItemType(mediaContent: BaseResponse<MediaContentResponse>, lang: string): SectionItemType {

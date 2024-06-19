@@ -99,6 +99,19 @@ export class SearchService {
 
     }
 
+    public getSuggestedContents(): Observable<MediaContentDetailType[]> {
+        if(!this._requestContext.profileId) {
+            return of([])
+        }
+        const lang = this._requestContext.languages[0].code
+        return this._searchRepository.getSuggestionByProfileId(this._requestContext.profileId).pipe(
+            mergeMap(res => from(res.data)),
+            map(content => this._toMediaContentDetailType(content, lang)),
+            toArray(),
+        )
+
+    }
+
     private _toMediaContentDetailType(content: SearchMediaContentResponse, lang: string) {
 
             const link = get(content, 'link', {})
