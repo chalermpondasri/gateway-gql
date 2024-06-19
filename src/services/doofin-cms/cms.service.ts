@@ -248,7 +248,6 @@ export class CmsService {
 
                 section.sectionItems = []
                 const rawSectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? [])
-
                 if (section.sectionType === 'top') {
                     return of(section).pipe(
                         mergeMap((section) => (this._searchService[attributes.internalResourcePath]() as Observable<BaseResponse<MediaContentDetailResponse>[]>).pipe(
@@ -262,14 +261,14 @@ export class CmsService {
                     )
                 }
 
-                // if(section.sectionType === 'suggestions') {
-                //     return this._searchService.getSuggestedContents().pipe(
-                //         map(result => {
-                //             section.sectionItems = result.map(i => this._fromMediaContentDetailToSectionItemType(i, lang))
-                //             return section
-                //         }),
-                //     )
-                // }
+                if(section.sectionType === 'suggestions' && !!this._requestContext.profileId) {
+                    return this._searchService.getSuggestedContents(this._requestContext.profileId).pipe(
+                        map(result => {
+                            section.sectionItems = result.map(i => this._fromMediaContentDetailToSectionItemType(i, lang))
+                            return section
+                        }),
+                    )
+                }
 
                 if (section.sectionType === 'continue-watching') {
                     return this.getContinueWatchingSectionItems().pipe(
