@@ -121,8 +121,8 @@ export class CmsRepository implements ICmsRepository {
                 queryString += `&filters[id][$eq]=${sectionId}`
             }
 
-            const q =(<number[]>sectionId).map((value, index) => `&filter[id][$in][${index}]=${value}`)
-            queryString += `${q.join()}`
+            const q =(<number[]>sectionId).map((value, index) => `&filters[id][$in][${index}]=${value}`)
+            queryString += `${q.join('')}`
         }
         const promise = this._axiosInstance.get(`/page-sections?${queryString}&sort=order:asc`)
         return from(promise).pipe(

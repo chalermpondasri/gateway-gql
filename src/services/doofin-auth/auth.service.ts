@@ -65,7 +65,10 @@ import { IByteArkRepository } from '@/repositories/byte-ark/repository.interface
 import { RequestContext } from '@/providers/request-context.provider'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
 import { UpdatePlaybackStatusRequest } from '@/repositories/playback/update-playback-status.request'
-import { isEmpty } from 'lodash'
+import {
+    isEmpty,
+    orderBy,
+} from 'lodash'
 
 @Injectable()
 export class AuthService {
@@ -259,7 +262,7 @@ export class AuthService {
                 if (isEmpty(deviceId)) {
                     return result
                 }
-                return result.sort((a, b) => Number(b.isCurrentDevice) - Number(a.isCurrentDevice))
+                return orderBy(result, ['isCurrentDevice', 'lastAccess'], ['desc', 'desc'])
             }),
         )
 
