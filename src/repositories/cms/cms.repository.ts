@@ -32,6 +32,7 @@ import {
 } from 'class-transformer'
 import {
     get,
+    isArray,
     isNil,
 } from 'lodash'
 import { Cache } from 'cache-manager'
@@ -82,7 +83,7 @@ export class CmsRepository implements ICmsRepository {
 
     }
 
-    public getMainPageSections(sectionId?: number): Observable<ListResponse<BaseResponse<SectionResponse>>> {
+    public getMainPageSections(sectionId?: number|number[]): Observable<ListResponse<BaseResponse<SectionResponse>>> {
         const populate = [
             'title',
             'subtitle',
@@ -114,8 +115,14 @@ export class CmsRepository implements ICmsRepository {
             'items.imageTopSection'
         ]
         let queryString = querystring.encode({populate})
+
         if(!isNil(sectionId)) {
-            queryString += `&filters[id][$eq]=${sectionId}`
+            if(!isArray(sectionId)) {
+                queryString += `&filters[id][$eq]=${sectionId}`
+            }
+
+            const q =(<number[]>sectionId).map((value, index) => `&filter[id][$in][${index}]=${value}`)
+            queryString += `${q.join()}`
         }
         const promise = this._axiosInstance.get(`/page-sections?${queryString}&sort=order:asc`)
         return from(promise).pipe(

@@ -563,7 +563,7 @@ type Query {
   localeManagerLogin(username: String!, password: String!): CmsUserType!
   getPromotionalContents: [CmsPromotionalContentType!]!
   getFAQs: [SubjectType!]!
-  getMainPage(profileId: String, sectionId: Float): [SectionType!]!
+  getMainPage(profileId: String, sectionId: Float, sectionIds: [Float!]): [SectionType!]!
   getKidFin(profileId: String): [SectionItemType!]!
   getNewFin: [SectionItemType!]!
   getContinueWatchingList: [MediaContentDetailType!]!

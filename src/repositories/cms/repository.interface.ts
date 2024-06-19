@@ -29,7 +29,7 @@ export interface ICmsRepository {
     getPromotionalContents(): Observable<ListResponse<BaseResponse<PromotionalResponse>>>
     getFaqs(request: BaseRequest): Observable<ListResponse<BaseResponse<FaqResponse>>>
     getAvatars(id: number): Observable<ListResponse<BaseResponse<AvatarResponse>>>
-    getMainPageSections(sectionId?: number): Observable<ListResponse<BaseResponse<SectionResponse>>>
+    getMainPageSections(sectionId?: number| number[]): Observable<ListResponse<BaseResponse<SectionResponse>>>
     getMediaContentById(id: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentBySlug(slug: string): Observable<CmsDataResponse<MediaContentDetailResponse>>
     getMediaContentByTags(tag: string[], contentRatings?: ContentRating[]): Observable<ListResponse<BaseResponse<MediaContentDetailResponse>>>

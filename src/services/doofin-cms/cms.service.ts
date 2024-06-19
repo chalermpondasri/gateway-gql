@@ -223,7 +223,7 @@ export class CmsService {
         )
     }
 
-    public getMainPageSections(sectionId?: number): Observable<SectionType[]> {
+    public getMainPageSections(sectionId?: number|number[]): Observable<SectionType[]> {
 
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMainPageSections(sectionId).pipe(

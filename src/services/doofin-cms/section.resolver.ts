@@ -36,13 +36,16 @@ export class SectionResolver {
     public getMainPage(
         @Args({ name: 'profileId', nullable: true }) profileId: string,
         @Args({name: 'sectionId', nullable: true}) sectionId: number,
+        @Args({name: 'sectionIds', nullable: true, type: () => [Number]}) sectionIds: number[],
         @Context() context: any,
 
         ) {
         context.req.profileId = profileId
 
+        if(!!sectionIds) {
+            return this._cmsService.getMainPageSections(sectionIds)
+        }
         return this._cmsService.getMainPageSections(sectionId)
-
     }
 
     @Query(() => [SectionItemType])
