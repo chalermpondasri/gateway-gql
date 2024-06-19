@@ -24,7 +24,7 @@ export class SearchRepository implements ISearchRepository {
 
     public getSuggestionByProfileId(profileId: string): Observable<ListResponse<SearchMediaContentResponse>> {
 
-        return from(this._axiosInstance.get(`/suggestions/profile/${profileId}`)).pipe(
+        return from(this._axiosInstance.get(`/search/suggestions/profile/${profileId}`)).pipe(
             map(response => response.data)
         )
     }
