@@ -16,6 +16,7 @@ export const searchRepositoryProvider: Provider = {
     useFactory: (config: EnvironmentConfig, client: AxiosInstance) => {
         client.defaults.baseURL = config.SEARCH_ENDPOINT
         client.interceptors.response.use(null, error => {
+            console.error(error)
             throw new BadRequestException(error?.response?.data)
         })
 

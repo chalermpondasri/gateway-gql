@@ -467,7 +467,12 @@ export class CmsService {
     }
 
     private _fromMediaContentDetailToSectionItemType(detail: MediaContentDetailType, lang: string): SectionItemType {
-        return plainToInstance(SectionItemType, detail)
+        const result = plainToInstance(SectionItemType, detail)
+        // quick fix
+        result.totalEpisode = 1
+        result.totalSeason = 1
+
+        return result
     }
 
     private _toSectionItemType(mediaContent: BaseResponse<MediaContentResponse>, lang: string): SectionItemType {
