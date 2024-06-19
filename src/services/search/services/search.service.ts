@@ -63,13 +63,13 @@ export class SearchService {
         const cacheKey = `${this.getGeneralTopViews.name}_${this._requestContext.languages[0].code}`
         return this._cacheService.getCache(cacheKey).pipe(
             mergeMap(data => {
-                return iif(() => !!data,
-                    of(JSON.parse(data)),
-                    this._getGeneralTopViewsCacheWrapper()
-                        .pipe(
-                            tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 3600)),
-                        ),
-                )
+                if(!!data) {
+                    return of(JSON.parse(data))
+                }
+                return this._getGeneralTopViewsCacheWrapper()
+                    .pipe(
+                        tap(result => this._cacheService.setCache(cacheKey, JSON.stringify(result), 3600)),
+                    )
             }),
         )
     }
