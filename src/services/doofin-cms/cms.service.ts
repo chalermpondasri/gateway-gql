@@ -777,6 +777,9 @@ export class CmsService {
     }
 
     public getTotalDuration(media: MediaContentDetailType): Observable<number> {
+        if(isNil(media)) {
+            return of(null)
+        }
         return this.getMediaContentById(String(media.id)).pipe(
             map(() => {
                 if (this.isSeries(media.tags)) {
