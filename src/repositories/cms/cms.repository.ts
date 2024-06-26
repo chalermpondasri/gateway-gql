@@ -230,7 +230,7 @@ export class CmsRepository implements ICmsRepository {
                 return from(this._axiosInstance.get(`/media-contents/${id}/?${queryString}`)).pipe(
                     map(res => res.data),
                     tap(data => {
-                        this._cacheService.setCache(cacheKey, JSON.stringify(data), 300)
+                        this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600)
                     })
                 )
             }),
