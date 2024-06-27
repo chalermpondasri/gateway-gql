@@ -828,6 +828,7 @@ export class CmsService {
             map(result => {
                 return result.some(value => String(value.programId) === String(mediaContentId))
             }),
+            catchError(() => of(false))
         )
     }
 }
