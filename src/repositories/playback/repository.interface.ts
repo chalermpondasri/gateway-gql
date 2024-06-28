@@ -6,4 +6,5 @@ export interface IPlaybackRepository {
     getPlaybackStatus(profileId: string, mediaContentId: string): Observable<{ [episodeId: string]: number }>
     updatePlaybackStatus(profileId: string, body: UpdatePlaybackStatusRequest): Observable<string>
     getLatestPlayedContent(profileId: string): Observable<LatestPlayedContentResponse[]>
+    consumeAdsToken(adsToken: string): Observable<string>
 }

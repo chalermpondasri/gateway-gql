@@ -35,4 +35,10 @@ export class PlaybackRepository implements IPlaybackRepository {
             map((data: unknown[]) => plainToInstance(LatestPlayedContentResponse, data)),
         )
     }
+
+    public consumeAdsToken(adsToken: string): Observable<string> {
+        return from(this._axiosInstance.post('/playback/ads/consume', {adsToken})).pipe(
+            map(res => res.data)
+        )
+    }
 }
