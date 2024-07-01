@@ -9,7 +9,11 @@ import {
     SectionItemResolver,
     SectionResolver,
 } from '@/services/doofin-cms/section.resolver'
-import { MediaContentDetailResolver, MediaEpisodeResolver } from '@/services/doofin-cms/content.resolver'
+import {
+    MediaContentDetailResolver,
+    MediaContentTypeResolver,
+    MediaEpisodeResolver,
+} from '@/services/doofin-cms/content.resolver'
 import { authRepositoryProvider } from '@/providers/auth.provider'
 import { SearchModule } from './search.module'
 import { PresetSearchResolver } from '@/services/doofin-cms/preset-search.resolver'
@@ -29,6 +33,7 @@ import { PaymentModule } from '@/modules/payment.module'
         SectionResolver,
         SectionItemResolver,
         MediaContentDetailResolver,
+        MediaContentTypeResolver,
         authRepositoryProvider,
         MediaEpisodeResolver,
         PresetSearchResolver,
