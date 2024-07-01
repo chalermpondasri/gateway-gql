@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     Provider,
 } from '@nestjs/common'
 import { ProviderName } from '@/constants/provider-name.const'
@@ -15,9 +14,6 @@ export const playbackRepositoryProvider: Provider = {
     ],
     useFactory: (config: EnvironmentConfig, client: AxiosInstance) => {
         client.defaults.baseURL = config.PLAYBACK_ENDPOINT
-        client.interceptors.response.use(null, error => {
-            throw new BadRequestException(error?.response?.data)
-        })
         return new PlaybackRepository(client)
     },
 }
