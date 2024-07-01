@@ -33,7 +33,12 @@ export class JwtGuard implements CanActivate {
         const getAuthHeader = get(req, 'headers.authorization', '')
         const splitHeader = split(getAuthHeader, ' ')
         if(isNil(splitHeader[1])) {
-            throw new UnauthorizedException(UnauthorizedException.name)
+            throw new UnauthorizedException({
+                statusCode: `EAU030002`,
+                message: 'Invalid token or token expired',
+                error: '',
+            })
+            // throw new UnauthorizedException(UnauthorizedException.name)
         }
         return this._authRepo.getProfiles(splitHeader[1]).pipe(
             map(() => {
