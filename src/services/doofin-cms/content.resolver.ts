@@ -8,10 +8,13 @@ import {
 } from '@nestjs/graphql'
 import {
     MediaContentDetailType,
+    MediaContentType,
     MediaEpisodeType,
 } from '@/types/objects'
 import { CmsService } from '@/services/doofin-cms/cms.service'
-import { Inject } from '@nestjs/common'
+import {
+    Inject,
+} from '@nestjs/common'
 import { SearchInput } from '@/types/inputs/search.input'
 import { SearchService } from '../search/services/search.service'
 import { RentalStatus } from '@/types/enums/rental-status.enum'
@@ -155,4 +158,20 @@ export class MediaEpisodeResolver {
     public rentalStatus(@Parent() parent: MediaEpisodeType) {
         return this._paymentService.getRentalStatus(parent)
     }
+}
+
+@Resolver(() => MediaContentType)
+export class MediaContentTypeResolver {
+    public constructor(
+        @Inject(CmsService)
+        private readonly _cmsService: CmsService,
+    ) {
+    }
+    @ResolveField('addedToMyList', () => Boolean)
+    public addedToMyList(
+        @Parent() parent: MediaContentDetailType
+    ) {
+        return this._cmsService.isAddedToMyList(parent.id)
+    }
+
 }
