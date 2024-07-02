@@ -75,6 +75,7 @@ export class RequestContextMiddleware implements NestMiddleware {
                     this._logger.log(`REQ: ${req.body.query}\n | DID: ${req.cookies['did']}\n`)
 
                     if(isEmpty(req.cookies['did'])) {
+                        res.clearCookie('did',{sameSite: 'none', secure: true})
                         res.cookie('did', did, {sameSite: 'none', secure: true})
                     }
 
