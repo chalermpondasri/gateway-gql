@@ -23,6 +23,7 @@ import {
 } from 'rxjs'
 import {
     BaseResponse,
+    CmsDataResponse,
     CmsImageContent,
     ContentRatingResponse,
     ICmsRepository,
@@ -351,15 +352,22 @@ export class CmsService {
 
     public getMediaContentById(id: string): Observable<MediaContentDetailType> {
         const lang = this._requestContext.languages[0].code ?? 'en'
-        return iif(
-            () => Number.isInteger(Number(id)),
-            this._cmsRepository.getMediaContentById(id),
-            this._cmsRepository.getMediaContentBySlug(id),
+        let observ: Observable<CmsDataResponse<MediaContentDetailResponse>>
+        if (Number.isInteger(Number(id))) {
+            observ = this._cmsRepository.getMediaContentById(id)
+        } else {
+            observ = this._cmsRepository.getMediaContentBySlug(id)
+        }
+        // for test iif ran 2 operation
+        // return iif(
+        //     () => Number.isInteger(Number(id)),
+        //     this._cmsRepository.getMediaContentById(id),
+        //     this._cmsRepository.getMediaContentBySlug(id),
+        // )
+        return observ.pipe(
+            map(res => (res.data) as BaseResponse<MediaContentDetailResponse>),
+            map((res) => CmsService.toMediaContentDetailType(res, lang)),
         )
-            .pipe(
-                map(res => (res.data) as BaseResponse<MediaContentDetailResponse>),
-                map((res) => CmsService.toMediaContentDetailType(res, lang)),
-            )
     }
 
     public isSeries(tags: LocalizedLabelType[]) {
@@ -571,10 +579,20 @@ export class CmsService {
 
     public getSeason(media: MediaContentDetailType): Observable<MediaSeasonType[]> {
         const lang = this._requestContext.languages[0].code ?? 'en'
-        return this._cmsRepository.getSeason(media.id.toString()).pipe(
-            concatMap(data => from(data.data)),
-            map(season => CmsService.seasonMapper(media.id, season, lang)),
-            toArray(),
+        const mediaId = media.id.toString()
+        const cacheKey = `${this.getSeason.name}_${mediaId}`
+        return this._cacheService.getCache(cacheKey).pipe(
+            mergeMap(cacheData => {
+                return iif(() => !!cacheData,
+                    of(JSON.parse(cacheData)),
+                    this._cmsRepository.getSeason(mediaId).pipe(
+                        concatMap(data => from(data.data)),
+                        map(season => CmsService.seasonMapper(media.id, season, lang)),
+                        toArray(),
+                        tap(data => this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600)),
+                    ),
+                )
+            }),
         )
     }
 
@@ -814,7 +832,7 @@ export class CmsService {
                             return null
                         } else if (findResult.duration.nextEpDuration) {
                             const nextEpDuration = isNil(findResult) ? 0 : findResult.duration.nextEpDuration
-                            if(v.latestPosition >= nextEpDuration) {
+                            if (v.latestPosition >= nextEpDuration) {
                                 return null
                             }
                         }
