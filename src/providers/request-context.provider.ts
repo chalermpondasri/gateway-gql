@@ -46,6 +46,7 @@ export class RequestContext {
             'authorization',
             'accept-language',
             'user-agent',
+            'x-did',
         ])
     }
 }
@@ -79,8 +80,11 @@ export class RequestContextMiddleware implements NestMiddleware {
                         this._logger.log(`cookie did not found, create new did, ${did}`)
                         res.cookie('did', did, {sameSite: 'none', secure: true, path: '/'})
                         this._rc.deviceId = did
+                    } else {
+                        this._rc.deviceId = req.cookies['did']
                     }
                     this._rc.headers = r.headers
+                    this._rc.headers['x-did'] = this._rc.deviceId
 
                     this._rc.request = r
 
