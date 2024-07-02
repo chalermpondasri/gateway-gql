@@ -616,7 +616,7 @@ input NotificationInput {
 }
 
 type Mutation {
-  consumeAdsToken(adsToken: String!): String!
+  consumeAdsToken(adsToken: String!, claimType: String!, watchingDuration: Float!): String!
   createPaymentTransactionToken: String!
   checkoutPackage(CheckoutPackageInput: CheckoutPackageInput!): CheckoutPackageType!
   rentContent(contentId: Float!, episodeId: Float!): Boolean!
