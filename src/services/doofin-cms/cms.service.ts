@@ -223,7 +223,7 @@ export class CmsService {
         )
     }
 
-    public getMainPageSections(sectionId?: number|number[]): Observable<SectionType[]> {
+    public getMainPageSections(sectionId?: number | number[]): Observable<SectionType[]> {
 
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMainPageSections(sectionId).pipe(
@@ -261,7 +261,7 @@ export class CmsService {
                     )
                 }
 
-                if(section.sectionType === 'suggestions' && !!this._requestContext.profileId) {
+                if (section.sectionType === 'suggestions' && !!this._requestContext.profileId) {
                     return this._searchService.getSuggestedContents(this._requestContext.profileId).pipe(
                         map(result => {
                             section.sectionItems = result.map(i => this._fromMediaContentDetailToSectionItemType(i, lang))
@@ -279,22 +279,22 @@ export class CmsService {
                     )
                 }
 
-                if(section.sectionType === 'my-list') {
-                    if(!this._requestContext.profileId) {
+                if (section.sectionType === 'my-list') {
+                    if (!this._requestContext.profileId) {
                         return of(section)
                     }
                     return this._authRepository.getMyList(this._requestContext.profileId).pipe(
                         concatMap(list => from(list)),
                         concatMap(item => this._cmsRepository.getMediaContentById(item.programId)),
                         map(result => {
-                            const casted: BaseResponse<MediaContentResponse> = <BaseResponse<MediaContentDetailResponse>> result.data
+                            const casted: BaseResponse<MediaContentResponse> = <BaseResponse<MediaContentDetailResponse>>result.data
                             return this._toSectionItemType(casted, lang)
                         }),
                         toArray(),
-                        map( items => {
+                        map(items => {
                             section.sectionItems = items
                             return section
-                        })
+                        }),
                     )
                 }
 
@@ -332,7 +332,7 @@ export class CmsService {
     }
 
     public getContinueWatchingSectionItems(): Observable<SectionItemType[]> {
-        if(!this._requestContext.profileId) {
+        if (!this._requestContext.profileId) {
             return of([])
         }
         return this._getLatestPlayedContentFromCache().pipe(
@@ -388,7 +388,7 @@ export class CmsService {
     private static _mappingImageSection(result: MediaContentType, attributes: MediaContentDetailResponse): MediaContentType {
         const topSection = (<BaseResponse<CmsImageContent>>attributes.imageTopSection?.data)
         result.imageTopSection = topSection?.attributes
-        if(!!topSection) {
+        if (!!topSection) {
             result.imageTopSection.id = topSection?.id
         }
 
@@ -517,18 +517,18 @@ export class CmsService {
 
         item.imageTopSection = topSection?.attributes
 
-        if(!!topSection) {
+        if (!!topSection) {
             item.imageTopSection.id = topSection?.id
         }
 
         const imageCard = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageCard?.data)
-        if(!!imageCard) {
+        if (!!imageCard) {
             item.imageCard = imageCard.attributes
             item.imageCard.id = imageCard.id
         }
 
         const imageHeroBanner = (<BaseResponse<CmsImageContent>>mediaContent.attributes.imageHeroBanner?.data)
-        if(!!imageHeroBanner) {
+        if (!!imageHeroBanner) {
             item.imageHeroBanner = imageHeroBanner.attributes
             item.imageHeroBanner.id = imageHeroBanner.id
         }
@@ -777,7 +777,7 @@ export class CmsService {
     }
 
     public getTotalDuration(media: MediaContentDetailType): Observable<number> {
-        if(isNil(media)) {
+        if (isNil(media)) {
             return of(null)
         }
         return this.getMediaContentById(String(media.id)).pipe(
@@ -808,10 +808,20 @@ export class CmsService {
                         return this._getEpisodeDetailById(contentDetail.seasons, v.episodeId)
                     }),
                     map(findResult => {
+                        const fullDurationEp = isNil(findResult) ? 0 : findResult.duration.duration
+
+                        if (v.latestPosition >= fullDurationEp) {
+                            return null
+                        } else if (findResult.duration.nextEpDuration) {
+                            const nextEpDuration = isNil(findResult) ? 0 : findResult.duration.nextEpDuration
+                            if(v.latestPosition >= nextEpDuration) {
+                                return null
+                            }
+                        }
                         return plainToClassFromExist(new LatestPlayedType, {
                             latestPlayedEpisodeId: v.episodeId,
                             latestPlayedPosition: v.latestPosition,
-                            latestPlayedFullDuration: isNil(findResult) ? 0 : findResult.duration.duration,
+                            latestPlayedFullDuration: fullDurationEp,
                         })
                     }),
                 )
@@ -828,7 +838,7 @@ export class CmsService {
             map(result => {
                 return result.some(value => String(value.programId) === String(mediaContentId))
             }),
-            catchError(() => of(false))
+            catchError(() => of(false)),
         )
     }
 }
