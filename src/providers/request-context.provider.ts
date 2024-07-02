@@ -22,7 +22,10 @@ import {
 } from 'rxjs'
 import { ProviderName } from '@/constants/provider-name.const'
 import { extractTokenFromHeader } from '@/utilities/token.util'
-import { pick } from 'lodash'
+import {
+    isEmpty,
+    pick,
+} from 'lodash'
 import { randomUUID } from 'crypto'
 
 export class RequestContext {
@@ -68,10 +71,13 @@ export class RequestContextMiddleware implements NestMiddleware {
         return of(req)
             .pipe(
                 tap((r) => {
-                    const did = req.cookies['did'] ?? randomUUID()
-                    this._logger.log(`REQ: ${req.body.query}\n | DID: ${req.cookies['did']}\n`)
-                    res.cookie('did', did, {sameSite: 'none', secure: true})
-                    this._rc.deviceId = did
+                    if(isEmpty(req.cookies['did'])) {
+                        this._logger.log(`REQ: ${req.body.query}\n | DID: ${req.cookies['did']}\n`)
+                        const did = randomUUID()
+                        res.cookie('did', did, {sameSite: 'none', secure: true})
+                        this._rc.deviceId = did
+                    }
+
                     this._rc.headers = r.headers
 
                     this._rc.request = r

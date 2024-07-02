@@ -27,6 +27,7 @@ export const httpClientProvider: Provider = {
         })
 
         axiosInstance.interceptors.request.use( (conf) => {
+            Logger.log(conf.url, ProviderName.HTTP_CLIENT)
             return conf
         })
 
