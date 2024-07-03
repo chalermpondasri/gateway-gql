@@ -1,38 +1,38 @@
-import { 
-    Field, 
-    GraphQLISODateTime, 
-    ObjectType, 
-} from '@nestjs/graphql';
-import { IdStringType } from './id-string.type';
-import { AvatarType } from './cms.type';
-import { UserType } from './user.type';
-import { MediaContentDetailType } from './section.type';
-import { CategoryType } from './category.type';
-
+import {
+    Field,
+    GraphQLISODateTime,
+    ObjectType,
+} from '@nestjs/graphql'
+import { IdStringType } from './id-string.type'
+import { AvatarType } from './cms.type'
+import { UserType } from './user.type'
+import { MediaContentDetailType } from './section.type'
+import { CategoryType } from './category.type'
+import { Transform } from 'class-transformer'
 
 @ObjectType()
-export class BaseProfileType extends IdStringType  {
+export class BaseProfileType extends IdStringType {
     @Field()
     public name: string
-    @Field(()=> AvatarType)
+    @Field(() => AvatarType)
     public avatar: AvatarType
     @Field()
     public audienceLevel: string
 }
 
 @ObjectType()
-export class ProfileType extends BaseProfileType  {
+export class ProfileType extends BaseProfileType {
     @Field()
     public dob: string
-    @Field(()=> [CategoryType])
+    @Field(() => [CategoryType])
     public categories: CategoryType[]
     @Field()
     public contentRating: string
     @Field()
     public pinSettingStatus: string
-    @Field(()=> UserType)
+    @Field(() => UserType)
     public userAccount: UserType
-    @Field(()=> [MyListType])
+    @Field(() => [MyListType])
     public myList: MyListType[]
 }
 
@@ -46,19 +46,22 @@ export class ValidateProfilePinType {
 export class ProfileRequestResetPinType {
     @Field()
     public token: string
-    @Field(() => GraphQLISODateTime )
+    @Field(() => GraphQLISODateTime)
     public expiredAt: Date
 }
 
 @ObjectType()
-export class MyListType{
+export class MyListType {
     @Field()
-    public programId:string
+    public programId: string
 
-    @Field(()=> GraphQLISODateTime)
-    public addDate:Date
+    @Field(() => GraphQLISODateTime)
+    @Transform(({ value }) => {
+        return !!value ? new Date(value) : null
+    })
+    public addDate: Date
 
-    @Field(()=> MediaContentDetailType)
+    @Field(() => MediaContentDetailType)
     public mediaContent: MediaContentDetailType
 }
 
