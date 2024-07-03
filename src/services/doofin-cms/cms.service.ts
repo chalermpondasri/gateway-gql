@@ -579,20 +579,10 @@ export class CmsService {
 
     public getSeason(media: MediaContentDetailType): Observable<MediaSeasonType[]> {
         const lang = this._requestContext.languages[0].code ?? 'en'
-        const mediaId = media.id.toString()
-        const cacheKey = `${this.getSeason.name}_${mediaId}`
-        return this._cacheService.getCache(cacheKey).pipe(
-            mergeMap(cacheData => {
-                return iif(() => !!cacheData,
-                    of(JSON.parse(cacheData)),
-                    this._cmsRepository.getSeason(mediaId).pipe(
-                        concatMap(data => from(data.data)),
-                        map(season => CmsService.seasonMapper(media.id, season, lang)),
-                        toArray(),
-                        tap(data => this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600)),
-                    ),
-                )
-            }),
+        return this._cmsRepository.getSeason(media.id.toString()).pipe(
+            concatMap(data => from(data.data)),
+            map(season => CmsService.seasonMapper(media.id, season, lang)),
+            toArray(),
         )
     }
 
