@@ -5,6 +5,7 @@ import {
 } from '@nestjs/graphql'
 import { PlaybackService } from '@/services/playback/playback.service'
 import { Inject } from '@nestjs/common'
+import { AdsTokenClaimInput } from '@/types/inputs/ads-token-claim.input'
 
 @Resolver()
 export class AdsResolver {
@@ -17,9 +18,9 @@ export class AdsResolver {
 
     @Mutation(() => String)
     public consumeAdsToken(
-        @Args('adsToken') adsToken: string,
+        @Args(AdsTokenClaimInput.name) adsClaimInput: AdsTokenClaimInput,
     ) {
-        return this._playbackService.consumeAdsToken(adsToken)
+        return this._playbackService.consumeAdsToken(adsClaimInput)
     }
 
 }

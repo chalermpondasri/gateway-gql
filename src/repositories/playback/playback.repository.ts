@@ -8,6 +8,7 @@ import { UpdatePlaybackStatusRequest } from './update-playback-status.request'
 import { AxiosInstance } from 'axios'
 import { LatestPlayedContentResponse } from '@/repositories/playback/latest-played-content.response'
 import { plainToInstance } from 'class-transformer'
+import { ConsumeAdsTokenRequest } from '@/repositories/playback/consume-ads-token.request'
 
 export class PlaybackRepository implements IPlaybackRepository {
     public constructor(
@@ -36,8 +37,8 @@ export class PlaybackRepository implements IPlaybackRepository {
         )
     }
 
-    public consumeAdsToken(adsToken: string): Observable<string> {
-        return from(this._axiosInstance.post('/playback/ads/consume', {adsToken})).pipe(
+    public consumeAdsToken(input: ConsumeAdsTokenRequest): Observable<string> {
+        return from(this._axiosInstance.post('/playback/ads/consume', input)).pipe(
             map(res => res.data)
         )
     }
