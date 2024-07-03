@@ -5,6 +5,9 @@ import {
 import { ProviderName } from '@/constants/provider-name.const'
 import { IPlaybackRepository } from '@/repositories/playback/repository.interface'
 import { Observable } from 'rxjs'
+import { AdsTokenClaimInput } from '@/types/inputs/ads-token-claim.input'
+import { instanceToInstance } from 'class-transformer'
+import { ConsumeAdsTokenRequest } from '@/repositories/playback/consume-ads-token.request'
 
 @Injectable()
 export class PlaybackService {
@@ -15,8 +18,9 @@ export class PlaybackService {
 
     }
 
-    public consumeAdsToken(adsToken: string): Observable<string> {
-        return this._playbackRepository.consumeAdsToken(adsToken)
+    public consumeAdsToken(input: AdsTokenClaimInput): Observable<string> {
+        const request = instanceToInstance<ConsumeAdsTokenRequest>(input)
+        return this._playbackRepository.consumeAdsToken(request)
     }
 
 }

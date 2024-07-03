@@ -616,7 +616,7 @@ input NotificationInput {
 }
 
 type Mutation {
-  consumeAdsToken(adsToken: String!, claimType: String!, watchingDuration: Float!): String!
+  consumeAdsToken(AdsTokenClaimInput: AdsTokenClaimInput!): String!
   createPaymentTransactionToken: String!
   checkoutPackage(CheckoutPackageInput: CheckoutPackageInput!): CheckoutPackageType!
   rentContent(contentId: Float!, episodeId: Float!): Boolean!
@@ -665,6 +665,18 @@ type Mutation {
   revokeSession(sessionId: String!): DeviceSessionType!
   markAllNotiAsRead(profileId: String): ReadAllNotificationType!
   markNotiAsRead(notificationId: String!): NotificationType!
+}
+
+input AdsTokenClaimInput {
+  adsToken: String!
+  claimType: AdsClaimType!
+  watchingDuration: Float!
+}
+
+enum AdsClaimType {
+  SKIP
+  VISIT
+  NO_VISIT
 }
 
 input CheckoutPackageInput {
