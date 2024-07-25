@@ -42,4 +42,10 @@ export class PlaybackRepository implements IPlaybackRepository {
             map(res => res.data)
         )
     }
+
+    public updateBufferedSizeUsage(bufferUsage: number): Observable<string> {
+        return from(this._axiosInstance.post('/playback/stats', {bufferUsage})).pipe(
+            map(res => res.data)
+        )
+    }
 }
