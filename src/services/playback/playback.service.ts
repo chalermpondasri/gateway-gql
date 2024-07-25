@@ -23,8 +23,8 @@ export class PlaybackService {
         return this._playbackRepository.consumeAdsToken(request)
     }
 
-    public updateBufferedSizeUsage(bufferedSize: number): Observable<string> {
-        return this._playbackRepository.updateBufferedSizeUsage(bufferedSize)
+    public updateBufferedSizeUsage(videoId:string,bufferedSize: number): Observable<string> {
+        return this._playbackRepository.updateBufferedSizeUsage(videoId, bufferedSize)
 
     }
 }

@@ -8,5 +8,5 @@ export interface IPlaybackRepository {
     updatePlaybackStatus(profileId: string, body: UpdatePlaybackStatusRequest): Observable<string>
     getLatestPlayedContent(profileId: string): Observable<LatestPlayedContentResponse[]>
     consumeAdsToken(input: ConsumeAdsTokenRequest): Observable<string>
-    updateBufferedSizeUsage(bufferUsage: number): Observable<string>
+    updateBufferedSizeUsage(videoId: string,bufferUsage: number): Observable<string>
 }

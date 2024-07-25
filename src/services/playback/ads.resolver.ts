@@ -26,9 +26,10 @@ export class AdsResolver {
 
     @Mutation(() => String)
     public updateBufferedSizeUsage(
-        @Args({nullable: false, type: () => GraphQLInt}) bufferedSize: number
+        @Args('bufferedSize',{nullable: false, type: () => GraphQLInt}) bufferedSize: number,
+        @Args('videoId',{nullable: false, type: () => String}) videoId: string
     ) {
-        return this._playbackService.updateBufferedSizeUsage(bufferedSize)
+        return this._playbackService.updateBufferedSizeUsage(videoId,bufferedSize)
     }
 
 }
