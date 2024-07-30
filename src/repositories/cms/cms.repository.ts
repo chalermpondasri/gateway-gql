@@ -34,6 +34,7 @@ import {
     get,
     isArray,
     isNil,
+    orderBy,
 } from 'lodash'
 import { Cache } from 'cache-manager'
 import { NotFoundException } from '@nestjs/common'
@@ -119,10 +120,12 @@ export class CmsRepository implements ICmsRepository {
         if(!isNil(sectionId)) {
             if(!isArray(sectionId)) {
                 queryString += `&filters[id][$eq]=${sectionId}`
+            } else {
+                const sorts = orderBy(sectionId)
+                const q = sorts.map((value, index) => `&filters[id][$in][${index}]=${value}`)
+                queryString += `${q.join('')}`
             }
 
-            const q =(<number[]>sectionId).map((value, index) => `&filters[id][$in][${index}]=${value}`)
-            queryString += `${q.join('')}`
         }
         const promise = this._axiosInstance.get(`/page-sections?${queryString}&sort=order:asc`)
         return from(promise).pipe(
