@@ -500,6 +500,7 @@ type PresetSearchType {
   id: Float!
   order: Float!
   title: String!
+  type: String!
   expanded: Boolean!
   url: String
   coverImage: CmsImageType!

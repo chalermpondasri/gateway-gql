@@ -11,6 +11,7 @@ export class PredefinedSearchResponse {
     public title: LocaleTextResponse
     public coverImage: CmsDataResponse<CmsImageContent>
     public order: number
+    public type: 'generic' | 'collection'
     public includeTags: CmsDataResponse<TagResponse>
     public excludeTags: CmsDataResponse<TagResponse>
 }

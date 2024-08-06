@@ -19,6 +19,9 @@ export class PresetSearchType {
     public title: string
 
     @Field()
+    public type: string
+
+    @Field()
     public expanded: boolean
 
     @Field({nullable: true})

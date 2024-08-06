@@ -32,6 +32,9 @@ export class PresetSearchResolver {
     public contents(
         @Parent() parent: PresetSearchType,
     ) {
+        if(parent.type === 'collection') {
+            return this._cmsService.getCollectionByCollectionId(Number(parent.url))
+        }
         const includeTagsId = parent.includeTags.map( v => v.id)
         const excludeTagsId = parent.excludeTags.map(v => v.id)
         return this._cmsService.getMediaContentByTags(includeTagsId, excludeTagsId)

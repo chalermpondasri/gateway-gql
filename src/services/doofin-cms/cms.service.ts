@@ -598,6 +598,7 @@ export class CmsService {
         return this._cmsRepository.getPredefinedSearches().pipe(
             concatMap(result => from(result.data)),
             filter(data => !presetId || presetId === data.id),
+            tap(console.log),
             map(data => {
                 const tags = <BaseResponse<TagResponse>[]>data.attributes.includeTags.data
                 const exclTags = <BaseResponse<TagResponse>[]>data.attributes.excludeTags.data
@@ -609,6 +610,7 @@ export class CmsService {
                 const type: PresetSearchType = {
                     id: data.id,
                     coverImage,
+                    type: data.attributes.type,
                     expanded: data.attributes.expanded,
                     includeTags: tags.map(v => ({
                         id: v.attributes.slug,
@@ -853,6 +855,20 @@ export class CmsService {
                 return result.some(value => String(value.programId) === String(mediaContentId))
             }),
             catchError(() => of(false)),
+        )
+    }
+
+    public getCollectionByCollectionId(sectionId: number): Observable<MediaContentDetailType[]> {
+
+        return this._cmsRepository.getMainPageSections(sectionId).pipe(
+            map(result => result.data.map(v => v.id)),
+            mergeMap(id => this._cmsRepository.getMediaContentsByIds(id)),
+            concatMap(result => from(<BaseResponse<MediaContentDetailResponse>[]>result.data)),
+            map(data => {
+                return CmsService.toMediaContentDetailType(data, this._requestContext.languages[0].code)
+            }),
+            toArray(),
+
         )
     }
 }
