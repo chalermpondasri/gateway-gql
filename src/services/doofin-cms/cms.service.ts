@@ -20,6 +20,7 @@ import {
     tap,
     throwError,
     toArray,
+    reduce as rxReduce
 } from 'rxjs'
 import {
     BaseResponse,
@@ -298,6 +299,17 @@ export class CmsService {
                         }),
                     )
                 }
+                from(rawSectionItems).pipe(
+                    rxReduce((acc, value) => {
+                        acc.push(this._toSectionItemType(value, lang))
+                        return acc
+                    }, [] as SectionItemType[]),
+                    map(v => {
+                        section.sectionItems = v
+                        return section
+                    })
+                )
+
 
                 return of(section).pipe(
                     map(section => {
@@ -358,12 +370,6 @@ export class CmsService {
         } else {
             observ = this._cmsRepository.getMediaContentBySlug(id)
         }
-        // for test iif ran 2 operation
-        // return iif(
-        //     () => Number.isInteger(Number(id)),
-        //     this._cmsRepository.getMediaContentById(id),
-        //     this._cmsRepository.getMediaContentBySlug(id),
-        // )
         return observ.pipe(
             map(res => (res.data) as BaseResponse<MediaContentDetailResponse>),
             map((res) => CmsService.toMediaContentDetailType(res, lang)),
@@ -483,7 +489,7 @@ export class CmsService {
         return result
     }
 
-    private _toSectionItemType(mediaContent: BaseResponse<MediaContentResponse>, lang: string): SectionItemType {
+    private _toSectionItemType(mediaContent: BaseResponse<MediaContentResponse>, lang: string, contentRating = ''): SectionItemType {
         const item = new SectionItemType()
         item.id = mediaContent.id
         item.contentRating = (<BaseResponse<ContentRatingResponse>>mediaContent?.attributes?.rating?.data)?.attributes?.value ?? ''
@@ -789,11 +795,11 @@ export class CmsService {
             return of(null)
         }
         return this.getMediaContentById(String(media.id)).pipe(
-            map(() => {
-                if (this.isSeries(media.tags)) {
+            map((detail) => {
+                if (this.isSeries(detail.tags)) {
                     return null
                 }
-                const duration = media.seasons[0]?.mediaEpisodes[0]?.duration?.duration
+                const duration = detail.seasons[0]?.mediaEpisodes[0]?.duration?.duration
                 return !!duration ? Number(duration) : null
             }),
             catchError(err => {
