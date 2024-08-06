@@ -861,14 +861,16 @@ export class CmsService {
     public getCollectionByCollectionId(sectionId: number): Observable<MediaContentDetailType[]> {
 
         return this._cmsRepository.getMainPageSections(sectionId).pipe(
-            map(result => result.data.map(v => v.id)),
+            map(result => {
+                const section = result.data[0]
+                return (<BaseResponse<MediaContentResponse>[]> section.attributes.items.data).map(v => v.id)
+            }),
             mergeMap(id => this._cmsRepository.getMediaContentsByIds(id)),
             concatMap(result => from(<BaseResponse<MediaContentDetailResponse>[]>result.data)),
             map(data => {
                 return CmsService.toMediaContentDetailType(data, this._requestContext.languages[0].code)
             }),
             toArray(),
-
         )
     }
 }
