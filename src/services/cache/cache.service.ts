@@ -23,14 +23,15 @@ export class CacheService implements ICacheService{
         this._logger = new Logger(CacheService.name)
     }
 
-    public setCache(name: CacheName, value: string, ttl: null|number = null): void {
+    public setCache(name: CacheName, value: string, ttl: null|number = null): Observable<string> {
         if(ttl) {
-            this._cacheMng.set(name, value, {
+            return from(this._cacheMng.set(name, value, {
                 ttl
-            })
+            }))
         } else {
-            this._cacheMng.set(name, value)
+            return from(this._cacheMng.set(name, value))
         }
+
     }
 
     public getCache(name: CacheName): Observable<string> {

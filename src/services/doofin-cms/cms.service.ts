@@ -78,7 +78,10 @@ import {
 } from '@/types/objects/subject.type'
 import { RequestContext } from '@/providers/request-context.provider'
 import { LocalizedLabelType } from '@/types/objects/label.type'
-import { IAuthRepository } from '@/repositories/auth'
+import {
+    IAuthRepository,
+    ProfileResponse,
+} from '@/repositories/auth'
 import {
     ContentRating,
     ContentRatingValidation,
@@ -226,98 +229,119 @@ export class CmsService {
     }
 
     public getMainPageSections(sectionId?: number | number[]): Observable<SectionType[]> {
-
         const lang = this._requestContext.languages[0].code
         return this._cmsRepository.getMainPageSections(sectionId).pipe(
-            concatMap(result => from(result.data)),
-            mergeMap(sectionResponse => {
-
-                const { attributes } = sectionResponse
-                const section = new SectionType()
-                section.id = sectionResponse?.id ?? 0
-                section.sectionTitle = attributes?.title[lang] ?? ''
-                section.sectionType = attributes?.sectionType ?? ''
-                section.sectionLink = attributes?.sectionLink ?? ''
-                section.sectionSubtitle = attributes?.subtitle ? attributes.subtitle[lang] : ''
-                section.order = attributes?.order ?? 0
-                section.createdAt = new Date(attributes.createdAt)
-                section.updatedAt = new Date(attributes.updatedAt)
-                section.coverImage = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.attributes
-
-                if (section.coverImage) {
-                    section.coverImage.id = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.id
+            mergeMap(result => {
+                const profileId = this._getCurrentProfileId(this._requestContext.profileId)
+                if(!!profileId) {
+                    return this._getProfile(profileId).pipe(
+                        map(profile => ({profile, result})),
+                        catchError(() => of({profile: null as ProfileResponse, result}))
+                    )
                 }
 
-                section.sectionItems = []
-                const rawSectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? [])
-                if (section.sectionType === 'top') {
-                    return of(section).pipe(
-                        mergeMap((section) => (this._searchService[attributes.internalResourcePath]() as Observable<BaseResponse<MediaContentDetailResponse>[]>).pipe(
-                            defaultIfEmpty([]),
-                            map(result => result.map((v: BaseResponse<MediaContentResponse>) => this._toSectionItemType(v, lang))),
+                return of({profile: null as ProfileResponse, result})
+            }),
+            concatMap(({ profile, result }) => from(result.data).pipe(
+                mergeMap(sectionResponse => {
+
+                    const { attributes } = sectionResponse
+                    const section = new SectionType()
+                    section.id = sectionResponse?.id ?? 0
+                    section.sectionTitle = attributes?.title[lang] ?? ''
+                    section.sectionType = attributes?.sectionType ?? ''
+                    section.sectionLink = attributes?.sectionLink ?? ''
+                    section.sectionSubtitle = attributes?.subtitle ? attributes.subtitle[lang] : ''
+                    section.order = attributes?.order ?? 0
+                    section.createdAt = new Date(attributes.createdAt)
+                    section.updatedAt = new Date(attributes.updatedAt)
+                    section.coverImage = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.attributes
+
+                    if (section.coverImage) {
+                        section.coverImage.id = (<BaseResponse<CmsImageContent>>attributes?.coverImage?.data)?.id
+                    }
+
+                    section.sectionItems = []
+                    const rawSectionItems = (attributes.items?.data as BaseResponse<MediaContentResponse>[] ?? [])
+                    if (section.sectionType === 'top') {
+                        return of(section).pipe(
+                            mergeMap((section) => (this._searchService[attributes.internalResourcePath]() as Observable<BaseResponse<MediaContentDetailResponse>[]>).pipe(
+                                defaultIfEmpty([]),
+                                map(result => result.map((v: BaseResponse<MediaContentResponse>) => this._toSectionItemType(v, lang))),
+                                map(items => {
+                                    section.sectionItems = items
+                                    return section
+                                }),
+                            )),
+                        )
+                    }
+
+                    if (section.sectionType === 'suggestions' && !!this._requestContext.profileId) {
+                        return this._searchService.getSuggestedContents(this._requestContext.profileId).pipe(
+                            map(result => {
+                                section.sectionItems = result.map(i => this._fromMediaContentDetailToSectionItemType(i, lang))
+                                return section
+                            }),
+                        )
+                    }
+
+                    if (section.sectionType === 'continue-watching') {
+                        return this.getContinueWatchingSectionItems().pipe(
+                            map(result => {
+                                section.sectionItems = result
+                                return section
+                            }),
+                        )
+                    }
+
+                    if (section.sectionType === 'my-list') {
+                        if (!this._requestContext.profileId) {
+                            return of(section)
+                        }
+                        return this._authRepository.getMyList(this._requestContext.profileId).pipe(
+                            concatMap(list => from(list)),
+                            concatMap(item => this._cmsRepository.getMediaContentById(item.programId)),
+                            map(result => {
+                                const casted: BaseResponse<MediaContentResponse> = <BaseResponse<MediaContentDetailResponse>>result.data
+                                return this._toSectionItemType(casted, lang)
+                            }),
+                            toArray(),
                             map(items => {
                                 section.sectionItems = items
                                 return section
                             }),
-                        )),
-                    )
-                }
-
-                if (section.sectionType === 'suggestions' && !!this._requestContext.profileId) {
-                    return this._searchService.getSuggestedContents(this._requestContext.profileId).pipe(
-                        map(result => {
-                            section.sectionItems = result.map(i => this._fromMediaContentDetailToSectionItemType(i, lang))
-                            return section
-                        }),
-                    )
-                }
-
-                if (section.sectionType === 'continue-watching') {
-                    return this.getContinueWatchingSectionItems().pipe(
-                        map(result => {
-                            section.sectionItems = result
-                            return section
-                        }),
-                    )
-                }
-
-                if (section.sectionType === 'my-list') {
-                    if (!this._requestContext.profileId) {
-                        return of(section)
+                        )
                     }
-                    return this._authRepository.getMyList(this._requestContext.profileId).pipe(
-                        concatMap(list => from(list)),
-                        concatMap(item => this._cmsRepository.getMediaContentById(item.programId)),
-                        map(result => {
-                            const casted: BaseResponse<MediaContentResponse> = <BaseResponse<MediaContentDetailResponse>>result.data
-                            return this._toSectionItemType(casted, lang)
-                        }),
-                        toArray(),
-                        map(items => {
-                            section.sectionItems = items
+                    from(rawSectionItems).pipe(
+                        rxReduce((acc, value) => {
+                            acc.push(this._toSectionItemType(value, lang))
+                            return acc
+                        }, [] as SectionItemType[]),
+                        map(v => {
+                            section.sectionItems = v
+                            return section
+                        })
+                    )
+
+
+                    return of(section).pipe(
+                        map(section => {
+                            section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
                             return section
                         }),
                     )
-                }
-                from(rawSectionItems).pipe(
-                    rxReduce((acc, value) => {
-                        acc.push(this._toSectionItemType(value, lang))
-                        return acc
-                    }, [] as SectionItemType[]),
-                    map(v => {
-                        section.sectionItems = v
+                }),
+                map(section => {
+                    if(!profile) {
                         return section
-                    })
-                )
-
-
-                return of(section).pipe(
-                    map(section => {
-                        section.sectionItems = rawSectionItems.map(i => this._toSectionItemType(i, lang))
-                        return section
-                    }),
-                )
-            }),
+                    }
+                    section.sectionItems = section.sectionItems.filter(item => this._ratingValidation.isAllowed(
+                        profile.contentRating as ContentRating,
+                        item.contentRating as ContentRating,
+                    ))
+                    return section
+                }),
+            )),
             filter(v => !isEmpty(v.sectionItems)),
             toArray(),
         )
@@ -779,11 +803,26 @@ export class CmsService {
         return !!profileIdInput ? profileIdInput : this._requestContext.profileId
     }
 
+    private _getProfile(profileId: string): Observable<ProfileResponse> {
+        const cacheKey = `gql_profile_${profileId}`
+        return this._cacheService.getCache(cacheKey).pipe(
+            mergeMap(result => {
+                if(isNil(result)) {
+                    return this._authRepository.getProfileById(profileId).pipe(
+                        mergeMap(profile => this._cacheService.setCache(cacheKey, JSON.stringify(profile), 3000))
+                    )
+                }
+                return of(result)
+            }),
+            map(dataString => JSON.parse(dataString)),
+        )
+    }
+
     private _getCurrentRating(profileId?: string): Observable<Array<ContentRating>> {
         return of(this._getCurrentProfileId(profileId)).pipe(
             mergeMap(pfId => {
                 if (!pfId) return of<Array<ContentRating>>([])
-                return this._authRepository.getProfileById(pfId).pipe(
+                return this._getProfile(pfId).pipe(
                     map(pfDetail => {
                         return this._ratingValidation.getValue(pfDetail.contentRating as ContentRating)
                     }),
