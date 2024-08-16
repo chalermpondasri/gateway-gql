@@ -37,8 +37,16 @@ export class ContentRatingValidation {
             ContentRating.KIDS_6P,
         ])
 
-        this._validationTable.set(ContentRating.MATURE_13P, [ContentRating.GENERAL, ContentRating.MATURE_13P])
+        this._validationTable.set(ContentRating.MATURE_13P, [
+            ContentRating.KIDS_3P,
+            ContentRating.KIDS_6P,
+            ContentRating.GENERAL,
+            ContentRating.MATURE_13P,
+        ])
+
         this._validationTable.set(ContentRating.MATURE_18P, [
+            ContentRating.KIDS_3P,
+            ContentRating.KIDS_6P,
             ContentRating.GENERAL,
             ContentRating.MATURE_13P,
             ContentRating.MATURE_18P,
