@@ -45,4 +45,12 @@ export class CacheService implements ICacheService{
             })
         )
     }
+
+    public deleteCache(name: CacheName | string): Observable<any> {
+        return from(this._cacheMng.del(name)).pipe(
+            map(result => {
+                return result as string
+            }),
+        )
+    }
 }

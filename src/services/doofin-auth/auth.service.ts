@@ -16,6 +16,7 @@ import {
     map,
     mergeMap,
     Observable,
+    tap,
     toArray,
 } from 'rxjs'
 import {
@@ -69,6 +70,7 @@ import {
     isEmpty,
     orderBy,
 } from 'lodash'
+import { ICacheService } from '@/services/cache/interface/service.interface'
 
 @Injectable()
 export class AuthService {
@@ -82,6 +84,8 @@ export class AuthService {
         private readonly _reqCtx: RequestContext,
         @Inject(ProviderName.PLAYBACK_REPOSITORY)
         private readonly _playbackRepository: IPlaybackRepository,
+        @Inject(ProviderName.CACHE_SERVICE)
+        private readonly _cacheService: ICacheService,
     ) {
     }
 
@@ -364,6 +368,7 @@ export class AuthService {
     public updateProfile(profileId: string, input: UpdateProfileInput): Observable<ProfileType> {
         return this._authRepository.updateProfile(this._getCurrentProfileId(profileId), input).pipe(
             map(res => plainToInstance(ProfileType, res)),
+            tap(() => this._cacheService.deleteCache(`gql_profile_${profileId}`))
         )
     }
 

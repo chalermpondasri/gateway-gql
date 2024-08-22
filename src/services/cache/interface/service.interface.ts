@@ -12,4 +12,7 @@ export interface ICacheService {
     getCache(name: CacheName | string): Observable<string>
 
     setCache(name: CacheName | string, value: string, ttl: null | number): Observable<any>
+
+    deleteCache(name: CacheName | string): Observable<any>
+
 }
