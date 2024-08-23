@@ -6,7 +6,6 @@ import {
     mergeMap,
     Observable,
     of,
-    tap,
     toArray,
 } from 'rxjs'
 import { Inject } from '@nestjs/common'
@@ -41,7 +40,6 @@ import {
     MediaEpisodeResponse,
     MediaSeasonResponse,
 } from '@/repositories/cms'
-import * as console from 'console'
 import { Locale } from '@/types/enums'
 import {
     flatMap,
@@ -113,7 +111,6 @@ export class PaymentService {
 
                 return ep.rentalStatus
             }),
-            tap(console.log),
         )
     }
 
@@ -129,7 +126,7 @@ export class PaymentService {
             }),
             mergeMap(({ subscribed, total }) => {
                 const contentId = subscribed.map(v => v.mediaContentId)
-                return this._cmsRepository.getMediaContentsByIds(contentId).pipe(
+                return this._cmsRepository.getMediaContentsByIds(contentId, {allowDraft: true}).pipe(
                     map(media => ({ media, subscribed, total })),
                 )
             }),

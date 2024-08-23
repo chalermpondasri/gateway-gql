@@ -17,3 +17,7 @@ export class BaseRequest implements IBaseRequest {
         return querystring.stringify(Object.assign({populate: this.populate}, queryObject))
     }
 }
+
+export interface IQueryOptions {
+    allowDraft?: boolean
+}
