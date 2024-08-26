@@ -17,10 +17,10 @@ import {
     mergeMap,
     Observable,
     of,
+    reduce as rxReduce,
     tap,
     throwError,
     toArray,
-    reduce as rxReduce
 } from 'rxjs'
 import {
     BaseResponse,
@@ -233,14 +233,14 @@ export class CmsService {
         return this._cmsRepository.getMainPageSections(sectionId).pipe(
             mergeMap(result => {
                 const profileId = this._getCurrentProfileId(this._requestContext.profileId)
-                if(!!profileId) {
+                if (!!profileId) {
                     return this._getProfile(profileId).pipe(
-                        map(profile => ({profile, result})),
-                        catchError(() => of({profile: null as ProfileResponse, result}))
+                        map(profile => ({ profile, result })),
+                        catchError(() => of({ profile: null as ProfileResponse, result })),
                     )
                 }
 
-                return of({profile: null as ProfileResponse, result})
+                return of({ profile: null as ProfileResponse, result })
             }),
             concatMap(({ profile, result }) => from(result.data).pipe(
                 mergeMap(sectionResponse => {
@@ -320,9 +320,8 @@ export class CmsService {
                         map(v => {
                             section.sectionItems = v
                             return section
-                        })
+                        }),
                     )
-
 
                     return of(section).pipe(
                         map(section => {
@@ -332,7 +331,7 @@ export class CmsService {
                     )
                 }),
                 map(section => {
-                    if(!profile) {
+                    if (!profile) {
                         return section
                     }
                     section.sectionItems = section.sectionItems.filter(item => this._ratingValidation.isAllowed(
@@ -622,7 +621,6 @@ export class CmsService {
         return this._cmsRepository.getPredefinedSearches().pipe(
             concatMap(result => from(result.data)),
             filter(data => !presetId || presetId === data.id),
-            tap(console.log),
             map(data => {
                 const tags = <BaseResponse<TagResponse>[]>data.attributes.includeTags.data
                 const exclTags = <BaseResponse<TagResponse>[]>data.attributes.excludeTags.data
@@ -659,26 +657,35 @@ export class CmsService {
     public getMediaContentByTags(includeTags: string[], excludeTags: string[] = []): Observable<MediaContentDetailType[]> {
         const lang = this._requestContext.languages[0].code
 
-        const cacheKey = `getPresetSearches_${String(lang)}_${includeTags.join('+')}_${excludeTags.join('-')}`
-
-        return this._cacheService.getCache(cacheKey).pipe(
-            mergeMap(cacheData => {
-                return iif(() => !!cacheData,
-                    of(JSON.parse(cacheData)),
-                    this._cmsRepository.getMediaContentByTags(includeTags).pipe(
-                        concatMap(result => from(result.data)),
-                        filter(data => {
-                            const tagResponse = <BaseResponse<TagResponse>[]>data.attributes.mediaTags.data
-                            const tagSlugs = tagResponse.map(v => v.attributes.slug)
-                            return !tagSlugs.some(cursor => excludeTags.includes(cursor))
-                        }),
-                        map(result => CmsService.toMediaContentDetailType(result, lang)),
-                        toArray(),
-                        tap(data => this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600)),
-                    ),
+        return this._getProfile(this._getCurrentProfileId()).pipe(
+            catchError(() => of(null)),
+            mergeMap(profile => {
+                const cacheKey = `getPresetSearches_${profile?.contentRating}_${String(lang)}_${includeTags.join('+')}_${excludeTags.join('-')}`
+                return this._cacheService.getCache(cacheKey).pipe(
+                    mergeMap(cacheData => {
+                        return iif(() => !!cacheData,
+                            of(JSON.parse(cacheData)),
+                            this._cmsRepository.getMediaContentByTags(includeTags).pipe(
+                                concatMap(result => from(result.data)),
+                                filter(data => {
+                                    const ratingResponse = <BaseResponse<ContentRatingResponse>>data.attributes.rating.data
+                                    const profileRatingRestriction = !!profile ? this._ratingValidation.isAllowed(
+                                        profile.contentRating as ContentRating,
+                                        ratingResponse.attributes.value as ContentRating) : true
+                                    const tagResponse = <BaseResponse<TagResponse>[]>data.attributes.mediaTags.data
+                                    const tagSlugs = tagResponse.map(v => v.attributes.slug)
+                                    return profileRatingRestriction && !tagSlugs.some(cursor => excludeTags.includes(cursor))
+                                }),
+                                map(result => CmsService.toMediaContentDetailType(result, lang)),
+                                toArray(),
+                                tap(data => this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600)),
+                            ),
+                        )
+                    }),
                 )
             }),
         )
+
     }
 
     private _resolveLocaleText(localeText: LocaleTextResponse, lang: keyof Locale) {
@@ -807,9 +814,9 @@ export class CmsService {
         const cacheKey = `gql_profile_${profileId}`
         return this._cacheService.getCache(cacheKey).pipe(
             mergeMap(result => {
-                if(isNil(result)) {
+                if (isNil(result)) {
                     return this._authRepository.getProfileById(profileId).pipe(
-                        mergeMap(profile => this._cacheService.setCache(cacheKey, JSON.stringify(profile), 3000))
+                        mergeMap(profile => this._cacheService.setCache(cacheKey, JSON.stringify(profile), 3000)),
                     )
                 }
                 return of(result)
@@ -899,17 +906,29 @@ export class CmsService {
 
     public getCollectionByCollectionId(sectionId: number): Observable<MediaContentDetailType[]> {
 
-        return this._cmsRepository.getMainPageSections(sectionId).pipe(
-            map(result => {
-                const section = result.data[0]
-                return (<BaseResponse<MediaContentResponse>[]> section.attributes.items.data).map(v => v.id)
-            }),
-            mergeMap(id => this._cmsRepository.getMediaContentsByIds(id)),
-            concatMap(result => from(<BaseResponse<MediaContentDetailResponse>[]>result.data)),
-            map(data => {
-                return CmsService.toMediaContentDetailType(data, this._requestContext.languages[0].code)
-            }),
-            toArray(),
+
+        return this._getProfile(this._getCurrentProfileId()).pipe(
+            concatMap(profile => this._cmsRepository.getMainPageSections(sectionId).pipe(
+                map(result => {
+                    const section = result.data[0]
+                    return (<BaseResponse<MediaContentResponse>[]> section.attributes.items.data)
+                        .map(v => v.id)
+                }),
+                mergeMap(id => this._cmsRepository.getMediaContentsByIds(id)),
+                concatMap(result => from(<BaseResponse<MediaContentDetailResponse>[]>result.data)),
+                filter(v => {
+                    const ratingResponse = <BaseResponse<ContentRatingResponse>>v.attributes.rating.data
+                    return !!profile ? this._ratingValidation.isAllowed(
+                        profile.contentRating as ContentRating,
+                        ratingResponse.attributes.value as ContentRating) : true
+                }),
+                map(data => {
+                    return CmsService.toMediaContentDetailType(data, this._requestContext.languages[0].code)
+                }),
+                toArray(),
+            ))
         )
+
+
     }
 }

@@ -53,6 +53,11 @@ export class ContentRatingValidation {
         ])
     }
 
+    /**
+     *
+     * @param reference profile rating
+     * @param subject media content rating to validate
+     */
     public isAllowed(reference: ContentRating, subject: ContentRating) {
         return this._validationTable.get(reference).some((v) => v === subject)
     }
