@@ -648,15 +648,34 @@ export class CmsService {
                     contents: [],
                 }
                 return type
-
             }),
+            mergeMap(presetSetting => {
+
+                if (presetSetting.type === 'collection') {
+                    return this.getCollectionByCollectionId(Number(presetSetting.url)).pipe(
+                        map(result => {
+                            presetSetting.contents = result
+                            return presetSetting
+                        }),
+                    )
+                }
+
+                const includeTagsId = presetSetting.includeTags.map(v => v.id)
+                const excludeTagsId = presetSetting.excludeTags.map(v => v.id)
+                return this.getMediaContentByTags(includeTagsId, excludeTagsId).pipe(
+                    map(result => {
+                        presetSetting.contents = result
+                        return presetSetting
+                    }),
+                )
+            }),
+            filter(setting => setting.contents.length > 0),
             toArray(),
         )
     }
 
     public getMediaContentByTags(includeTags: string[], excludeTags: string[] = []): Observable<MediaContentDetailType[]> {
         const lang = this._requestContext.languages[0].code
-
         return this._getProfile(this._getCurrentProfileId()).pipe(
             catchError(() => of(null)),
             mergeMap(profile => {
@@ -905,30 +924,38 @@ export class CmsService {
     }
 
     public getCollectionByCollectionId(sectionId: number): Observable<MediaContentDetailType[]> {
-
-
         return this._getProfile(this._getCurrentProfileId()).pipe(
-            concatMap(profile => this._cmsRepository.getMainPageSections(sectionId).pipe(
-                map(result => {
-                    const section = result.data[0]
-                    return (<BaseResponse<MediaContentResponse>[]> section.attributes.items.data)
-                        .map(v => v.id)
-                }),
-                mergeMap(id => this._cmsRepository.getMediaContentsByIds(id)),
-                concatMap(result => from(<BaseResponse<MediaContentDetailResponse>[]>result.data)),
-                filter(v => {
-                    const ratingResponse = <BaseResponse<ContentRatingResponse>>v.attributes.rating.data
-                    return !!profile ? this._ratingValidation.isAllowed(
-                        profile.contentRating as ContentRating,
-                        ratingResponse.attributes.value as ContentRating) : true
-                }),
-                map(data => {
-                    return CmsService.toMediaContentDetailType(data, this._requestContext.languages[0].code)
-                }),
-                toArray(),
-            ))
-        )
+            catchError(() => of(null)),
+            concatMap(profile => {
+                const lang = this._requestContext.languages[0].code
+                const cacheKey = `getCollectionByCollectionId(${sectionId})_${profile?.contentRating}_${String(lang)}`
+                return this._cacheService.getCache(cacheKey).pipe(
+                    mergeMap(cacheData => iif(() => !!cacheData,
+                        of(JSON.parse(cacheData)),
+                        this._cmsRepository.getMainPageSections(sectionId).pipe(
+                            map(result => {
+                                const section = result.data[0]
+                                return (<BaseResponse<MediaContentResponse>[]>section.attributes.items.data)
+                                    .map(v => v.id)
+                            }),
+                            mergeMap(id => this._cmsRepository.getMediaContentsByIds(id)),
+                            concatMap(result => from(<BaseResponse<MediaContentDetailResponse>[]>result.data)),
+                            filter(v => {
+                                const ratingResponse = <BaseResponse<ContentRatingResponse>>v.attributes.rating.data
+                                return !!profile ? this._ratingValidation.isAllowed(
+                                    profile.contentRating as ContentRating,
+                                    ratingResponse.attributes.value as ContentRating) : true
+                            }),
+                            map(data => {
+                                return CmsService.toMediaContentDetailType(data, lang)
+                            }),
+                            toArray(),
+                            tap(data => this._cacheService.setCache(cacheKey, JSON.stringify(data), 3600)),
+                        ))),
+                )
 
+            }),
+        )
 
     }
 }
