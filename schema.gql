@@ -775,6 +775,12 @@ input UpdateContinueWatchingInput {
   mediaContentId: String!
   mediaEpisodeId: String!
   watchingAt: Float!
+  playbackState: PlaybackState!
+}
+
+enum PlaybackState {
+  NEW_SESSION
+  CONTINUE
 }
 
 input UserVerifyOtpInput {

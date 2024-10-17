@@ -3,6 +3,7 @@ import {
     InputType,  
 } from '@nestjs/graphql';
 import { ContentRating } from '../enums';
+import { PlaybackState } from '@/types/enums/playback-state.enum'
 
 @InputType()
 export class CreateProfilePinInput {
@@ -83,4 +84,7 @@ export class UpdateContinueWatchingInput{
     public mediaEpisodeId: string
     @Field()
     public watchingAt: number
+
+    @Field(() => PlaybackState)
+    public playbackState: PlaybackState
 }
